@@ -28,6 +28,29 @@
           "is_correct": false
         }
       ]
+    },
+    {
+      "question_type": "quiz",
+      "body": "Dans quelle ville du nord-est de la France le pape Léon XIV a-t-il terminé sa visite en septembre 2026 ?",
+      "image_url": null,
+      "choices": [
+        {
+          "body": "Strasbourg",
+          "is_correct": false
+        },
+        {
+          "body": "Metz",
+          "is_correct": true
+        },
+        {
+          "body": "Reims",
+          "is_correct": false
+        },
+        {
+          "body": "Nancy",
+          "is_correct": false
+        }
+      ]
     }
   ]
 }
