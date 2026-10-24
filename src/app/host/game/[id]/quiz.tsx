@@ -184,7 +184,7 @@ export default function Quiz({
       <div className="flex-grow text-white px-8 flex flex-col justify-center">
         {!hasShownChoices && !isAnswerRevealed && (
           <div className="flex flex-col items-center gap-6">
-            {/* Illustration visible dès l'affichage de la question (Décision D16) */}
+            {/* Illustration visible dès l'affichage de la question (Décision D17) */}
             {!isBlindTest && question.image_url && (
               <img
                 src={question.image_url}

@@ -128,7 +128,7 @@ export function getClientSessionId(): string {
 
 /**
  * Précharge les illustrations de toutes les questions d'un pack pour qu'elles
- * s'affichent instantanément à l'apparition de chaque question (Décision D16).
+ * s'affichent instantanément à l'apparition de chaque question (Décision D17).
  */
 export function preloadQuestionImages(questions: Question[] | undefined) {
   if (typeof window === 'undefined' || !questions) return

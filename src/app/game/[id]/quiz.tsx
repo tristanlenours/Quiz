@@ -26,7 +26,7 @@ export default function Quiz({
     (question.audio_duration_sec ? question.audio_duration_sec * 1000 : null) ||
     QUESTION_ANSWER_TIME
 
-  // Illustration affichée dès l'apparition de la question, en grand dans l'espace libre (Décision D16)
+  // Illustration affichée dès l'apparition de la question, en grand dans l'espace libre (Décision D17)
   const questionImage =
     !isBlindTest && question.image_url ? (
       <div className="flex-grow min-h-0 w-full flex items-center justify-center px-4 pt-4">
