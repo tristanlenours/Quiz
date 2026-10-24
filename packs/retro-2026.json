@@ -51,6 +51,29 @@
           "is_correct": false
         }
       ]
+    },
+    {
+      "question_type": "quiz",
+      "body": "Quel pays a remporté la Coupe du monde de football 2026 ?",
+      "image_url": null,
+      "choices": [
+        {
+          "body": "Argentine",
+          "is_correct": false
+        },
+        {
+          "body": "France",
+          "is_correct": false
+        },
+        {
+          "body": "Espagne",
+          "is_correct": true
+        },
+        {
+          "body": "Brésil",
+          "is_correct": false
+        }
+      ]
     }
   ]
 }
