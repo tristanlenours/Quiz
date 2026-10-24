@@ -5,20 +5,20 @@ export const dynamic = 'force-dynamic'
 const DEFAULT_HOST_PASSWORD = 'Quiz007!'
 
 export async function GET() {
-  const sitePassword =
-    process.env.SITE_PASSWORD?.trim() || DEFAULT_HOST_PASSWORD
+  const env = process.env as Record<string, string | undefined>
+  const sitePassword = env['SITE_PASSWORD']?.trim() || DEFAULT_HOST_PASSWORD
 
   const supabaseUrl = (
-    process.env.SUPABASE_URL ||
-    process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    env['SUPABASE_URL'] ||
+    env['NEXT_PUBLIC_SUPABASE_URL'] ||
     ''
   )
     .trim()
     .replace(/^["']|["']$/g, '')
 
   const supabaseAnonKey = (
-    process.env.SUPABASE_ANON_KEY ||
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    env['SUPABASE_ANON_KEY'] ||
+    env['NEXT_PUBLIC_SUPABASE_ANON_KEY'] ||
     ''
   )
     .trim()
@@ -34,8 +34,8 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const sitePassword =
-    process.env.SITE_PASSWORD?.trim() || DEFAULT_HOST_PASSWORD
+  const env = process.env as Record<string, string | undefined>
+  const sitePassword = env['SITE_PASSWORD']?.trim() || DEFAULT_HOST_PASSWORD
 
   try {
     const body = await request.json()

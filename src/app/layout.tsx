@@ -12,17 +12,18 @@ export const metadata: Metadata = {
 }
 
 function getRuntimeSupabaseConfig() {
+  const env = process.env as Record<string, string | undefined>
   const rawUrl = (
-    process.env.NEXT_PUBLIC_SUPABASE_URL ??
-    process.env.SUPABASE_URL ??
+    env['SUPABASE_URL'] ||
+    env['NEXT_PUBLIC_SUPABASE_URL'] ||
     ''
   )
     .trim()
     .replace(/^["']|["']$/g, '')
 
   const rawKey = (
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
-    process.env.SUPABASE_ANON_KEY ??
+    env['SUPABASE_ANON_KEY'] ||
+    env['NEXT_PUBLIC_SUPABASE_ANON_KEY'] ||
     ''
   )
     .trim()
