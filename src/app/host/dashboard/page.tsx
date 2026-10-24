@@ -34,6 +34,7 @@ interface DraftQuestion {
   reveal_title: string
   reveal_artist: string
   reveal_cover_url: string
+  video_url?: string
   choices: DraftChoice[]
 }
 
@@ -335,6 +336,7 @@ export default function HostDashboardPage() {
           reveal_title: q.reveal_title || null,
           reveal_artist: q.reveal_artist || null,
           reveal_cover_url: q.reveal_cover_url || null,
+          video_url: q.video_url || null,
         })
         .select()
         .single()
@@ -381,6 +383,7 @@ export default function HostDashboardPage() {
       reveal_title: q.reveal_title || '',
       reveal_artist: q.reveal_artist || '',
       reveal_cover_url: q.reveal_cover_url || '',
+      video_url: q.video_url || '',
       choices:
         q.choices && q.choices.length > 0
           ? q.choices.map((c) => ({ body: c.body, is_correct: c.is_correct }))
@@ -488,6 +491,7 @@ export default function HostDashboardPage() {
         reveal_title: q.reveal_title,
         reveal_artist: q.reveal_artist,
         reveal_cover_url: q.reveal_cover_url,
+        video_url: q.video_url,
         choices: (q.choices || []).map((c) => ({
           body: c.body,
           is_correct: c.is_correct,
@@ -980,19 +984,75 @@ export default function HostDashboardPage() {
                     )}
                   </div>
                 ) : (
-                  <div>
-                    <label className="block text-xs uppercase text-slate-400 font-bold mb-1">
-                      URL d&apos;image d&apos;illustration (Optionnel)
-                    </label>
-                    <input
-                      type="text"
-                      value={activeQ.image_url}
-                      onChange={(e) =>
-                        updateActiveQuestion({ image_url: e.target.value })
-                      }
-                      placeholder="https://..."
-                      className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-sm"
-                    />
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs uppercase text-slate-400 font-bold mb-1">
+                        URL d&apos;image d&apos;illustration (Optionnel)
+                      </label>
+                      <input
+                        type="text"
+                        value={activeQ.image_url}
+                        onChange={(e) =>
+                          updateActiveQuestion({ image_url: e.target.value })
+                        }
+                        placeholder="https://..."
+                        className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-sm"
+                      />
+                    </div>
+
+                    {/* Extrait vidéo YouTube joué sur l'Écran Hôte (Décision D19) */}
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                      <div className="md:col-span-2">
+                        <label className="block text-xs uppercase text-slate-400 font-bold mb-1">
+                          Extrait vidéo YouTube (Optionnel)
+                        </label>
+                        <input
+                          type="text"
+                          value={activeQ.video_url || ''}
+                          onChange={(e) =>
+                            updateActiveQuestion({ video_url: e.target.value })
+                          }
+                          placeholder="https://youtu.be/..."
+                          className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-slate-400 mb-1">
+                          Début (sec)
+                        </label>
+                        <input
+                          type="number"
+                          min={0}
+                          value={activeQ.audio_start_sec}
+                          onChange={(e) =>
+                            updateActiveQuestion({
+                              audio_start_sec: Math.max(
+                                0,
+                                Number(e.target.value) || 0
+                              ),
+                            })
+                          }
+                          className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-slate-400 mb-1">
+                          Durée extrait (sec)
+                        </label>
+                        <input
+                          type="number"
+                          min={5}
+                          max={60}
+                          value={activeQ.audio_duration_sec}
+                          onChange={(e) =>
+                            updateActiveQuestion({
+                              audio_duration_sec: Number(e.target.value) || 20,
+                            })
+                          }
+                          className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-sm"
+                        />
+                      </div>
+                    </div>
                   </div>
                 )}
 

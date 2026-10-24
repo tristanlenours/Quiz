@@ -36,6 +36,13 @@ export default function Quiz({
           className="max-h-full max-w-full rounded-2xl shadow-lg object-contain"
         />
       </div>
+    ) : !isBlindTest && question.video_url ? (
+      // L'extrait vidéo n'est joué que sur l'Écran Hôte (Décision D19)
+      <div className="flex-grow min-h-0 w-full flex items-center justify-center px-4 pt-4">
+        <div className="text-white text-xl font-bold text-center p-6 bg-slate-800/80 rounded-2xl border border-white/10">
+          📺 Regardez l&apos;écran !
+        </div>
+      </div>
     ) : null
 
   useEffect(() => {

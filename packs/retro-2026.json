@@ -1,0 +1,21 @@
+{
+  "name": "Rétro 2026",
+  "description": "Le quiz rétrospectif de l'année 2026",
+  "mode": "quiz",
+  "questions": [
+    {
+      "question_type": "quiz",
+      "body": "Qui est le réalisateur de ce clip ?",
+      "image_url": null,
+      "video_url": "https://youtu.be/x6_mbnsh6VU",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 20,
+      "choices": [
+        { "body": "Romain Gavras", "is_correct": true },
+        { "body": "Hiro Murai", "is_correct": false },
+        { "body": "Michel Gondry", "is_correct": false },
+        { "body": "Spike Jonze", "is_correct": false }
+      ]
+    }
+  ]
+}

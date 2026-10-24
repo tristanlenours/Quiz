@@ -30,8 +30,13 @@ create table if not exists public.quiz_questions (
     -- Métadonnées dévoilées uniquement à la révélation (is_answer_revealed = true)
     reveal_title text,
     reveal_artist text,
-    reveal_cover_url text
+    reveal_cover_url text,
+    -- Extrait vidéo YouTube joué sur l'Écran Hôte (Décision D19)
+    video_url text
 );
+
+-- Migration idempotente pour les bases existantes (Décision D19)
+alter table public.quiz_questions add column if not exists video_url text;
 
 -- 3. Table des Choix de Réponse (QCM)
 create table if not exists public.quiz_choices (

@@ -1,5 +1,11 @@
 import { TIME_TIL_CHOICE_REVEAL } from '@/constants'
-import { Answer, Participant, Question, supabase } from '@/types/types'
+import {
+  Answer,
+  Participant,
+  Question,
+  getYouTubeEmbedUrl,
+  supabase,
+} from '@/types/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 
@@ -25,6 +31,13 @@ export default function Quiz({
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const isBlindTest = question.question_type === 'blind_test'
   const answerDurationSec = question.audio_duration_sec || 20
+  const videoEmbedUrl = isBlindTest
+    ? null
+    : getYouTubeEmbedUrl(
+        question.video_url,
+        question.audio_start_sec || 0,
+        answerDurationSec
+      )
 
   const getNextQuestion = async () => {
     if (audioRef.current) {
@@ -246,6 +259,15 @@ export default function Quiz({
                       : '▶️ Relancer le son'}
                   </button>
                 </div>
+              ) : videoEmbedUrl ? (
+                // Extrait vidéo YouTube lu sur l'Écran Hôte pendant le chrono (Décision D19)
+                <iframe
+                  key={question.id}
+                  src={videoEmbedUrl}
+                  title="Extrait vidéo"
+                  allow="autoplay; encrypted-media; picture-in-picture"
+                  className="w-[min(60vw,calc(55vh*16/9))] aspect-video rounded-2xl shadow-lg border-0"
+                />
               ) : (
                 question.image_url && (
                   <img

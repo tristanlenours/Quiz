@@ -136,3 +136,30 @@ export function preloadQuestionImages(questions: Question[] | undefined) {
     if (q.image_url) new window.Image().src = q.image_url
   })
 }
+
+/**
+ * Construit l'URL d'intégration YouTube d'un extrait vidéo (Décision D19) :
+ * lecture automatique de `startSec` à `startSec + durationSec`, sans suggestions.
+ * Retourne null si l'URL n'est pas un lien YouTube reconnu.
+ */
+export function getYouTubeEmbedUrl(
+  url: string | null | undefined,
+  startSec: number,
+  durationSec: number
+): string | null {
+  if (!url) return null
+  const match = url.match(
+    /(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/))([\w-]{11})/
+  )
+  if (!match) return null
+  const params = new URLSearchParams({
+    autoplay: '1',
+    start: String(startSec),
+    end: String(startSec + durationSec),
+    controls: '0',
+    rel: '0',
+    modestbranding: '1',
+    playsinline: '1',
+  })
+  return `https://www.youtube.com/embed/${match[1]}?${params.toString()}`
+}

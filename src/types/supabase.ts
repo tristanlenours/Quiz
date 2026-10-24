@@ -175,6 +175,7 @@ export type Database = {
           audio_duration_sec: number
           audio_start_sec: number
           audio_url: string | null
+          video_url: string | null
           body: string
           created_at: string
           id: string
@@ -190,6 +191,7 @@ export type Database = {
           audio_duration_sec?: number
           audio_start_sec?: number
           audio_url?: string | null
+          video_url?: string | null
           body: string
           created_at?: string
           id?: string
@@ -205,6 +207,7 @@ export type Database = {
           audio_duration_sec?: number
           audio_start_sec?: number
           audio_url?: string | null
+          video_url?: string | null
           body?: string
           created_at?: string
           id?: string
