@@ -111,6 +111,15 @@ export default function Quiz({
           {question.body}
         </h2>
 
+        {/* Illustration aussi visible sur la Manette Joueur (Décision D16) */}
+        {!isBlindTest && question.image_url && (
+          <img
+            src={question.image_url}
+            alt="Illustration question"
+            className="mt-4 mx-auto max-h-[30vh] rounded-2xl shadow-lg object-contain"
+          />
+        )}
+
         {/* Bouton optionnel pour écouter sur son téléphone à distance (Décision D08) */}
         {isBlindTest && question.audio_url && !isAnswerRevealed && (
           <div className="mt-3">
