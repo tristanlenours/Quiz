@@ -26,6 +26,18 @@ export default function Quiz({
     (question.audio_duration_sec ? question.audio_duration_sec * 1000 : null) ||
     QUESTION_ANSWER_TIME
 
+  // Illustration affichée dès l'apparition de la question, en grand dans l'espace libre (Décision D16)
+  const questionImage =
+    !isBlindTest && question.image_url ? (
+      <div className="flex-grow min-h-0 w-full flex items-center justify-center px-4 pt-4">
+        <img
+          src={question.image_url}
+          alt="Illustration question"
+          className="max-h-full max-w-full rounded-2xl shadow-lg object-contain"
+        />
+      </div>
+    ) : null
+
   useEffect(() => {
     setChosenChoice(null)
     setHasShownChoices(false)
@@ -111,15 +123,6 @@ export default function Quiz({
           {question.body}
         </h2>
 
-        {/* Illustration aussi visible sur la Manette Joueur (Décision D16) */}
-        {!isBlindTest && question.image_url && (
-          <img
-            src={question.image_url}
-            alt="Illustration question"
-            className="mt-4 mx-auto max-h-[30vh] rounded-2xl shadow-lg object-contain"
-          />
-        )}
-
         {/* Bouton optionnel pour écouter sur son téléphone à distance (Décision D08) */}
         {isBlindTest && question.audio_url && !isAnswerRevealed && (
           <div className="mt-3">
@@ -149,10 +152,13 @@ export default function Quiz({
       )}
 
       {!hasShownChoices && !isAnswerRevealed && (
-        <div className="flex-grow text-white flex flex-col items-center justify-center">
+        <div className="flex-grow min-h-0 text-white flex flex-col items-center justify-center">
+          {questionImage}
           <CountdownCircleTimer
             isPlaying
             duration={TIME_TIL_CHOICE_REVEAL / 1000}
+            size={questionImage ? 72 : 180}
+            strokeWidth={questionImage ? 6 : 12}
             colors={['#6366f1', '#6366f1', '#6366f1', '#6366f1']}
             trailColor={'transparent' as ColorFormat}
             colorsTime={[5, 3, 1, 0]}
@@ -161,13 +167,13 @@ export default function Quiz({
               <span className="text-4xl font-black">{remainingTime}</span>
             )}
           </CountdownCircleTimer>
-          <p className="mt-4 text-slate-400 text-sm">Préparez-vous...</p>
+          <p className="mt-4 mb-4 text-slate-400 text-sm">Préparez-vous...</p>
         </div>
       )}
 
       {hasShownChoices && !isAnswerRevealed && !chosenChoice && (
-        <div className="flex-grow flex flex-col items-stretch">
-          <div className="flex-grow"></div>
+        <div className="flex-grow min-h-0 flex flex-col items-stretch">
+          {questionImage || <div className="flex-grow"></div>}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4">
             {question.choices.map((choice, index) => (
               <button

@@ -183,10 +183,20 @@ export default function Quiz({
 
       <div className="flex-grow text-white px-8 flex flex-col justify-center">
         {!hasShownChoices && !isAnswerRevealed && (
-          <div className="text-center text-2xl text-slate-300 animate-pulse font-semibold">
-            {isBlindTest
-              ? '🎧 Préparez vos oreilles...'
-              : '👀 Lisez bien la question...'}
+          <div className="flex flex-col items-center gap-6">
+            {/* Illustration visible dès l'affichage de la question (Décision D16) */}
+            {!isBlindTest && question.image_url && (
+              <img
+                src={question.image_url}
+                alt="Illustration question"
+                className="max-h-[50vh] max-w-full rounded-2xl shadow-lg object-contain"
+              />
+            )}
+            <div className="text-center text-2xl text-slate-300 animate-pulse font-semibold">
+              {isBlindTest
+                ? '🎧 Préparez vos oreilles...'
+                : '👀 Lisez bien la question...'}
+            </div>
           </div>
         )}
 
@@ -241,7 +251,7 @@ export default function Quiz({
                   <img
                     src={question.image_url}
                     alt="Illustration question"
-                    className="max-h-52 rounded-2xl shadow-lg object-contain"
+                    className="max-h-[50vh] max-w-full rounded-2xl shadow-lg object-contain"
                   />
                 )
               )}

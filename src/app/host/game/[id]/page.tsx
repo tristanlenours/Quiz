@@ -1,6 +1,12 @@
 'use client'
 
-import { Game, Participant, QuizSet, supabase } from '@/types/types'
+import {
+  Game,
+  Participant,
+  QuizSet,
+  preloadQuestionImages,
+  supabase,
+} from '@/types/types'
 import { useEffect, useState } from 'react'
 import Lobby from './lobby'
 import Quiz from './quiz'
@@ -52,6 +58,7 @@ export default function HostGamePage({
         return
       }
       setQuizSet(data as unknown as QuizSet)
+      preloadQuestionImages((data as unknown as QuizSet).questions)
     }
 
     const fetchHostState = async () => {

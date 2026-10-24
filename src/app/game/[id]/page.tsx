@@ -6,6 +6,7 @@ import {
   GameResult,
   Participant,
   Question,
+  preloadQuestionImages,
   supabase,
 } from '@/types/types'
 import Lobby from './lobby'
@@ -42,6 +43,7 @@ export default function PlayerGamePage({
       return
     }
     setQuestions(data as unknown as Question[])
+    preloadQuestionImages(data as unknown as Question[])
   }, [])
 
   const syncGameState = useCallback(async () => {
