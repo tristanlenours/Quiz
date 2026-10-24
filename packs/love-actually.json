@@ -1,0 +1,181 @@
+{
+  "name": "Do you really love Love actually ?",
+  "description": "Importé depuis Kahoot (aaedfcd7-d74d-4283-8c8d-c475882e2218)",
+  "mode": "quiz",
+  "questions": [
+    {
+      "question_type": "quiz",
+      "body": "Où est situé le tatouage d'Aurelia (la portugaise)?",
+      "image_url": "https://media.kahoot.it/73573d61-b899-4d05-aa50-fba4402ed63d",
+      "choices": [
+        { "body": "À la cheville", "is_correct": false },
+        { "body": "Bas du dos", "is_correct": true },
+        { "body": "Épaule droite", "is_correct": false },
+        { "body": "Épaule gauche", "is_correct": false }
+      ]
+    },
+    {
+      "question_type": "quiz",
+      "body": "Qui est l'américaine la plus fans des anglais ?",
+      "image_url": "https://media.kahoot.it/11c695cf-b943-4537-8c21-f7f9e4ce4737",
+      "choices": [
+        { "body": "Carol-Anne", "is_correct": true },
+        { "body": "Jenny", "is_correct": false },
+        { "body": "Harriet", "is_correct": false },
+        { "body": "Stacy", "is_correct": false }
+      ]
+    },
+    {
+      "question_type": "quiz",
+      "body": "Quelle scène suit juste après la dance de Hugh Grant ?",
+      "image_url": "https://media.kahoot.it/6535e9a0-296d-40b8-918a-1783730b8d35",
+      "choices": [
+        { "body": "Jamie et Aurélia et les feuilles du bouquin dans l'étang", "is_correct": true },
+        { "body": "Juliett et Mark avec la VHS du mariage", "is_correct": false },
+        { "body": "Hugh Grant qui humilie le président Américain", "is_correct": false },
+        { "body": "Sam et son beau père qui mettent en place le plan de séduction de Johana", "is_correct": false }
+      ]
+    },
+    {
+      "question_type": "quiz",
+      "body": "Sur les panneaux tenus par Mark face à Juliet (Keira Knightley), on peut lire :",
+      "image_url": "https://media.kahoot.it/7d8305bd-97a3-492e-84f1-11bba0fb25d9",
+      "choices": [
+        { "body": "A Noël, on dit la vérité, pour moi tu es parfaite", "is_correct": true },
+        { "body": "A Noël, on dit la vérité, je t’aime", "is_correct": false },
+        { "body": "A Noël, on dit la vérité, tu es la femme de ma vie", "is_correct": false },
+        { "body": "A Noël, on dit joyeux Noël", "is_correct": false }
+      ]
+    },
+    {
+      "question_type": "quiz",
+      "body": "Quelle chanson est diffusée pendant l’enterrement de la mère de Sam ?",
+      "image_url": "https://media.kahoot.it/ff6a8114-7ebb-4343-9cf5-d462e9eaa9c9",
+      "choices": [
+        { "body": "« Good Vibrations » des Beach Boys", "is_correct": false },
+        { "body": "« Turn Me on » de Norah Jones", "is_correct": false },
+        { "body": "« Bye Bye Baby » des Bay City Rollers", "is_correct": true },
+        { "body": "Highway to hell, ACDC", "is_correct": false }
+      ]
+    },
+    {
+      "question_type": "quiz",
+      "body": "Sur quelle chanson des Pointer Sisters Hugh Grant fait-il une danse dans ses appartements du 10 Downing Street ?",
+      "image_url": "https://media.kahoot.it/abc0a607-21e0-4427-818f-549e8a75f6be",
+      "choices": [
+        { "body": "I'm so exited", "is_correct": false },
+        { "body": "Jump", "is_correct": true },
+        { "body": "Having a party", "is_correct": false }
+      ]
+    },
+    {
+      "question_type": "quiz",
+      "body": "Dans la meilleure scène du film avec Mr Bean qui prépare un paquet cadeau, quel végétal n' est pas utilisé ?",
+      "image_url": "https://media.kahoot.it/6ca25203-5fb6-4f15-a441-805cd8bf6e21",
+      "choices": [
+        { "body": "Du houx", "is_correct": false },
+        { "body": "Des roses", "is_correct": false },
+        { "body": "De la lavande", "is_correct": false },
+        { "body": "Du sapin", "is_correct": true }
+      ]
+    },
+    {
+      "question_type": "quiz",
+      "body": "Quel mot se prononce de façon identique en anglais et en américain",
+      "image_url": "https://media.kahoot.it/7afa3a54-e7ca-412a-afa8-4845cf493d78",
+      "choices": [
+        { "body": "Bottle", "is_correct": false },
+        { "body": "Straw", "is_correct": false },
+        { "body": "Table", "is_correct": true }
+      ]
+    },
+    {
+      "question_type": "quiz",
+      "body": "Quel magnifique Cd est offert à Karen ?",
+      "image_url": "https://media.kahoot.it/fb66eb1f-1ae0-44c8-94b5-da861dbc5447",
+      "choices": [
+        { "body": "Maria Callas", "is_correct": false },
+        { "body": "Joni Mitchell", "is_correct": true },
+        { "body": "Billy Mack", "is_correct": false },
+        { "body": "The beatles", "is_correct": false }
+      ]
+    },
+    {
+      "question_type": "quiz",
+      "body": "Quelle est la proposition faite à Judy à ce moment?",
+      "image_url": "https://media.kahoot.it/12eb43cb-db0f-4bac-a15e-39a10b038779",
+      "choices": [
+        { "body": "Boire un verre", "is_correct": true },
+        { "body": "Devenir sa femme", "is_correct": false },
+        { "body": "Rencontrer sa mère", "is_correct": false },
+        { "body": "Aller acheter un mini-village de noel Lemax", "is_correct": false }
+      ]
+    },
+    {
+      "question_type": "quiz",
+      "body": "Où habite Mia ?",
+      "image_url": "https://media.kahoot.it/ed0d6f6e-96eb-4e96-a85b-b26e2ff71efa",
+      "choices": [
+        { "body": "Lombard avenue", "is_correct": false },
+        { "body": "Downing street", "is_correct": false },
+        { "body": "Harris Street", "is_correct": true },
+        { "body": "Nakatomi plaza", "is_correct": false }
+      ]
+    },
+    {
+      "question_type": "quiz",
+      "body": "Quelle est la chanson du spectacle de l'école ?",
+      "image_url": "https://media.kahoot.it/feeb1ac2-5cd4-491f-b91c-f973fe7b8d66",
+      "choices": [
+        { "body": "All I want for Christmas is you", "is_correct": true },
+        { "body": "Last Christmas", "is_correct": false },
+        { "body": "Christmas is in the air", "is_correct": false },
+        { "body": "Make my wish come true", "is_correct": false }
+      ]
+    },
+    {
+      "question_type": "quiz",
+      "body": "Quelle est ville que rejoint Joana juste après le spectacle ?",
+      "image_url": "https://media.kahoot.it/a9e1ee10-7395-4f61-a9bb-11ce2f0065ab",
+      "choices": [
+        { "body": "Los Angeles", "is_correct": false },
+        { "body": "Milwaukee", "is_correct": false },
+        { "body": "New York", "is_correct": true },
+        { "body": "Miami", "is_correct": false }
+      ]
+    },
+    {
+      "question_type": "quiz",
+      "body": "Avec qui la sœur d'Aurelia lui conseille de se marier à la place de Jamie ?",
+      "image_url": "https://media.kahoot.it/e443eea4-7de6-4186-835e-f677817b42c8",
+      "choices": [
+        { "body": "Le prince William", "is_correct": true },
+        { "body": "Robbie Williams", "is_correct": false },
+        { "body": "Prince Harry", "is_correct": false },
+        { "body": "David Beckham", "is_correct": false }
+      ]
+    },
+    {
+      "question_type": "quiz",
+      "body": "Qu'apporte Juliett à Marc qd elle passe récupérer sa cassette de mariage ?",
+      "image_url": "https://media.kahoot.it/548e9334-5bc5-44dc-af9b-36f9076786c3",
+      "choices": [
+        { "body": "Du pudding gallois", "is_correct": false },
+        { "body": "Un banofee pie", "is_correct": true },
+        { "body": "Une part tarte au citron meringuée", "is_correct": false },
+        { "body": "Un choux à la crème", "is_correct": false }
+      ]
+    },
+    {
+      "question_type": "quiz",
+      "body": "Combien de temps prend l'emballage du collier ? (temps réel non ressenti)",
+      "image_url": "https://media.kahoot.it/132290d3-2aac-455e-8755-fe020785877d",
+      "choices": [
+        { "body": "Environ une minute", "is_correct": false },
+        { "body": "Environ deux minutes", "is_correct": false },
+        { "body": "Environ trois minutes", "is_correct": true },
+        { "body": "Deux bonnes heures", "is_correct": false }
+      ]
+    }
+  ]
+}
