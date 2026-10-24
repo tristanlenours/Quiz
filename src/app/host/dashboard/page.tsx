@@ -3,6 +3,7 @@
 import {
   isSupabaseClientConfigured,
   QuizSet,
+  setRuntimeSupabaseConfig,
   supabase,
 } from '@/types/types'
 import { useEffect, useState } from 'react'
@@ -90,17 +91,19 @@ export default function HostDashboardPage() {
 
   useEffect(() => {
     const checkAuth = async () => {
-      if (
-        typeof window !== 'undefined' &&
-        window.sessionStorage.getItem('quiz_host_unlocked') === '1'
-      ) {
-        setIsUnlocked(true)
-        setAuthChecked(true)
-        return
-      }
       try {
-        const res = await fetch('/api/host-auth')
+        const res = await fetch('/api/host-auth', { cache: 'no-store' })
         const data = await res.json()
+        if (data.supabaseUrl && data.supabaseAnonKey) {
+          setRuntimeSupabaseConfig(data.supabaseUrl, data.supabaseAnonKey)
+        }
+        if (
+          typeof window !== 'undefined' &&
+          window.sessionStorage.getItem('quiz_host_unlocked') === '1'
+        ) {
+          setIsUnlocked(true)
+          return
+        }
         if (!data.passwordRequired) {
           setIsUnlocked(true)
         }

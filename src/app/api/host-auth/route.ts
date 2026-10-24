@@ -1,13 +1,35 @@
 import { NextResponse } from 'next/server'
 
+export const dynamic = 'force-dynamic'
+
 const DEFAULT_HOST_PASSWORD = 'Quiz007!'
 
 export async function GET() {
   const sitePassword =
     process.env.SITE_PASSWORD?.trim() || DEFAULT_HOST_PASSWORD
+
+  const supabaseUrl = (
+    process.env.SUPABASE_URL ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    ''
+  )
+    .trim()
+    .replace(/^["']|["']$/g, '')
+
+  const supabaseAnonKey = (
+    process.env.SUPABASE_ANON_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    ''
+  )
+    .trim()
+    .replace(/^["']|["']$/g, '')
+
   return NextResponse.json({
     ok: true,
     passwordRequired: Boolean(sitePassword),
+    supabaseConfigured: Boolean(supabaseUrl && supabaseAnonKey),
+    supabaseUrl,
+    supabaseAnonKey,
   })
 }
 

@@ -55,6 +55,15 @@ function resolveSupabaseCredentials(): {
 }
 
 let cachedBrowserClient: SupabaseClient<Database> | null = null
+let cachedBrowserUrl: string | null = null
+
+export function setRuntimeSupabaseConfig(url?: string, anonKey?: string) {
+  if (typeof window !== 'undefined' && url && anonKey) {
+    window.__QUIZ_SUPABASE__ = { url, anonKey }
+    cachedBrowserClient = null
+    cachedBrowserUrl = null
+  }
+}
 
 export function isSupabaseClientConfigured(): boolean {
   return resolveSupabaseCredentials().configured
@@ -64,14 +73,14 @@ export const supabase: SupabaseClient<Database> = new Proxy(
   {} as SupabaseClient<Database>,
   {
     get(_target, prop, receiver) {
+      const creds = resolveSupabaseCredentials()
       if (typeof window === 'undefined') {
-        const creds = resolveSupabaseCredentials()
         const ssrClient = createClient<Database>(creds.url, creds.anonKey)
         return Reflect.get(ssrClient, prop, receiver)
       }
-      if (!cachedBrowserClient) {
-        const creds = resolveSupabaseCredentials()
+      if (!cachedBrowserClient || cachedBrowserUrl !== creds.url) {
         cachedBrowserClient = createClient<Database>(creds.url, creds.anonKey)
+        cachedBrowserUrl = creds.url
       }
       const value = Reflect.get(cachedBrowserClient, prop, receiver)
       return typeof value === 'function'
