@@ -8,7 +8,7 @@
       "body": "Qui est le réalisateur de ce clip ?",
       "image_url": null,
       "video_url": "https://youtu.be/x6_mbnsh6VU",
-      "audio_start_sec": 0,
+      "audio_start_sec": 257,
       "audio_duration_sec": 20,
       "choices": [
         { "body": "Romain Gavras", "is_correct": true },
