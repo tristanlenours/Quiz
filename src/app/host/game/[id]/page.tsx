@@ -1,14 +1,6 @@
 'use client'
 
-import {
-  Answer,
-  Choice,
-  Game,
-  Participant,
-  Question,
-  QuizSet,
-  supabase,
-} from '@/types/types'
+import { Game, Participant, QuizSet, supabase } from '@/types/types'
 import { useEffect, useState } from 'react'
 import Lobby from './lobby'
 import Quiz from './quiz'
@@ -20,7 +12,7 @@ enum AdminScreens {
   result = 'result',
 }
 
-export default function Home({
+export default function HostGamePage({
   params: { id: gameId },
 }: {
   params: { id: string }
@@ -28,122 +20,134 @@ export default function Home({
   const [currentScreen, setCurrentScreen] = useState<AdminScreens>(
     AdminScreens.lobby
   )
-
   const [participants, setParticipants] = useState<Participant[]>([])
-
   const [quizSet, setQuizSet] = useState<QuizSet>()
+  const [pinCode, setPinCode] = useState<string>('')
+  const [currentQuestionSequence, setCurrentQuestionSequence] = useState(0)
 
   useEffect(() => {
     const getQuestions = async () => {
       const { data: gameData, error: gameError } = await supabase
-        .from('games')
+        .from('quiz_games')
         .select()
         .eq('id', gameId)
         .single()
       if (gameError) {
         console.error(gameError.message)
-        alert('Error getting game data')
         return
       }
+      setPinCode(gameData.pin_code)
+
       const { data, error } = await supabase
         .from('quiz_sets')
-        .select(`*, questions(*, choices(*))`)
+        .select(`*, questions:quiz_questions(*, choices:quiz_choices(*))`)
         .eq('id', gameData.quiz_set_id)
         .order('order', {
           ascending: true,
-          referencedTable: 'questions',
+          referencedTable: 'quiz_questions',
         })
         .single()
       if (error) {
         console.error(error.message)
-        getQuestions()
         return
       }
-      setQuizSet(data)
+      setQuizSet(data as unknown as QuizSet)
     }
 
-    const setGameListner = async () => {
-      const { data } = await supabase
-        .from('participants')
+    const fetchHostState = async () => {
+      const { data: pData } = await supabase
+        .from('quiz_participants')
         .select()
         .eq('game_id', gameId)
         .order('created_at')
-      if (data) setParticipants(data)
+      if (pData) setParticipants(pData)
 
-      supabase
-        .channel('game')
-        .on(
-          'postgres_changes',
-          {
-            event: 'INSERT',
-            schema: 'public',
-            table: 'participants',
-            filter: `game_id=eq.${gameId}`,
-          },
-          (payload) => {
-            setParticipants((currentParticipants) => {
-              return [...currentParticipants, payload.new as Participant]
-            })
-          }
-        )
-        .on(
-          'postgres_changes',
-          {
-            event: 'UPDATE',
-            schema: 'public',
-            table: 'games',
-            filter: `id=eq.${gameId}`,
-          },
-          (payload) => {
-            // start the quiz game
-            const game = payload.new as Game
-            setCurrentQuestionSequence(game.current_question_sequence)
-            setCurrentScreen(game.phase as AdminScreens)
-          }
-        )
-        .subscribe()
-
-      const { data: gameData, error: gameError } = await supabase
-        .from('games')
+      const { data: gData } = await supabase
+        .from('quiz_games')
         .select()
         .eq('id', gameId)
         .single()
-
-      if (gameError) {
-        alert(gameError.message)
-        console.error(gameError)
-        return
+      if (gData) {
+        setPinCode(gData.pin_code)
+        setCurrentQuestionSequence(gData.current_question_sequence)
+        setCurrentScreen(gData.phase as AdminScreens)
       }
-
-      setCurrentQuestionSequence(gameData.current_question_sequence)
-      setCurrentScreen(gameData.phase as AdminScreens)
     }
 
     getQuestions()
-    setGameListner()
+    fetchHostState()
+
+    const channel = supabase
+      .channel(`host_game_${gameId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'quiz_participants',
+          filter: `game_id=eq.${gameId}`,
+        },
+        (payload) => {
+          setParticipants((currentParticipants) => {
+            const exists = currentParticipants.some(
+              (p) => p.id === (payload.new as Participant).id
+            )
+            if (exists) return currentParticipants
+            return [...currentParticipants, payload.new as Participant]
+          })
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'quiz_games',
+          filter: `id=eq.${gameId}`,
+        },
+        (payload) => {
+          const game = payload.new as Game
+          setCurrentQuestionSequence(game.current_question_sequence)
+          setCurrentScreen(game.phase as AdminScreens)
+        }
+      )
+      .subscribe()
+
+    const pollInterval = setInterval(fetchHostState, 1500)
+
+    return () => {
+      clearInterval(pollInterval)
+      supabase.removeChannel(channel)
+    }
   }, [gameId])
 
-  const [currentQuestionSequence, setCurrentQuestionSequence] = useState(0)
-
   return (
-    <main className="bg-green-600 min-h-screen">
-      {currentScreen == AdminScreens.lobby && (
-        <Lobby participants={participants} gameId={gameId}></Lobby>
-      )}
-      {currentScreen == AdminScreens.quiz && (
-        <Quiz
-          question={quizSet!.questions![currentQuestionSequence]}
-          questionCount={quizSet!.questions!.length}
-          gameId={gameId}
+    <main className="bg-slate-950 min-h-screen">
+      {currentScreen === AdminScreens.lobby && (
+        <Lobby
           participants={participants}
-        ></Quiz>
-      )}
-      {currentScreen == AdminScreens.result && (
-        <Results
-          participants={participants!}
-          quizSet={quizSet!}
           gameId={gameId}
-        ></Results>
+          pinCode={pinCode}
+          quizName={quizSet?.name}
+        />
+      )}
+      {currentScreen === AdminScreens.quiz &&
+        quizSet &&
+        quizSet.questions &&
+        quizSet.questions[currentQuestionSequence] && (
+          <Quiz
+            question={quizSet.questions[currentQuestionSequence]}
+            questionCount={quizSet.questions.length}
+            gameId={gameId}
+            participants={participants}
+          />
+        )}
+      {currentScreen === AdminScreens.result && quizSet && (
+        <Results
+          participants={participants}
+          quizSet={quizSet}
+          gameId={gameId}
+        />
       )}
     </main>
   )

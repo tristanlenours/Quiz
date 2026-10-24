@@ -1,62 +1,31 @@
+# 🎵 Quiz & Blind Test Perso (Kahoot-like)
 
-# Open source Kahoot alternative
+Plateforme personnelle de **Quiz interactif & Blind Test musical** en temps réel, propulsée par **Next.js 14**, **Supabase Realtime** et **Tailwind CSS**, conçue pour partager la base Supabase et le compte **Railway** de **DraftMaster (LMCDEU)**.
 
-This is an open source Kahoot alternative , a game-based learning platform that brings engagement and fun at school, work, and at home.
-This project aims to provide similar functionality to Kahoot while being customizable and extensible for various educational and entertainment purposes.
+---
 
+## 🧭 Gouvernance Intent-Driven & Journal des Micro-Décisions
 
-1. The host starts the game
-1. Players join the game
-1. The host starts the questions
-1. Players answer the questions
-1. Results are shown
+Ce dépôt est piloté par les intentions :
+- **[`DECISIONS.md`](./DECISIONS.md)** : Registre des intentions de l'auteur (`I01`–`I05`), des micro-décisions adoptées (`D01`–`D09`) et journal chronologique détaillé (ADR).
+- **[`CONTEXT.md`](./CONTEXT.md)** : Vocabulaire canonique du domaine (Pack de jeu, Manche, Extrait Audio, Révélation, Écran Hôte, Manette Joueur) et architecture mutualisée avec DraftMaster.
+- **[`AGENTS.md`](./AGENTS.md)** & **[`.specify/constitution.md`](./.specify/constitution.md)** : Règles de contribution et invariants non-négociables.
 
+---
 
-##  Built With
-* [Nextjs](https://nextjs.org/)
-* [Supabase](https://supabase.com/)
-* [Tailwind CSS](https://tailwindcss.com/)
+## 🚀 Mise en route rapide (Local & Supabase partagé)
 
+### 1. Créer les tables `quiz_*` dans le projet Supabase de DraftMaster
+Dans le **SQL Editor** de ton projet Supabase DraftMaster, copie-colle et exécute :
+- **[`supabase/schema_shared_draftmaster.sql`](./supabase/schema_shared_draftmaster.sql)**
 
-## Run Locally
-```sh
-# Install dependencies 
+Toutes les tables sont préfixées par `quiz_` (`quiz_sets`, `quiz_questions`, `quiz_choices`, `quiz_games`, `quiz_participants`, `quiz_answers`, `quiz_game_results`) : **aucune table de DraftMaster n'est modifiée**.
 
-npm install
-
-# Start Supabase
-
-supabase start
-
-# Start Next.js locally
-
+### 2. Lancer le serveur de développement
+Le fichier `.env.local` est déjà pré-configuré avec les clés Supabase de DraftMaster :
+```bash
 npm run dev
-
-# Access app in your web browser at `http://localhost:3000`. 
-
 ```
-
-Access the project root at / to join as a player.
-
-Access /host to join as a host.
-
-## Generate Types
-
-`supabase gen types typescript --local --schema public > src/types/supabase.ts`
-
-[read more on generating types](https://supabase.com/docs/guides/api/rest/generating-types)
-
-
-## Contributing
-
-We welcome contributions from the community! If you'd like to contribute, please follow these guidelines:
-
-1. Fork the repository.
-2. Create your feature branch (`git checkout -b feature/YourFeature`).
-3. Commit your changes (`git commit -am 'Add some feature'`).
-4. Push to the branch (`git push origin feature/YourFeature`).
-5. Create a new Pull Request.
-
-## License
-This project is licensed under the [MIT License](https://choosealicense.com/licenses/mit/)
-
+- **Accès Joueur (Code PIN)** : `http://localhost:3000`
+- **Studio Hôte (Création de packs, Recherche iTunes Blind Test, Lancement sur TV)** : `http://localhost:3000/host/dashboard`
+*(Déverrouillage avec le même `SITE_PASSWORD` que DraftMaster).*

@@ -9,7 +9,7 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      answers: {
+      quiz_answers: {
         Row: {
           choice_id: string | null
           created_at: string
@@ -17,14 +17,16 @@ export type Database = {
           participant_id: string
           question_id: string
           score: number
+          text_answer: string | null
         }
         Insert: {
           choice_id?: string | null
           created_at?: string
           id?: string
-          participant_id?: string
+          participant_id: string
           question_id: string
           score: number
+          text_answer?: string | null
         }
         Update: {
           choice_id?: string | null
@@ -33,39 +35,40 @@ export type Database = {
           participant_id?: string
           question_id?: string
           score?: number
+          text_answer?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "answers_choice_id_fkey"
+            foreignKeyName: "quiz_answers_choice_id_fkey"
             columns: ["choice_id"]
             isOneToOne: false
-            referencedRelation: "choices"
+            referencedRelation: "quiz_choices"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "answers_participant_id_fkey"
+            foreignKeyName: "quiz_answers_participant_id_fkey"
             columns: ["participant_id"]
             isOneToOne: false
-            referencedRelation: "game_results"
+            referencedRelation: "quiz_game_results"
             referencedColumns: ["participant_id"]
           },
           {
-            foreignKeyName: "answers_participant_id_fkey"
+            foreignKeyName: "quiz_answers_participant_id_fkey"
             columns: ["participant_id"]
             isOneToOne: false
-            referencedRelation: "participants"
+            referencedRelation: "quiz_participants"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "answers_question_id_fkey"
+            foreignKeyName: "quiz_answers_question_id_fkey"
             columns: ["question_id"]
             isOneToOne: false
-            referencedRelation: "questions"
+            referencedRelation: "quiz_questions"
             referencedColumns: ["id"]
           },
         ]
       }
-      choices: {
+      quiz_choices: {
         Row: {
           body: string
           created_at: string
@@ -89,52 +92,45 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "choices_question_id_fkey"
+            foreignKeyName: "quiz_choices_question_id_fkey"
             columns: ["question_id"]
             isOneToOne: false
-            referencedRelation: "questions"
+            referencedRelation: "quiz_questions"
             referencedColumns: ["id"]
           },
         ]
       }
-      games: {
+      quiz_games: {
         Row: {
           created_at: string
           current_question_sequence: number
-          host_user_id: string | null
           id: string
           is_answer_revealed: boolean
           phase: string
+          pin_code: string
           quiz_set_id: string
         }
         Insert: {
           created_at?: string
           current_question_sequence?: number
-          host_user_id?: string | null
           id?: string
           is_answer_revealed?: boolean
           phase?: string
+          pin_code?: string
           quiz_set_id: string
         }
         Update: {
           created_at?: string
           current_question_sequence?: number
-          host_user_id?: string | null
           id?: string
           is_answer_revealed?: boolean
           phase?: string
+          pin_code?: string
           quiz_set_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "games_host_user_id_fkey"
-            columns: ["host_user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "games_quiz_set_id_fkey"
+            foreignKeyName: "quiz_games_quiz_set_id_fkey"
             columns: ["quiz_set_id"]
             isOneToOne: false
             referencedRelation: "quiz_sets"
@@ -142,80 +138,87 @@ export type Database = {
           },
         ]
       }
-      participants: {
+      quiz_participants: {
         Row: {
+          client_session_id: string
           created_at: string
           game_id: string
           id: string
           nickname: string
-          user_id: string
         }
         Insert: {
+          client_session_id: string
           created_at?: string
           game_id: string
           id?: string
           nickname: string
-          user_id?: string
         }
         Update: {
+          client_session_id?: string
           created_at?: string
           game_id?: string
           id?: string
           nickname?: string
-          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "participants_game_id_fkey"
+            foreignKeyName: "quiz_participants_game_id_fkey"
             columns: ["game_id"]
             isOneToOne: false
-            referencedRelation: "game_results"
-            referencedColumns: ["game_id"]
-          },
-          {
-            foreignKeyName: "participants_game_id_fkey"
-            columns: ["game_id"]
-            isOneToOne: false
-            referencedRelation: "games"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "participants_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "quiz_games"
             referencedColumns: ["id"]
           },
         ]
       }
-      questions: {
+      quiz_questions: {
         Row: {
+          audio_duration_sec: number
+          audio_start_sec: number
+          audio_url: string | null
           body: string
           created_at: string
           id: string
           image_url: string | null
           order: number
+          question_type: "quiz" | "blind_test"
           quiz_set_id: string
+          reveal_artist: string | null
+          reveal_cover_url: string | null
+          reveal_title: string | null
         }
         Insert: {
+          audio_duration_sec?: number
+          audio_start_sec?: number
+          audio_url?: string | null
           body: string
           created_at?: string
           id?: string
           image_url?: string | null
           order: number
+          question_type?: "quiz" | "blind_test"
           quiz_set_id: string
+          reveal_artist?: string | null
+          reveal_cover_url?: string | null
+          reveal_title?: string | null
         }
         Update: {
+          audio_duration_sec?: number
+          audio_start_sec?: number
+          audio_url?: string | null
           body?: string
           created_at?: string
           id?: string
           image_url?: string | null
           order?: number
+          question_type?: "quiz" | "blind_test"
           quiz_set_id?: string
+          reveal_artist?: string | null
+          reveal_cover_url?: string | null
+          reveal_title?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "questions_quiz_set_id_fkey"
+            foreignKeyName: "quiz_questions_quiz_set_id_fkey"
             columns: ["quiz_set_id"]
             isOneToOne: false
             referencedRelation: "quiz_sets"
@@ -228,25 +231,28 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          mode: "quiz" | "blind_test" | "mixed"
           name: string
         }
         Insert: {
           created_at?: string
           description?: string | null
           id?: string
+          mode?: "quiz" | "blind_test" | "mixed"
           name: string
         }
         Update: {
           created_at?: string
           description?: string | null
           id?: string
+          mode?: "quiz" | "blind_test" | "mixed"
           name?: string
         }
         Relationships: []
       }
     }
     Views: {
-      game_results: {
+      quiz_game_results: {
         Row: {
           game_id: string | null
           nickname: string | null
@@ -256,104 +262,8 @@ export type Database = {
         Relationships: []
       }
     }
-    Functions: {
-      add_question: {
-        Args: {
-          quiz_set_id: string
-          body: string
-          order: number
-          choices: Json[]
-        }
-        Returns: undefined
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
+    Functions: Record<string, never>
+    Enums: Record<string, never>
+    CompositeTypes: Record<string, never>
   }
 }
-
-type PublicSchema = Database[Extract<keyof Database, "public">]
-
-export type Tables<
-  PublicTableNameOrOptions extends
-    | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
-    | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-        Database[PublicTableNameOrOptions["schema"]]["Views"])
-    : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
-      Row: infer R
-    }
-    ? R
-    : never
-  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
-        PublicSchema["Views"])
-    ? (PublicSchema["Tables"] &
-        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
-        Row: infer R
-      }
-      ? R
-      : never
-    : never
-
-export type TablesInsert<
-  PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
-    | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Insert: infer I
-    }
-    ? I
-    : never
-  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
-        Insert: infer I
-      }
-      ? I
-      : never
-    : never
-
-export type TablesUpdate<
-  PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
-    | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Update: infer U
-    }
-    ? U
-    : never
-  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
-        Update: infer U
-      }
-      ? U
-      : never
-    : never
-
-export type Enums<
-  PublicEnumNameOrOptions extends
-    | keyof PublicSchema["Enums"]
-    | { schema: keyof Database },
-  EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
-> = PublicEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
-    ? PublicSchema["Enums"][PublicEnumNameOrOptions]
-    : never
