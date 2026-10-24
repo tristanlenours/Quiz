@@ -14,7 +14,7 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **I03** | 2026-10-24 | Intégrer nativement un mode **Blind Test musical** en plus du Quiz classique. | Demande explicite auteur | Actif |
 | **I04** | 2026-10-24 | Mutualiser la **même base de données Supabase que DraftMaster** pour éviter la dispersion des comptes et **garder la base active** (éviter la mise en pause d'inactivité Supabase). | Demande explicite auteur | Actif |
 | **I05** | 2026-10-24 | Adopter un pilotage **Intent-Driven** et journaliser systématiquement les micro-décisions prises au fil de l'eau (et poser les questions d'arbitrage directement dans le chat). | Demande explicite auteur | Actif |
-| **I06** | 2026-10-24 | Créer un pack « Rétro 2026 » mêlant questions et **extraits vidéo** (ex : clip « STORM » de GENER8ION, « Qui est le réalisateur de ce clip ? », extrait de 20 s à partir de 4:17). | Demande explicite auteur | Actif |
+| **I06** | 2026-10-24 | Créer un pack « Rétro 2026 » mêlant questions et **extraits vidéo** (ex : clip « STORM » de GENER8ION, « Qui est le réalisateur de ce clip ? », extrait de 30 s à partir de 4:20). | Demande explicite auteur | Actif |
 
 ---
 
@@ -41,6 +41,7 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **D17** | 2026-10-24 | Images des questions : taille, moment d'affichage, Manette Joueur | Afficher `image_url` en grand dès l'apparition de la question (y compris pendant le décompte de 5 s), sur l'Écran Hôte (jusqu'à 50vh) et sur la Manette Joueur (espace libre au-dessus des boutons) ; précharger toutes les images du pack au chargement de la partie. Jamais en Blind Test. | Adopté |
 | **D18** | 2026-10-24 | Injection Runtime des variables Supabase sur Railway | Injecter la configuration Supabase au runtime via `RootLayout` (`window.__QUIZ_SUPABASE__`) en acceptant aussi bien `SUPABASE_URL` / `SUPABASE_ANON_KEY` (convention DraftMaster) que `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY`, afin d'éviter le piège du figeage au build de Next.js sur Railway (`Failed to fetch` sur `placeholder.supabase.co`). | Adopté |
 | **D19** | 2026-10-24 | Extraits vidéo YouTube dans les questions Quiz | Nouvelle colonne `quiz_questions.video_url` ; extrait lu sur l'Écran Hôte uniquement via l'intégration YouTube (`start` / `end`), en réutilisant `audio_start_sec` (début) et `audio_duration_sec` (durée = temps de réponse). Manette : « 📺 Regardez l'écran ! ». | Adopté |
+| **D20** | 2026-10-24 | Durée par défaut 30 s & zone média agrandie | Temps de réponse / durée d'extrait par défaut passé de 20 s à 30 s (constante `DEFAULT_QUESTION_DURATION_SEC`, défaut SQL, questions existantes migrées) ; sur l'Écran Hôte, l'image ou la vidéo occupe toute la hauteur disponible et les 4 choix passent sur une ligne. | Adopté |
 
 ---
 
@@ -134,3 +135,11 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
   4. Studio : champs « Extrait vidéo YouTube », « Début (sec) » et « Durée extrait (sec) » pour les questions Quiz ; `video_url` inclus dans l'import/export JSON.
 - **Alternatives écartées** : Stocker le lien YouTube dans `audio_url` (aucune migration mais mélange audio/vidéo) ; diffuser la vidéo aussi sur les téléphones.
 - **Limites** : L'autoplay avec son dépend du navigateur (l'Hôte ayant cliqué « Manche suivante », il est normalement autorisé) ; une vidéo dont l'intégration est désactivée par son auteur ne pourra pas être lue.
+
+### 2026-10-24 — D20 : Durée par défaut de 30 s et zone image / vidéo agrandie
+- **Contexte** : Après le premier test du pack « Rétro 2026 », l'auteur veut un extrait STORM de 30 s à partir de 4:20, 30 s par défaut pour toutes les questions, et une zone image / vidéo environ 50 % plus grande.
+- **Décision** :
+  1. `DEFAULT_QUESTION_DURATION_SEC = 30` (`src/constants.ts`) utilisé partout (Studio, Écran Hôte, Manette) ; défaut SQL de `audio_duration_sec` passé à 30 (migration `20261024180000_quiz_questions_default_duration_30.sql`) ; les 20 questions existantes à 20 s passées à 30 s en base.
+  2. Écran Hôte : la zone média n'est plus bridée (`max-h-52` / `max-w-5xl` / `55vh`) et occupe toute la hauteur libre ; quand la question a une image ou une vidéo, les 4 choix s'affichent sur une seule ligne pour libérer de la hauteur.
+- **Limite** : Sur un écran 16:9, la vidéo est limitée par la hauteur restante (titre + choix) ; le gain réel est d'environ +25 à +50 % selon la longueur de l'intitulé.
+- **Ajout de contenu** : question « Contre quel boys band Billy Mack se bat-il pour la place de numéro 1 à Noël ? » (Blue) ajoutée au pack « Love actually » (17e question, sans image pour l'instant).

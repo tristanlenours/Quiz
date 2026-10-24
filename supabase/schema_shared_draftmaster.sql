@@ -26,7 +26,7 @@ create table if not exists public.quiz_questions (
     -- Champs spécifiques Blind Test & Audio
     audio_url text,
     audio_start_sec integer default 0 not null,
-    audio_duration_sec integer default 20 not null,
+    audio_duration_sec integer default 30 not null,
     -- Métadonnées dévoilées uniquement à la révélation (is_answer_revealed = true)
     reveal_title text,
     reveal_artist text,
@@ -37,6 +37,8 @@ create table if not exists public.quiz_questions (
 
 -- Migration idempotente pour les bases existantes (Décision D19)
 alter table public.quiz_questions add column if not exists video_url text;
+-- Durée par défaut des questions passée à 30 s (Décision D20)
+alter table public.quiz_questions alter column audio_duration_sec set default 30;
 
 -- 3. Table des Choix de Réponse (QCM)
 create table if not exists public.quiz_choices (

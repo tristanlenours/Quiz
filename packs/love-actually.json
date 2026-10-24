@@ -362,6 +362,29 @@
           "is_correct": false
         }
       ]
+    },
+    {
+      "question_type": "quiz",
+      "body": "Contre quel boys band Billy Mack se bat-il pour la place de numéro 1 à Noël ?",
+      "image_url": null,
+      "choices": [
+        {
+          "body": "Blue",
+          "is_correct": true
+        },
+        {
+          "body": "Westlife",
+          "is_correct": false
+        },
+        {
+          "body": "Boyzone",
+          "is_correct": false
+        },
+        {
+          "body": "Take That",
+          "is_correct": false
+        }
+      ]
     }
   ]
 }

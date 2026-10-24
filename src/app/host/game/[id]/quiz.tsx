@@ -1,4 +1,4 @@
-import { TIME_TIL_CHOICE_REVEAL } from '@/constants'
+import { DEFAULT_QUESTION_DURATION_SEC, TIME_TIL_CHOICE_REVEAL } from '@/constants'
 import {
   Answer,
   Participant,
@@ -30,7 +30,7 @@ export default function Quiz({
 
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const isBlindTest = question.question_type === 'blind_test'
-  const answerDurationSec = question.audio_duration_sec || 20
+  const answerDurationSec = question.audio_duration_sec || DEFAULT_QUESTION_DURATION_SEC
   const videoEmbedUrl = isBlindTest
     ? null
     : getYouTubeEmbedUrl(
@@ -38,6 +38,8 @@ export default function Quiz({
         question.audio_start_sec || 0,
         answerDurationSec
       )
+  // Zone image / vidéo agrandie : elle occupe toute la hauteur disponible (Décision D20)
+  const hasMedia = !isBlindTest && Boolean(videoEmbedUrl || question.image_url)
 
   const getNextQuestion = async () => {
     if (audioRef.current) {
@@ -194,15 +196,15 @@ export default function Quiz({
         </h2>
       </div>
 
-      <div className="flex-grow text-white px-8 flex flex-col justify-center">
+      <div className="flex-grow min-h-0 text-white px-8 flex flex-col justify-center">
         {!hasShownChoices && !isAnswerRevealed && (
-          <div className="flex flex-col items-center gap-6">
+          <div className="flex flex-col items-center justify-center gap-6 flex-grow min-h-0 py-4">
             {/* Illustration visible dès l'affichage de la question (Décision D17) */}
             {!isBlindTest && question.image_url && (
               <img
                 src={question.image_url}
                 alt="Illustration question"
-                className="max-h-[50vh] max-w-full rounded-2xl shadow-lg object-contain"
+                className="min-h-0 max-h-full max-w-full rounded-2xl shadow-lg object-contain"
               />
             )}
             <div className="text-center text-2xl text-slate-300 animate-pulse font-semibold">
@@ -214,7 +216,11 @@ export default function Quiz({
         )}
 
         {hasShownChoices && !isAnswerRevealed && (
-          <div className="flex justify-between items-center max-w-5xl w-full mx-auto">
+          <div
+            className={`flex justify-between items-center gap-6 w-full mx-auto ${
+              hasMedia ? 'flex-grow min-h-0 py-4' : 'max-w-5xl'
+            }`}
+          >
             <div className="text-5xl font-black">
               <CountdownCircleTimer
                 onComplete={() => {
@@ -235,7 +241,7 @@ export default function Quiz({
             </div>
 
             {/* Zone centrale : Image Quiz ou Vinyle Blind Test */}
-            <div className="flex flex-col items-center justify-center mx-6">
+            <div className="flex flex-col items-center justify-center mx-6 flex-grow min-h-0 h-full">
               {isBlindTest ? (
                 <div className="flex flex-col items-center gap-4">
                   <div
@@ -266,14 +272,14 @@ export default function Quiz({
                   src={videoEmbedUrl}
                   title="Extrait vidéo"
                   allow="autoplay; encrypted-media; picture-in-picture"
-                  className="w-[min(60vw,calc(55vh*16/9))] aspect-video rounded-2xl shadow-lg border-0"
+                  className="h-full max-w-full aspect-video rounded-2xl shadow-lg border-0"
                 />
               ) : (
                 question.image_url && (
                   <img
                     src={question.image_url}
                     alt="Illustration question"
-                    className="max-h-[50vh] max-w-full rounded-2xl shadow-lg object-contain"
+                    className="max-h-full max-w-full rounded-2xl shadow-lg object-contain"
                   />
                 )
               )}
@@ -382,9 +388,14 @@ export default function Quiz({
       {hasShownChoices && (
         <div className="flex justify-between flex-wrap p-4">
           {question.choices.map((choice, index) => (
-            <div key={choice.id} className="w-1/2 p-1.5">
+            <div
+              key={choice.id}
+              className={`${hasMedia ? 'w-1/4' : 'w-1/2'} p-1.5`}
+            >
               <div
-                className={`px-6 py-5 w-full text-2xl rounded-xl font-bold text-white flex justify-between items-center shadow-lg
+                className={`px-6 ${
+                  hasMedia ? 'py-4 text-xl' : 'py-5 text-2xl'
+                } w-full h-full rounded-xl font-bold text-white flex justify-between items-center shadow-lg
                 ${
                   index === 0
                     ? 'bg-red-500'

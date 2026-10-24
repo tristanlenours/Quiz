@@ -1,5 +1,6 @@
 'use client'
 
+import { DEFAULT_QUESTION_DURATION_SEC } from '@/constants'
 import {
   isSupabaseClientConfigured,
   QuizSet,
@@ -44,7 +45,7 @@ const EMPTY_QUESTION = (): DraftQuestion => ({
   image_url: '',
   audio_url: '',
   audio_start_sec: 0,
-  audio_duration_sec: 20,
+  audio_duration_sec: DEFAULT_QUESTION_DURATION_SEC,
   reveal_title: '',
   reveal_artist: '',
   reveal_cover_url: '',
@@ -208,7 +209,7 @@ export default function HostDashboardPage() {
           image_url: '',
           audio_url: '',
           audio_start_sec: 0,
-          audio_duration_sec: 20,
+          audio_duration_sec: DEFAULT_QUESTION_DURATION_SEC,
           reveal_title: '',
           reveal_artist: '',
           reveal_cover_url: '',
@@ -227,7 +228,7 @@ export default function HostDashboardPage() {
                 image_url: '',
                 audio_url: track1.previewUrl,
                 audio_start_sec: 0,
-                audio_duration_sec: 20,
+                audio_duration_sec: DEFAULT_QUESTION_DURATION_SEC,
                 reveal_title: track1.title,
                 reveal_artist: track1.artist,
                 reveal_cover_url: track1.coverUrl,
@@ -257,7 +258,7 @@ export default function HostDashboardPage() {
                 image_url: '',
                 audio_url: track2.previewUrl,
                 audio_start_sec: 0,
-                audio_duration_sec: 20,
+                audio_duration_sec: DEFAULT_QUESTION_DURATION_SEC,
                 reveal_title: track2.title,
                 reveal_artist: track2.artist,
                 reveal_cover_url: track2.coverUrl,
@@ -332,7 +333,7 @@ export default function HostDashboardPage() {
           image_url: q.image_url || null,
           audio_url: q.audio_url || null,
           audio_start_sec: q.audio_start_sec || 0,
-          audio_duration_sec: q.audio_duration_sec || 20,
+          audio_duration_sec: q.audio_duration_sec || DEFAULT_QUESTION_DURATION_SEC,
           reveal_title: q.reveal_title || null,
           reveal_artist: q.reveal_artist || null,
           reveal_cover_url: q.reveal_cover_url || null,
@@ -379,7 +380,7 @@ export default function HostDashboardPage() {
       image_url: q.image_url || '',
       audio_url: q.audio_url || '',
       audio_start_sec: q.audio_start_sec || 0,
-      audio_duration_sec: q.audio_duration_sec || 20,
+      audio_duration_sec: q.audio_duration_sec || DEFAULT_QUESTION_DURATION_SEC,
       reveal_title: q.reveal_title || '',
       reveal_artist: q.reveal_artist || '',
       reveal_cover_url: q.reveal_cover_url || '',
@@ -958,7 +959,7 @@ export default function HostDashboardPage() {
                           value={activeQ.audio_duration_sec}
                           onChange={(e) =>
                             updateActiveQuestion({
-                              audio_duration_sec: Number(e.target.value) || 20,
+                              audio_duration_sec: Number(e.target.value) || DEFAULT_QUESTION_DURATION_SEC,
                             })
                           }
                           className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-sm"
@@ -1046,7 +1047,7 @@ export default function HostDashboardPage() {
                           value={activeQ.audio_duration_sec}
                           onChange={(e) =>
                             updateActiveQuestion({
-                              audio_duration_sec: Number(e.target.value) || 20,
+                              audio_duration_sec: Number(e.target.value) || DEFAULT_QUESTION_DURATION_SEC,
                             })
                           }
                           className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-700 text-sm"
