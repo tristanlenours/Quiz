@@ -1,12 +1,85 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { Database } from './supabase'
 
-const supabaseUrl =
-  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseAnonKey =
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key'
+declare global {
+  interface Window {
+    __QUIZ_SUPABASE__?: {
+      url?: string
+      anonKey?: string
+    }
+  }
+}
 
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey)
+function resolveSupabaseCredentials(): {
+  url: string
+  anonKey: string
+  configured: boolean
+} {
+  const runtimeUrl =
+    typeof window !== 'undefined' ? window.__QUIZ_SUPABASE__?.url : undefined
+  const runtimeKey =
+    typeof window !== 'undefined'
+      ? window.__QUIZ_SUPABASE__?.anonKey
+      : undefined
+
+  const url = (
+    runtimeUrl ||
+    process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.SUPABASE_URL ||
+    ''
+  )
+    .trim()
+    .replace(/^["']|["']$/g, '')
+
+  const anonKey = (
+    runtimeKey ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    process.env.SUPABASE_ANON_KEY ||
+    ''
+  )
+    .trim()
+    .replace(/^["']|["']$/g, '')
+
+  const configured = Boolean(
+    url &&
+      anonKey &&
+      url.startsWith('http') &&
+      !url.includes('placeholder.supabase.co')
+  )
+
+  return {
+    url: configured ? url : 'https://placeholder.supabase.co',
+    anonKey: configured ? anonKey : 'placeholder-anon-key',
+    configured,
+  }
+}
+
+let cachedBrowserClient: SupabaseClient<Database> | null = null
+
+export function isSupabaseClientConfigured(): boolean {
+  return resolveSupabaseCredentials().configured
+}
+
+export const supabase: SupabaseClient<Database> = new Proxy(
+  {} as SupabaseClient<Database>,
+  {
+    get(_target, prop, receiver) {
+      if (typeof window === 'undefined') {
+        const creds = resolveSupabaseCredentials()
+        const ssrClient = createClient<Database>(creds.url, creds.anonKey)
+        return Reflect.get(ssrClient, prop, receiver)
+      }
+      if (!cachedBrowserClient) {
+        const creds = resolveSupabaseCredentials()
+        cachedBrowserClient = createClient<Database>(creds.url, creds.anonKey)
+      }
+      const value = Reflect.get(cachedBrowserClient, prop, receiver)
+      return typeof value === 'function'
+        ? value.bind(cachedBrowserClient)
+        : value
+    },
+  }
+)
 
 export type Participant = Database['public']['Tables']['quiz_participants']['Row']
 

@@ -1,6 +1,10 @@
 'use client'
 
-import { QuizSet, supabase } from '@/types/types'
+import {
+  isSupabaseClientConfigured,
+  QuizSet,
+  supabase,
+} from '@/types/types'
 import { useEffect, useState } from 'react'
 
 interface MusicTrackResult {
@@ -560,21 +564,45 @@ export default function HostDashboardPage() {
 
   return (
     <div className="space-y-8">
-      {/* Alerte si le script SQL n'a pas encore été exécuté dans Supabase */}
+      {/* Alerte si les variables Supabase ou les tables SQL sont absentes */}
       {dbMissingTableError && (
         <div className="p-6 rounded-2xl bg-amber-500/15 border border-amber-500/40 text-amber-200 space-y-2">
-          <div className="font-black text-lg">
-            ⚠️ Tables `quiz_*` non trouvées sur votre base Supabase
-          </div>
-          <p className="text-sm text-amber-100/90">
-            Pour activer les tables du Quiz &amp; Blind Test dans votre projet
-            Supabase (sans toucher aux tables de DraftMaster), ouvrez le{' '}
-            <strong>SQL Editor</strong> de Supabase et exécutez le fichier{' '}
-            <code className="bg-black/40 px-2 py-0.5 rounded font-mono">
-              supabase/schema_shared_draftmaster.sql
-            </code>
-            , puis cliquez sur Rafraîchir.
-          </p>
+          {!isSupabaseClientConfigured() ? (
+            <>
+              <div className="font-black text-lg">
+                ⚙️ Variables d&apos;environnement Supabase manquantes sur Railway
+              </div>
+              <p className="text-sm text-amber-100/90">
+                Dans Railway, ouvrez votre service <strong>Quiz</strong> &rarr;
+                onglet <strong>Variables</strong> et ajoutez les variables de
+                votre projet Supabase (les mêmes que dans DraftMaster) :
+              </p>
+              <pre className="bg-black/50 p-3 rounded-xl font-mono text-xs text-amber-200 overflow-x-auto">
+                {`NEXT_PUBLIC_SUPABASE_URL=https://votre-projet.supabase.co\nNEXT_PUBLIC_SUPABASE_ANON_KEY=votre_cle_anon_publique`}
+              </pre>
+              <p className="text-xs text-amber-200/80">
+                (Les noms <code>SUPABASE_URL</code> et{' '}
+                <code>SUPABASE_ANON_KEY</code> de DraftMaster sont aussi
+                reconnus automatiquement au runtime !)
+              </p>
+            </>
+          ) : (
+            <>
+              <div className="font-black text-lg">
+                ⚠️ Tables `quiz_*` non trouvées sur votre base Supabase
+              </div>
+              <p className="text-sm text-amber-100/90">
+                Pour activer les tables du Quiz &amp; Blind Test dans votre
+                projet Supabase (sans toucher aux tables de DraftMaster), ouvrez
+                le <strong>SQL Editor</strong> de Supabase et exécutez le
+                fichier{' '}
+                <code className="bg-black/40 px-2 py-0.5 rounded font-mono">
+                  supabase/schema_shared_draftmaster.sql
+                </code>
+                , puis cliquez sur Rafraîchir.
+              </p>
+            </>
+          )}
           <div className="text-xs font-mono text-amber-300/80">
             Détail : {dbMissingTableError}
           </div>
