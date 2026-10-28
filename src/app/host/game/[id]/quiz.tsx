@@ -31,8 +31,11 @@ export default function Quiz({
   const [isAudioPlaying, setIsAudioPlaying] = useState(false)
   const [liveStandings, setLiveStandings] = useState<GameResult[]>([])
 
-  const answerStateRef = useRef<Answer[]>()
-  answerStateRef.current = answers
+  // Verrous synchrones pour éviter toute race condition entre le polling 1.5s et le passage à la manche suivante (Décision D24)
+  const hasRevealedRef = useRef(false)
+  const hasShownChoicesRef = useRef(false)
+  const isTransitioningRef = useRef(false)
+  const currentQuestionIdRef = useRef(question.id)
 
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const isBlindTest = question.question_type === 'blind_test'
@@ -49,7 +52,38 @@ export default function Quiz({
   // Zone image / vidéo agrandie : elle occupe toute la hauteur disponible (Décision D20)
   const hasMedia = !isBlindTest && Boolean(videoEmbedUrl || question.image_url)
 
+  const fetchStandings = useCallback(async () => {
+    const { data } = await supabase
+      .from('quiz_game_results')
+      .select()
+      .eq('game_id', gameId)
+      .order('total_score', { ascending: false })
+    if (data) setLiveStandings(data)
+  }, [gameId])
+
+  const onTimeUp = useCallback(async () => {
+    if (hasRevealedRef.current || isTransitioningRef.current) return
+    hasRevealedRef.current = true
+    setIsAnswerRevealed(true)
+
+    const targetQuestionId = currentQuestionIdRef.current
+    await supabase
+      .from('quiz_games')
+      .update({
+        is_answer_revealed: true,
+      })
+      .eq('id', gameId)
+
+    if (currentQuestionIdRef.current === targetQuestionId) {
+      fetchStandings()
+    }
+  }, [gameId, fetchStandings])
+
   const getNextQuestion = async () => {
+    if (isTransitioningRef.current) return
+    isTransitioningRef.current = true
+    hasRevealedRef.current = true
+
     if (audioRef.current) {
       audioRef.current.pause()
     }
@@ -66,59 +100,84 @@ export default function Quiz({
       .update(updateData)
       .eq('id', gameId)
     if (error) {
+      isTransitioningRef.current = false
       return alert(error.message)
     }
   }
 
-  const fetchStandings = useCallback(async () => {
-    const { data } = await supabase
-      .from('quiz_game_results')
-      .select()
-      .eq('game_id', gameId)
-      .order('total_score', { ascending: false })
-    if (data) setLiveStandings(data)
-  }, [gameId])
-
-  const onTimeUp = useCallback(async () => {
-    setIsAnswerRevealed(true)
-    await supabase
-      .from('quiz_games')
-      .update({
-        is_answer_revealed: true,
-      })
-      .eq('id', gameId)
-    fetchStandings()
-  }, [gameId, fetchStandings])
-
   const fetchAnswers = useCallback(async () => {
+    const targetQuestionId = question.id
+    if (
+      currentQuestionIdRef.current !== targetQuestionId ||
+      isTransitioningRef.current
+    ) {
+      return
+    }
+
+    const currentParticipantIds = participants.map((p) => p.id)
+    if (currentParticipantIds.length === 0) {
+      setAnswers([])
+      return
+    }
+
+    // IMPORTANT (Décision D24) : Filtrer strictement par les participants de la partie en cours (`gameId`)
+    // pour ne jamais compter les réponses d'anciennes parties sur cette même question !
     const { data } = await supabase
       .from('quiz_answers')
       .select()
-      .eq('question_id', question.id)
-    if (data) {
-      setAnswers(data)
-      if (participants.length > 0 && data.length >= participants.length) {
-        onTimeUp()
-      }
+      .eq('question_id', targetQuestionId)
+      .in('participant_id', currentParticipantIds)
+
+    if (
+      !data ||
+      currentQuestionIdRef.current !== targetQuestionId ||
+      isTransitioningRef.current
+    ) {
+      return
     }
-  }, [question.id, participants.length, onTimeUp])
+
+    // Dédupliquer par participant_id au cas où
+    const uniqueParticipantAnswers = new Map<string, Answer>()
+    for (const ans of data) {
+      uniqueParticipantAnswers.set(ans.participant_id, ans)
+    }
+    const validAnswers = Array.from(uniqueParticipantAnswers.values())
+    setAnswers(validAnswers)
+
+    if (
+      !hasRevealedRef.current &&
+      hasShownChoicesRef.current &&
+       currentParticipantIds.length > 0 &&
+      validAnswers.length >= currentParticipantIds.length
+    ) {
+      onTimeUp()
+    }
+  }, [question.id, participants, onTimeUp])
 
   useEffect(() => {
+    currentQuestionIdRef.current = question.id
+    hasRevealedRef.current = false
+    hasShownChoicesRef.current = false
+    isTransitioningRef.current = false
+
     setIsAnswerRevealed(false)
     setHasShownChoices(false)
     setAnswers([])
     setIsAudioPlaying(false)
 
     const revealTimer = setTimeout(() => {
-      setHasShownChoices(true)
+      if (currentQuestionIdRef.current === question.id) {
+        hasShownChoicesRef.current = true
+        setHasShownChoices(true)
+      }
     }, TIME_TIL_CHOICE_REVEAL)
 
     const channel = supabase
-      .channel(`host_answers_${question.id}`)
+      .channel(`host_answers_${gameId}_${question.id}`)
       .on(
         'postgres_changes',
         {
-          event: 'INSERT',
+          event: '*',
           schema: 'public',
           table: 'quiz_answers',
           filter: `question_id=eq.${question.id}`,
@@ -129,14 +188,18 @@ export default function Quiz({
       )
       .subscribe()
 
-    const pollInterval = setInterval(fetchAnswers, 1500)
+    const pollInterval = setInterval(() => {
+      if (!hasRevealedRef.current && !isTransitioningRef.current) {
+        fetchAnswers()
+      }
+    }, 1500)
 
     return () => {
       clearTimeout(revealTimer)
       clearInterval(pollInterval)
       supabase.removeChannel(channel)
     }
-  }, [question.id, fetchAnswers])
+  }, [gameId, question.id, fetchAnswers])
 
   // Déclencher la lecture audio sur l'Écran Hôte dès que les choix s'affichent (Blind Test ET Quiz sonorisé — Décisions D08 & D23)
   useEffect(() => {
@@ -255,6 +318,7 @@ export default function Quiz({
           >
             <div className="text-5xl font-black">
               <CountdownCircleTimer
+                key={question.id}
                 onComplete={() => {
                   onTimeUp()
                 }}

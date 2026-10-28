@@ -140,6 +140,7 @@ export default function HostGamePage({
         quizSet.questions &&
         quizSet.questions[currentQuestionSequence] && (
           <Quiz
+            key={quizSet.questions[currentQuestionSequence].id}
             question={quizSet.questions[currentQuestionSequence]}
             questionCount={quizSet.questions.length}
             gameId={gameId}

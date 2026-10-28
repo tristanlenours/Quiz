@@ -88,14 +88,32 @@ export default function Quiz({
       mobileAudioRef.current.pause()
     }
 
-    // Utiliser setTimeout plutôt que onComplete de CountdownCircleTimer pour fonctionner même si l'onglet est en arrière-plan (Décision D11)
+    // Restaurer la réponse si le joueur a rafraîchi sa page en cours de manche
+    supabase
+      .from('quiz_answers')
+      .select()
+      .eq('participant_id', playerId)
+      .eq('question_id', question.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data && data.choice_id) {
+          const found = question.choices.find((c) => c.id === data.choice_id)
+          if (found) {
+            setChosenChoice(found)
+            setEarnedScore(data.score ?? 0)
+          }
+        }
+      })
+
+    // Délai court (2.5s) côté mobile pour garantir que les boutons sont toujours prêts dès que le chrono TV démarre (Décision D24)
+    const mobileRevealMs = Math.min(TIME_TIL_CHOICE_REVEAL, 2500)
     const timer = setTimeout(() => {
       setHasShownChoices(true)
       setQuestionStartTime(Date.now())
-    }, TIME_TIL_CHOICE_REVEAL)
+    }, mobileRevealMs)
 
     return () => clearTimeout(timer)
-  }, [question.id])
+  }, [question.id, question.choices, playerId])
 
   // Si le joueur a activé l'écoute mobile à distance (Décision D08)
   useEffect(() => {

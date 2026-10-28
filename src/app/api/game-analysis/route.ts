@@ -354,7 +354,7 @@ export async function POST(request: Request) {
 
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    const [gameRes, participantsRes, resultsRes, answersRes] = await Promise.all([
+    const [gameRes, participantsRes, resultsRes] = await Promise.all([
       supabase.from('quiz_games').select('*, quiz_sets(*)').eq('id', gameId).single(),
       supabase.from('quiz_participants').select('*').eq('game_id', gameId),
       supabase
@@ -362,7 +362,6 @@ export async function POST(request: Request) {
         .select('*')
         .eq('game_id', gameId)
         .order('total_score', { ascending: false }),
-      supabase.from('quiz_answers').select('*'),
     ])
 
     const quizSetId = gameRes.data?.quiz_set_id
@@ -388,10 +387,15 @@ export async function POST(request: Request) {
       return NextResponse.json(cached)
     }
 
-    const participantIds = new Set(participants.map((p: any) => p.id))
-    const gameAnswers = (answersRes.data ?? []).filter((a: any) =>
-      participantIds.has(a.participant_id)
-    )
+    const participantIdsList = participants.map((p: any) => p.id)
+    let gameAnswers: any[] = []
+    if (participantIdsList.length > 0) {
+      const { data: ansData } = await supabase
+        .from('quiz_answers')
+        .select('*')
+        .in('participant_id', participantIdsList)
+      gameAnswers = ansData ?? []
+    }
 
     const totalQuestions = Math.max(questions.length, 1)
     const lastThreeQuestionIds = new Set(questions.slice(-3).map((q) => q.id))

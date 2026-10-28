@@ -135,6 +135,7 @@ export default function PlayerGamePage({
         questions[currentQuestionSequence] &&
         participant && (
           <Quiz
+            key={questions[currentQuestionSequence].id}
             question={questions[currentQuestionSequence]}
             questionCount={questions.length}
             participant={participant}

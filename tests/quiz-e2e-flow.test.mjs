@@ -300,3 +300,19 @@ test('5. Moteur d’analyse fun des résultats (/api/game-analysis) : présence 
   assert.ok(routeSrc.includes('Sprint Final à Heathrow'))
   assert.ok(routeSrc.includes('GEMINI_API_KEY'))
 })
+
+test('6. Non-régression D24 : isolation des réponses par partie en cours et verrou anti-révélation prématurée', async () => {
+  const hostQuizSrc = fs.readFileSync(
+    path.resolve(process.cwd(), 'src/app/host/game/[id]/quiz.tsx'),
+    'utf8'
+  )
+  assert.ok(
+    hostQuizSrc.includes(".in('participant_id', currentParticipantIds)"),
+    'Le compteur de réponses Hôte doit filtrer quiz_answers par les participants de la partie en cours'
+  )
+  assert.ok(
+    hostQuizSrc.includes('hasRevealedRef.current') &&
+      hostQuizSrc.includes('isTransitioningRef.current'),
+    'Les verrous synchrones hasRevealedRef et isTransitioningRef doivent protéger onTimeUp et getNextQuestion'
+  )
+})
