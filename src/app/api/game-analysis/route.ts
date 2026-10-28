@@ -275,7 +275,12 @@ Rédige en français un JSON strict avec 2 clés :
 
 Réponds UNIQUEMENT avec l'objet JSON valide, sans balises markdown.`
 
-  const models = ['gemini-2.5-flash', 'gemini-2.0-flash']
+  const models = [
+    'gemini-3.5-flash',
+    'gemini-2.5-flash',
+    'gemini-flash-latest',
+    'gemini-2.0-flash',
+  ]
   for (const model of models) {
     try {
       const controller = new AbortController()
