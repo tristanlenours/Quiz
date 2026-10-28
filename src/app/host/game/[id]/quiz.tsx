@@ -19,23 +19,27 @@ export default function Quiz({
   questionCount,
   gameId,
   participants,
+  isAnswerRevealedProp = false,
 }: {
   question: Question
   questionCount: number
   gameId: string
   participants: Participant[]
+  isAnswerRevealedProp?: boolean
 }) {
-  const [isAnswerRevealed, setIsAnswerRevealed] = useState(false)
-  const [hasShownChoices, setHasShownChoices] = useState(false)
+  const [isAnswerRevealed, setIsAnswerRevealed] = useState(isAnswerRevealedProp)
+  const [hasShownChoices, setHasShownChoices] = useState(isAnswerRevealedProp)
   const [answers, setAnswers] = useState<Answer[]>([])
   const [isAudioPlaying, setIsAudioPlaying] = useState(false)
   const [liveStandings, setLiveStandings] = useState<GameResult[]>([])
 
-  // Verrous synchrones pour éviter toute race condition entre le polling 1.5s et le passage à la manche suivante (Décision D24)
-  const hasRevealedRef = useRef(false)
-  const hasShownChoicesRef = useRef(false)
+  // Verrous synchrones pour éviter toute race condition (Décision D24)
+  const hasRevealedRef = useRef(isAnswerRevealedProp)
+  const hasShownChoicesRef = useRef(isAnswerRevealedProp)
   const isTransitioningRef = useRef(false)
   const currentQuestionIdRef = useRef(question.id)
+  const participantsRef = useRef(participants)
+  participantsRef.current = participants
 
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const isBlindTest = question.question_type === 'blind_test'
@@ -61,10 +65,28 @@ export default function Quiz({
     if (data) setLiveStandings(data)
   }, [gameId])
 
+  // Synchronisation avec la prop parent au cas où (ex: event realtime reçu au niveau HostGamePage)
+  useEffect(() => {
+    if (isAnswerRevealedProp && !isAnswerRevealed) {
+      hasRevealedRef.current = true
+      hasShownChoicesRef.current = true
+      setIsAnswerRevealed(true)
+      setHasShownChoices(true)
+      fetchStandings()
+    }
+  }, [isAnswerRevealedProp, isAnswerRevealed, fetchStandings])
+
   const onTimeUp = useCallback(async () => {
     if (hasRevealedRef.current || isTransitioningRef.current) return
     hasRevealedRef.current = true
+    hasShownChoicesRef.current = true
+    setHasShownChoices(true)
     setIsAnswerRevealed(true)
+
+    if (audioRef.current) {
+      audioRef.current.pause()
+      setIsAudioPlaying(false)
+    }
 
     const targetQuestionId = currentQuestionIdRef.current
     await supabase
@@ -86,23 +108,33 @@ export default function Quiz({
 
     if (audioRef.current) {
       audioRef.current.pause()
+      setIsAudioPlaying(false)
     }
-    const updateData =
-      questionCount === question.order + 1
-        ? { phase: 'result' }
-        : {
-            current_question_sequence: question.order + 1,
-            is_answer_revealed: false,
-          }
+
+    const nextSeq = question.order + 1
+    const isFinished = nextSeq >= questionCount
+    const updateData = isFinished
+      ? { phase: 'result', is_answer_revealed: true }
+      : {
+          current_question_sequence: nextSeq,
+          is_answer_revealed: false,
+        }
 
     const { error } = await supabase
       .from('quiz_games')
       .update(updateData)
       .eq('id', gameId)
+
     if (error) {
       isTransitioningRef.current = false
-      return alert(error.message)
+      alert(error.message)
+      return
     }
+
+    // Sécurité anti-blocage : réactiver après 2.5 secondes si toujours présent
+    setTimeout(() => {
+      isTransitioningRef.current = false
+    }, 2500)
   }
 
   const fetchAnswers = useCallback(async () => {
@@ -114,14 +146,13 @@ export default function Quiz({
       return
     }
 
-    const currentParticipantIds = participants.map((p) => p.id)
+    const currentParticipantIds = participantsRef.current.map((p) => p.id)
     if (currentParticipantIds.length === 0) {
       setAnswers([])
       return
     }
 
     // IMPORTANT (Décision D24) : Filtrer strictement par les participants de la partie en cours (`gameId`)
-    // pour ne jamais compter les réponses d'anciennes parties sur cette même question !
     const { data } = await supabase
       .from('quiz_answers')
       .select()
@@ -136,7 +167,7 @@ export default function Quiz({
       return
     }
 
-    // Dédupliquer par participant_id au cas où
+    // Dédupliquer par participant_id
     const uniqueParticipantAnswers = new Map<string, Answer>()
     for (const ans of data) {
       uniqueParticipantAnswers.set(ans.participant_id, ans)
@@ -144,31 +175,39 @@ export default function Quiz({
     const validAnswers = Array.from(uniqueParticipantAnswers.values())
     setAnswers(validAnswers)
 
+    // Si tous les participants ont répondu, révéler automatiquement et immédiatement
     if (
       !hasRevealedRef.current &&
-      hasShownChoicesRef.current &&
-       currentParticipantIds.length > 0 &&
+      currentParticipantIds.length > 0 &&
       validAnswers.length >= currentParticipantIds.length
     ) {
       onTimeUp()
     }
-  }, [question.id, participants, onTimeUp])
+  }, [question.id, onTimeUp])
 
   useEffect(() => {
     currentQuestionIdRef.current = question.id
-    hasRevealedRef.current = false
-    hasShownChoicesRef.current = false
+    hasRevealedRef.current = isAnswerRevealedProp
+    hasShownChoicesRef.current = isAnswerRevealedProp
     isTransitioningRef.current = false
 
-    setIsAnswerRevealed(false)
-    setHasShownChoices(false)
+    setIsAnswerRevealed(isAnswerRevealedProp)
     setAnswers([])
     setIsAudioPlaying(false)
+
+    if (isAnswerRevealedProp) {
+      setHasShownChoices(true)
+      fetchStandings()
+      return
+    }
+
+    setHasShownChoices(false)
 
     const revealTimer = setTimeout(() => {
       if (currentQuestionIdRef.current === question.id) {
         hasShownChoicesRef.current = true
         setHasShownChoices(true)
+        fetchAnswers()
       }
     }, TIME_TIL_CHOICE_REVEAL)
 
@@ -194,12 +233,14 @@ export default function Quiz({
       }
     }, 1500)
 
+    fetchAnswers()
+
     return () => {
       clearTimeout(revealTimer)
       clearInterval(pollInterval)
       supabase.removeChannel(channel)
     }
-  }, [gameId, question.id, fetchAnswers])
+  }, [gameId, question.id])
 
   // Déclencher la lecture audio sur l'Écran Hôte dès que les choix s'affichent (Blind Test ET Quiz sonorisé — Décisions D08 & D23)
   useEffect(() => {
@@ -256,9 +297,9 @@ export default function Quiz({
             {isAudioPlaying ? '🔊 Son actif (Pause)' : '▶️ Relancer la musique'}
           </button>
         )}
-        {!isAnswerRevealed && hasShownChoices && (
+        {!isAnswerRevealed && (
           <button
-            className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm font-semibold rounded-xl transition"
+            className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm font-semibold rounded-xl transition cursor-pointer"
             onClick={onTimeUp}
           >
             ⏭️ Révéler maintenant
@@ -266,7 +307,7 @@ export default function Quiz({
         )}
         {isAnswerRevealed && (
           <button
-            className="px-6 py-3 bg-gradient-to-r from-rose-600 to-indigo-600 hover:from-rose-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg transition"
+            className="px-6 py-3 bg-gradient-to-r from-rose-600 to-indigo-600 hover:from-rose-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg transition cursor-pointer active:scale-95"
             onClick={getNextQuestion}
           >
             {questionCount === question.order + 1

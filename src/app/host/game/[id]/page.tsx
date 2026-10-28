@@ -31,6 +31,7 @@ export default function HostGamePage({
   const [quizSet, setQuizSet] = useState<QuizSet>()
   const [pinCode, setPinCode] = useState<string>('')
   const [currentQuestionSequence, setCurrentQuestionSequence] = useState(0)
+  const [isAnswerRevealed, setIsAnswerRevealed] = useState(false)
 
   useEffect(() => {
     preloadAvatarImages()
@@ -60,8 +61,11 @@ export default function HostGamePage({
         console.error(error.message)
         return
       }
-      setQuizSet(data as unknown as QuizSet)
-      preloadQuestionImages((data as unknown as QuizSet).questions)
+      const rawQuestions = ((data as any)?.questions || []) as any[]
+      const sortedQuestions = [...rawQuestions].sort((a, b) => a.order - b.order)
+      const sortedSet = { ...data, questions: sortedQuestions } as unknown as QuizSet
+      setQuizSet(sortedSet)
+      preloadQuestionImages(sortedQuestions)
     }
 
     const fetchHostState = async () => {
@@ -70,7 +74,17 @@ export default function HostGamePage({
         .select()
         .eq('game_id', gameId)
         .order('created_at')
-      if (pData) setParticipants(pData)
+      if (pData) {
+        setParticipants((prev) => {
+          if (
+            prev.length === pData.length &&
+            prev.every((p, i) => p.id === pData[i]?.id)
+          ) {
+            return prev
+          }
+          return pData
+        })
+      }
 
       const { data: gData } = await supabase
         .from('quiz_games')
@@ -81,6 +95,7 @@ export default function HostGamePage({
         setPinCode(gData.pin_code)
         setCurrentQuestionSequence(gData.current_question_sequence)
         setCurrentScreen(gData.phase as AdminScreens)
+        setIsAnswerRevealed(Boolean(gData.is_answer_revealed))
       }
     }
 
@@ -113,6 +128,7 @@ export default function HostGamePage({
           const game = payload.new as Game
           setCurrentQuestionSequence(game.current_question_sequence)
           setCurrentScreen(game.phase as AdminScreens)
+          setIsAnswerRevealed(Boolean(game.is_answer_revealed))
         }
       )
       .subscribe()
@@ -135,18 +151,28 @@ export default function HostGamePage({
           quizName={quizSet?.name}
         />
       )}
-      {currentScreen === AdminScreens.quiz &&
-        quizSet &&
-        quizSet.questions &&
-        quizSet.questions[currentQuestionSequence] && (
+      {currentScreen === AdminScreens.quiz && quizSet && quizSet.questions && (
+        quizSet.questions[currentQuestionSequence] ? (
           <Quiz
             key={quizSet.questions[currentQuestionSequence].id}
             question={quizSet.questions[currentQuestionSequence]}
             questionCount={quizSet.questions.length}
             gameId={gameId}
             participants={participants}
+            isAnswerRevealedProp={isAnswerRevealed}
           />
-        )}
+        ) : (
+          <div className="flex flex-col items-center justify-center min-h-screen text-white gap-4">
+            <div className="text-xl font-bold animate-pulse">Chargement de la manche...</div>
+            <button
+              onClick={() => setCurrentScreen(AdminScreens.result)}
+              className="px-6 py-3 bg-gradient-to-r from-rose-600 to-indigo-600 hover:from-rose-500 hover:to-indigo-500 rounded-xl font-bold text-white shadow-xl transition"
+            >
+              🏆 Voir le Podium Final
+            </button>
+          </div>
+        )
+      )}
       {currentScreen === AdminScreens.result && quizSet && (
         <Results
           participants={participants}

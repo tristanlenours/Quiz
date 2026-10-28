@@ -30,10 +30,8 @@ export default function Quiz({
   const [hasShownChoices, setHasShownChoices] = useState(false)
   const [questionStartTime, setQuestionStartTime] = useState(Date.now())
   const [earnedScore, setEarnedScore] = useState<number>(0)
-  const [mobileAudioEnabled, setMobileAudioEnabled] = useState(false)
   const [leaderboard, setLeaderboard] = useState<GameResult[]>([])
 
-  const mobileAudioRef = useRef<HTMLAudioElement | null>(null)
   const isBlindTest = question.question_type === 'blind_test'
   const answerDurationMs =
     (question.audio_duration_sec ? question.audio_duration_sec * 1000 : null) ||
@@ -84,9 +82,6 @@ export default function Quiz({
     setChosenChoice(null)
     setHasShownChoices(false)
     setEarnedScore(0)
-    if (mobileAudioRef.current) {
-      mobileAudioRef.current.pause()
-    }
 
     // Restaurer la réponse si le joueur a rafraîchi sa page en cours de manche
     supabase
@@ -114,29 +109,6 @@ export default function Quiz({
 
     return () => clearTimeout(timer)
   }, [question.id, question.choices, playerId])
-
-  // Si le joueur a activé l'écoute mobile à distance (Décision D08)
-  useEffect(() => {
-    if (
-      mobileAudioEnabled &&
-      hasShownChoices &&
-      !isAnswerRevealed &&
-      question.audio_url &&
-      mobileAudioRef.current
-    ) {
-      mobileAudioRef.current.currentTime = question.audio_start_sec || 0
-      mobileAudioRef.current.play().catch(() => {})
-    }
-    if (isAnswerRevealed && mobileAudioRef.current) {
-      mobileAudioRef.current.pause()
-    }
-  }, [
-    mobileAudioEnabled,
-    hasShownChoices,
-    isAnswerRevealed,
-    question.audio_url,
-    question.audio_start_sec,
-  ])
 
   const answer = async (choice: Choice) => {
     setChosenChoice(choice)
@@ -171,10 +143,6 @@ export default function Quiz({
 
   return (
     <div className="h-screen flex flex-col items-stretch bg-slate-900 relative overflow-hidden">
-      {question.audio_url && (
-        <audio ref={mobileAudioRef} src={question.audio_url} preload="none" />
-      )}
-
       {/* Bandeau Avatar & Rang permanent en haut de la manette (Décision D21) */}
       <div className="flex items-center justify-between px-3.5 py-2 bg-slate-950/90 border-b border-white/10 text-white flex-shrink-0">
         <div className="flex items-center gap-2.5 min-w-0">
@@ -232,25 +200,6 @@ export default function Quiz({
         <h2 className="text-lg md:text-xl bg-white text-slate-900 font-black mx-auto p-3.5 rounded-2xl block shadow">
           {question.body}
         </h2>
-
-        {/* Bouton optionnel pour écouter sur son téléphone à distance (Décision D08) */}
-        {question.audio_url && !isAnswerRevealed && (
-          <div className="mt-2">
-            <button
-              type="button"
-              onClick={() => setMobileAudioEnabled((v) => !v)}
-              className={`px-3.5 py-1 rounded-full text-xs font-bold transition border ${
-                mobileAudioEnabled
-                  ? 'bg-rose-600 border-rose-400 text-white'
-                  : 'bg-slate-800 border-slate-700 text-slate-300'
-              }`}
-            >
-              {mobileAudioEnabled
-                ? '🔊 Son téléphone activé (Couper)'
-                : '🎧 Écouter la musique sur mon téléphone'}
-            </button>
-          </div>
-        )}
       </div>
 
       {!isAnswerRevealed && chosenChoice && (

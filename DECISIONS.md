@@ -32,7 +32,7 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **D05** | 2026-10-24 | Connexion joueur sans friction | Permettre aux participants de rejoindre une partie avec un simple pseudo et un identifiant de session client (`client_session_id` stocké en `localStorage`), sans dépendre obligatoirement de l'activation d'Anonymous Auth dans Supabase. | Adopté |
 | **D06** | 2026-10-24 | Mode de réponse en Blind Test (`Q01 -> A`) | **QCM à 4 boutons** sur mobile (ex: 4 propositions d'artistes/titres), garantissant une rapidité d'exécution maximale au pouce et zéro pénalité liée aux fautes de frappe. | Adopté |
 | **D07** | 2026-10-24 | Source des extraits audio (`Q02 -> A`) | **Recherche intégrée iTunes/Deezer API** (extrait MP3 30s + pochette + titre/artiste auto-remplis et génération de 3 leurres possibles) + **URL MP3 directe / Upload Supabase Storage** (`quiz-media`) pour les extraits personnalisés. | Adopté |
-| **D08** | 2026-10-24 | Diffusion sonore (`Q03 -> A`) | **Lecture audio sur l'Écran Hôte par défaut** (TV / PC relié aux enceintes du salon), avec un **bouton optionnel "🎧 Activer le son sur mon téléphone"** sur la Manette Joueur pour les parties à distance. | Adopté |
+| **D08** | 2026-10-24 | Diffusion sonore (`Q03 -> A`) | **Lecture audio sur l'Écran Hôte par défaut** (TV / PC relié aux enceintes du salon), avec un bouton optionnel sur la Manette Joueur. | Remplacée par **D26** |
 | **D09** | 2026-10-24 | Studio d'édition & Import/Export (`Q04 -> A`) | **Studio d'édition web dans `/host/dashboard`** protégé par le mot de passe Hôte (`SITE_PASSWORD`), accompagné d'une fonction **Import / Export JSON** pour sauvegarder ou générer des packs via IA. | Adopté |
 | **D10** | 2026-10-24 | Fiabilisation CSS, Synchro Hybride & Ergonomie Multi-Onglets | Supprimer le double import `globals.css` dans `/host/dashboard/layout.tsx` (qui cassait le chunk CSS Tailwind sur `/game/[id]`), ajouter un polling léger (1,5s) en complément de Supabase Realtime, et afficher des liens croisés Hôte ⇄ Manette pour faciliter le test sur un seul PC. | Adopté |
 | **D11** | 2026-10-24 | Timer anti-veille d'onglet & Bouton Rejouer *(partie clic Hôte remplacée par D13)* | Remplacer `onComplete` de `requestAnimationFrame` par `setTimeout` sur `/game/[id]` pour éviter le gel des onglets en arrière-plan, et ajouter un bouton « Rejouer ce Pack » sur le podium. *(Le clic de réponse sur l'Hôte a été écarté par D13).* | Partiellement remplacé par **D13** |
@@ -49,6 +49,8 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **D22** | 2026-10-28 | Analyse fun de fin de partie (Gemini + Fallback déterministe) | Créer la route API `/api/game-analysis` qui agrège les statistiques réelles de la partie (`quiz_game_results`, `quiz_answers`, `quiz_questions`, avatars choisis), calcule des trophées ludiques déterministes (Lucky Luke du Buzzer, Sniper sans pitié, Remontada de Noël, Mr Bean de l'emballage...) et génère une chronique humoristique personnalisée via l'API gratuite Gemini (`GEMINI_API_KEY` / `GOOGLE_API_KEY`, modèle `gemini-2.5-flash`) avec repli instantané sur un générateur narratif déterministe si la clé est absente ou le quota atteint. Mise en cache par `gameId` et affichage sur l'Écran Hôte et la Manette Joueur. | Adopté |
 | **D23** | 2026-10-28 | Pack « Love Actually — Warm-Up » (5 questions multi-formats), Ambiance sonore/visuelle & Suite de tests E2E | Créer et insérer en base le pack de chauffe de 5 questions couvrant QCM illustré + bande-son, Blind Test musical, Extrait vidéo YouTube et Grand Final musical (sans divulgâcher les 17 questions du grand quiz), enrichir le Salon + Podium d'une ambiance *Love Actually* (lecteur musical BO du film dans le salon et sur le podium, citations cultes) et ajouter la suite de tests automatisés `npm test` (`tests/quiz-e2e-flow.test.mjs`). | Adopté |
 | **D24** | 2026-10-28 | Isolation des réponses par partie & Verrou anti-révélation prématurée | Dans `src/app/host/game/[id]/quiz.tsx`, filtrer `quiz_answers` par `.in('participant_id', currentParticipantIds)` (pour ne jamais compter les réponses d'anciennes parties sur la même question) et verrouiller `onTimeUp` / `getNextQuestion` via `hasRevealedRef` et `isTransitioningRef` + `key={question.id}` afin d'empêcher le polling de 1,5 s de révéler prématurément la manche suivante. | Adopté |
+| **D25** | 2026-10-28 | Cycle de vie stable de l'Écran Hôte (TV), synchronisation de l'état `is_answer_revealed` & déverrouillage de `getNextQuestion` | Découpler le hook de manche de `participants` (stocké via `useRef`) pour empêcher le polling 1,5s de réinitialiser le timer de 5s en boucle (`hasShownChoices` bloqué à faux). Transmettre `is_answer_revealed` depuis `HostGamePage`, trier formellement `quizSet.questions` par `order` en JS, et rendre le bouton « ⏭️ Révéler maintenant » disponible immédiatement. | Adopté |
+| **D26** | 2026-10-28 | Écran Hôte (TV) comme diffuseur sonore unique & suppression de l'audio mobile (Zéro cacophonie) | Supprimer tout élément `<audio>`, état `mobileAudioEnabled` et bouton d'écoute sur la Manette Joueur (`/game/[id]/quiz.tsx`). Toute la musique et les effets sonores (Blind Test, quiz sonorisé, salon, podium) sont joués exclusivement sur l'Écran Hôte / les enceintes de la pièce. | Adopté |
 
 ---
 
@@ -184,3 +186,26 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
   2. **Ambiance sonore & visuelle dans le Salon et sur le Podium** :
      - Playlist d'ambiance *Love Actually* activable dans le Salon Hôte et jouée en fanfare lors de l'apparition du Podium final.
      - Affichage des répliques/descriptions cultes de chaque personnage lors de la sélection d'avatar et flocons/esthétique cinéma de Noël.
+
+### 2026-10-28 — D24 : Isolation des réponses par partie en cours & Verrou de transition
+- **Contexte** : Lors d'une partie de test, la manche 4 s'est auto-révélée prématurément ("Dommage !") sans attendre que les joueurs répondent.
+- **Cause** : La requête `quiz_answers` filtrait uniquement par `question_id`. Les réponses des parties précédentes sur la même question étaient comptabilisées immédiatement.
+- **Décision** : Filtrer strictement par `.in('participant_id', currentParticipantIds)` et poser des verrous `hasRevealedRef` et `isTransitioningRef`.
+
+### 2026-10-28 — D25 : Cycle de vie stable de l'Écran Hôte (TV), synchronisation `is_answer_revealed` & Déverrouillage de la manche suivante
+- **Contexte** : Alerte régression de l'auteur ("Les questions ne s'affichent plus sur la partie hôte et surtout, je ne peux plus passer à la question suivante").
+- **Cause identifiée** :
+  1. Dans `src/app/host/game/[id]/quiz.tsx`, le hook principal dépendait de `fetchAnswers`, qui lui-même dépendait de `participants`. Or le polling 1,5s de `HostGamePage` recréait la référence du tableau `participants` à chaque tick, provoquant le nettoyage et le redémarrage en boucle du timer de 5s (`revealTimer`) ! Ainsi, `hasShownChoices` ne passait jamais à `true`, masquant à la fois le chrono, les boutons de réponses et le bouton de saut/passage.
+  2. `HostGamePage` ne transmettait pas l'état `is_answer_revealed` à `<Quiz />`, provoquant des désynchronisations en cas de remount ou de rafraîchissement F5.
+  3. `quizSet.questions` n'était pas formellement trié par `order` croissant en JavaScript.
+- **Décision** :
+  1. Stocker `participants` dans un `useRef` pour que `fetchAnswers` et le `useEffect` principal soient totalement découplés du polling 1,5s. Le hook de manche ne dépend strictement que de `[gameId, question.id]`.
+  2. Conserver `isAnswerRevealed` dans l'état de `HostGamePage` (synchronisé avec Supabase realtime + polling) et le passer en prop (`isAnswerRevealedProp`) à `<Quiz />`.
+  3. Rendre le bouton « ⏭️ Révéler maintenant » accessible dès le début de la manche pour permettre à l'hôte d'abréger le décompte de lecture s'il le souhaite.
+  4. Sécuriser `getNextQuestion` : calcul direct du statut terminé (`nextSeq >= questionCount`), timeout de déverrouillage de sécurité à 2,5s, et bouton « Manche suivante → » / « 🏆 Voir le Podium Final » toujours cliquable une fois la réponse révélée.
+
+### 2026-10-28 — D26 : Écran Hôte (TV) comme diffuseur sonore unique & suppression de l'audio mobile (Zéro cacophonie)
+- **Contexte** : Demande explicite de l'auteur ("il ne doit pas être possible d'écouter la musique sur l'écran de participant, ça va être la cacophonie").
+- **Décision** : Remplacer la micro-décision D08 en supprimant intégralement la balise `<audio>`, l'état `mobileAudioEnabled` et le bouton « 🎧 Écouter la musique sur mon téléphone » de la Manette Joueur (`/game/[id]/quiz.tsx`).
+- **Résultat** : L'Écran Hôte (TV / Enceintes de la pièce) est le diffuseur sonore unique et exclusif (Blind Test, quiz sonorisé, salon, podium). Les smartphones des joueurs restent des manettes silencieuses et réactives.
+
