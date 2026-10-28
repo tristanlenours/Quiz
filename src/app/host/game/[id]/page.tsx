@@ -1,6 +1,6 @@
 'use client'
 
-import { preloadAvatarImages } from '@/avatars'
+import { preloadAvatarImages, resolveAvatarTheme } from '@/avatars'
 import {
   Game,
   Participant,
@@ -66,6 +66,7 @@ export default function HostGamePage({
       const sortedSet = { ...data, questions: sortedQuestions } as unknown as QuizSet
       setQuizSet(sortedSet)
       preloadQuestionImages(sortedQuestions)
+      preloadAvatarImages(resolveAvatarTheme(sortedSet))
     }
 
     const fetchHostState = async () => {
@@ -149,6 +150,7 @@ export default function HostGamePage({
           gameId={gameId}
           pinCode={pinCode}
           quizName={quizSet?.name}
+          themeId={resolveAvatarTheme(quizSet)}
         />
       )}
       {currentScreen === AdminScreens.quiz && quizSet && quizSet.questions && (
@@ -160,6 +162,7 @@ export default function HostGamePage({
             gameId={gameId}
             participants={participants}
             isAnswerRevealedProp={isAnswerRevealed}
+            themeId={resolveAvatarTheme(quizSet)}
           />
         ) : (
           <div className="flex flex-col items-center justify-center min-h-screen text-white gap-4">

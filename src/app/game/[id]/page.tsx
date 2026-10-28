@@ -1,8 +1,13 @@
 'use client'
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { getParticipantIdentity, preloadAvatarImages } from '@/avatars'
+import {
+  getParticipantIdentity,
+  preloadAvatarImages,
+  resolveAvatarTheme,
+} from '@/avatars'
 import { FunPodiumAndAnalysis } from '@/components/FunPodiumAndAnalysis'
+import { getUniverseTheme } from '@/themes'
 import {
   Game,
   GameResult,
@@ -33,6 +38,28 @@ export default function PlayerGamePage({
   const [questions, setQuestions] = useState<Question[]>()
   const [currentQuestionSequence, setCurrentQuestionSequence] = useState(0)
   const [isAnswerRevealed, setIsAnswerRevealed] = useState(false)
+  const [themeId, setThemeId] = useState<string | null>(null)
+
+  // Thème d'avatars du pack (D21/D29), nécessaire dès le salon avant inscription
+  useEffect(() => {
+    const fetchTheme = async () => {
+      const { data: game } = await supabase
+        .from('quiz_games')
+        .select('quiz_set_id')
+        .eq('id', gameId)
+        .single()
+      if (!game?.quiz_set_id) return
+      const { data: set } = await supabase
+        .from('quiz_sets')
+        .select('*')
+        .eq('id', game.quiz_set_id)
+        .single()
+      const resolved = resolveAvatarTheme(set)
+      setThemeId(resolved)
+      preloadAvatarImages(resolved)
+    }
+    fetchTheme()
+  }, [gameId])
 
   const getQuestions = useCallback(async (quizSetId: string) => {
     const { data, error } = await supabase
@@ -83,8 +110,6 @@ export default function PlayerGamePage({
   )
 
   useEffect(() => {
-    preloadAvatarImages()
-
     const gameChannel = supabase
       .channel(`game_participant_${gameId}`)
       .on(
@@ -128,7 +153,11 @@ export default function PlayerGamePage({
   return (
     <main className="bg-slate-950 min-h-screen">
       {currentScreen === Screens.lobby && (
-        <Lobby onRegisterCompleted={onRegisterCompleted} gameId={gameId} />
+        <Lobby
+          onRegisterCompleted={onRegisterCompleted}
+          gameId={gameId}
+          themeId={themeId}
+        />
       )}
       {currentScreen === Screens.quiz &&
         questions &&
@@ -144,7 +173,7 @@ export default function PlayerGamePage({
           />
         )}
       {currentScreen === Screens.results && participant && (
-        <Results participant={participant} gameId={gameId} />
+        <Results participant={participant} gameId={gameId} themeId={themeId} />
       )}
     </main>
   )
@@ -153,9 +182,11 @@ export default function PlayerGamePage({
 function Results({
   participant,
   gameId,
+  themeId,
 }: {
   participant: Participant
   gameId: string
+  themeId: string | null
 }) {
   const [gameResults, setGameResults] = useState<GameResult[]>([])
   const [allParticipants, setAllParticipants] = useState<Participant[]>([])
@@ -191,7 +222,11 @@ function Results({
   }, [gameId, participant.id])
 
   return (
-    <div className="min-h-screen text-center p-4 md:p-8 bg-gradient-to-br from-rose-950 via-slate-900 to-indigo-950 text-white space-y-6">
+    <div
+      className={`min-h-screen text-center p-4 md:p-8 bg-gradient-to-br ${
+        getUniverseTheme(themeId).pageBg
+      } text-white space-y-6`}
+    >
       {/* Carte Trophée Personnel du Joueur */}
       <div className="p-6 bg-slate-900/95 border-2 border-rose-400/40 text-white rounded-3xl max-w-lg mx-auto shadow-2xl space-y-3">
         <div className="flex flex-col items-center">

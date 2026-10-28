@@ -1,4 +1,6 @@
 import { FunPodiumAndAnalysis } from '@/components/FunPodiumAndAnalysis'
+import { resolveAvatarTheme } from '@/avatars'
+import { getUniverseTheme } from '@/themes'
 import {
   GameResult,
   Participant,
@@ -9,9 +11,6 @@ import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import Confetti from 'react-confetti'
 import useWindowSize from 'react-use/lib/useWindowSize'
-
-const PODIUM_FANFARE_URL =
-  'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/3b/17/e6/3b17e6c0-5a2a-2226-7c3f-6d0f57be6de9/mzaf_2188717033219073832.plus.aac.p.m4a'
 
 export default function Results({
   participants,
@@ -26,6 +25,7 @@ export default function Results({
   const [isMusicPlaying, setIsMusicPlaying] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const { width, height } = useWindowSize()
+  const theme = getUniverseTheme(resolveAvatarTheme(quizSet))
 
   useEffect(() => {
     const getResults = async () => {
@@ -41,7 +41,7 @@ export default function Results({
     }
     getResults()
 
-    // Lancer la musique du final Love Actually (God Only Knows — The Beach Boys)
+    // Lancer la musique du final propre à l'univers du pack (D29)
     if (audioRef.current) {
       audioRef.current.volume = 0.6
       audioRef.current
@@ -85,10 +85,10 @@ export default function Results({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-950 via-slate-900 to-indigo-950 text-white p-6 md:p-8 flex flex-col justify-between">
+    <div className={`min-h-screen bg-gradient-to-br ${theme.pageBg} text-white p-6 md:p-8 flex flex-col justify-between`}>
       <audio
         ref={audioRef}
-        src={PODIUM_FANFARE_URL}
+        src={theme.podiumTrack.url}
         loop
         preload="auto"
       />
@@ -104,7 +104,7 @@ export default function Results({
             className="text-xs font-bold px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 text-slate-200 transition"
           >
             {isMusicPlaying
-              ? '🔊 Final : God Only Knows (Pause)'
+              ? `🔊 Final : ${theme.podiumTrack.title} (Pause)`
               : '🎵 Jouer la musique du Podium'}
           </button>
         </div>

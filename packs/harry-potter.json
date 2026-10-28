@@ -1,0 +1,198 @@
+{
+  "name": "⚡ Harry Potter — Le Banquet des Sorciers (10 manches)",
+  "description": "10 manches retorses pour vrais Potterheads : Blind Tests de la BO, extraits vidéo cultes et questions pièges des livres. Incarnez votre sorcier, faites gagner votre maison et écoutez Dumbledore remettre la Coupe des Quatre Maisons au banquet final !",
+  "mode": "mixed",
+  "avatar_theme": "harry_potter",
+  "questions": [
+    {
+      "order": 0,
+      "question_type": "quiz",
+      "body": "🧪 Premier cours de Potions : « Que m'obtiendrais-je si j'ajoutais de la racine d'asphodèle en poudre à une infusion d'armoise ? » Que répondrait Hermione ?",
+      "image_url": null,
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/06/d0/e2/06d0e212-3cfc-d56a-a556-83383da598aa/mzaf_1095038464649433962.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "La Goutte du Mort vivant", "is_correct": true },
+        { "body": "Du Polynectar", "is_correct": false },
+        { "body": "La Potion Tue-Loup", "is_correct": false },
+        { "body": "Du Felix Felicis", "is_correct": false }
+      ]
+    },
+    {
+      "order": 1,
+      "question_type": "blind_test",
+      "body": "🎵 Blind Test : ce chant de la chorale de Poudlard (paroles empruntées aux sorcières de Macbeth) ouvre l'année scolaire de quel film ?",
+      "image_url": null,
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b0/e1/5a/b0e15a9d-ac5f-cbf4-f06c-5e5dc59ddd8d/mzaf_8389942527619992041.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": "Double Trouble",
+      "reveal_artist": "John Williams — Le Prisonnier d'Azkaban",
+      "reveal_cover_url": "https://is1-ssl.mzstatic.com/image/thumb/Music/y2004/m05/d21/h01/s05.hdlaskqk.jpg/600x600bb.jpg",
+      "choices": [
+        { "body": "Le Prisonnier d'Azkaban", "is_correct": true },
+        { "body": "La Chambre des Secrets", "is_correct": false },
+        { "body": "La Coupe de Feu", "is_correct": false },
+        { "body": "L'Ordre du Phénix", "is_correct": false }
+      ]
+    },
+    {
+      "order": 2,
+      "question_type": "quiz",
+      "body": "🏦 Chez Gringotts, dans quel coffre Hagrid récupère-t-il le mystérieux petit paquet (la Pierre philosophale) ?",
+      "image_url": null,
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/d8/57/61/d857619c-2369-8251-9872-723887abfc9f/mzaf_16652206452432754333.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "Le coffre 713", "is_correct": true },
+        { "body": "Le coffre 687", "is_correct": false },
+        { "body": "Le coffre 394", "is_correct": false },
+        { "body": "Le coffre 217", "is_correct": false }
+      ]
+    },
+    {
+      "order": 3,
+      "question_type": "quiz",
+      "body": "🎬 Regardez l'extrait ! Dans le LIVRE La Coupe de Feu, comment Dumbledore pose-t-il cette fameuse question à Harry ?",
+      "image_url": null,
+      "audio_url": null,
+      "audio_start_sec": 212,
+      "audio_duration_sec": 30,
+      "video_url": "https://www.youtube.com/watch?v=pLv1HXl_J10",
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "Calmement", "is_correct": true },
+        { "body": "En le plaquant contre l'armoire à trophées", "is_correct": false },
+        { "body": "En chuchotant pour que Karkaroff n'entende rien", "is_correct": false },
+        { "body": "Après lui avoir fait boire du Veritaserum", "is_correct": false }
+      ]
+    },
+    {
+      "order": 4,
+      "question_type": "quiz",
+      "body": "🌙 Spero Patronum ! Quelle forme prend le Patronus de Luna Lovegood ?",
+      "image_url": null,
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/71/49/6d/71496d6c-67b0-c684-02d9-fcc543e22078/mzaf_6055771900274130683.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "Un lièvre", "is_correct": true },
+        { "body": "Une loutre", "is_correct": false },
+        { "body": "Un cheval", "is_correct": false },
+        { "body": "Un chat", "is_correct": false }
+      ]
+    },
+    {
+      "order": 5,
+      "question_type": "blind_test",
+      "body": "🎵 Blind Test : ce thème bouleversant des Reliques de la Mort (partie 2) est signé par quel compositeur ?",
+      "image_url": null,
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/4f/6a/87/4f6a87c4-9adc-0187-dc67-fa85f5cdedd0/mzaf_2553637134403143289.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": "Lily's Theme",
+      "reveal_artist": "Alexandre Desplat",
+      "reveal_cover_url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/c6/04/89/c60489ad-2490-8345-2716-367b28f0a19b/794043152429.jpg/600x600bb.jpg",
+      "choices": [
+        { "body": "Alexandre Desplat", "is_correct": true },
+        { "body": "John Williams", "is_correct": false },
+        { "body": "Nicholas Hooper", "is_correct": false },
+        { "body": "Patrick Doyle", "is_correct": false }
+      ]
+    },
+    {
+      "order": 6,
+      "question_type": "quiz",
+      "body": "🎬 Regardez l'extrait ! Après cette sortie fracassante, Fred et George ouvrent « Farces pour sorciers facétieux ». À quelle adresse ?",
+      "image_url": null,
+      "audio_url": null,
+      "audio_start_sec": 20,
+      "audio_duration_sec": 30,
+      "video_url": "https://www.youtube.com/watch?v=ew0NiL1ehq4",
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "Au 93, Chemin de Traverse", "is_correct": true },
+        { "body": "Au 12, square Grimmaurd", "is_correct": false },
+        { "body": "Juste à côté de Zonko, à Pré-au-Lard", "is_correct": false },
+        { "body": "Allée des Embrumes, face à Barjow et Beurk", "is_correct": false }
+      ]
+    },
+    {
+      "order": 7,
+      "question_type": "quiz",
+      "body": "🏰 Selon L'École des sorciers, combien d'escaliers (capricieux) compte le château de Poudlard ?",
+      "image_url": null,
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/e7/3f/f6/e73ff637-6770-63d1-54b1-f58ba11167fb/mzaf_1920378698193191158.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "142", "is_correct": true },
+        { "body": "124", "is_correct": false },
+        { "body": "101", "is_correct": false },
+        { "body": "365", "is_correct": false }
+      ]
+    },
+    {
+      "order": 8,
+      "question_type": "blind_test",
+      "body": "🎵 Blind Test : Ron vient de partir. Sur quelle chanson Harry entraîne-t-il Hermione dans une danse sous la tente ?",
+      "image_url": null,
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/be/94/d3/be94d37b-9a98-52ba-82c1-a55e46a4786d/mzaf_2763611376421231712.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": "O Children",
+      "reveal_artist": "Nick Cave & The Bad Seeds",
+      "reveal_cover_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/7b/43/46/7b434664-a1f1-8c98-bab3-3145fe9d1c7b/5099962629829.jpg/600x600bb.jpg",
+      "choices": [
+        { "body": "O Children — Nick Cave & The Bad Seeds", "is_correct": true },
+        { "body": "Into My Arms — Nick Cave & The Bad Seeds", "is_correct": false },
+        { "body": "Magic Works — Jarvis Cocker", "is_correct": false },
+        { "body": "Hallelujah — Jeff Buckley", "is_correct": false }
+      ]
+    },
+    {
+      "order": 9,
+      "question_type": "quiz",
+      "body": "🎬 Regardez l'extrait ! Dans le LIVRE, quelles sorcières Bellatrix affrontait-elle toutes en même temps avant que Molly ne s'interpose ?",
+      "image_url": null,
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": "https://www.youtube.com/watch?v=7MIOVtAsjDU",
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "Hermione, Ginny et Luna", "is_correct": true },
+        { "body": "Hermione, Ginny et Tonks", "is_correct": false },
+        { "body": "McGonagall, Chourave et Ginny", "is_correct": false },
+        { "body": "Luna, Cho et Lavande", "is_correct": false }
+      ]
+    }
+  ]
+}

@@ -1,20 +1,22 @@
 import {
-  LOVE_ACTUALLY_AVATARS,
   encodeNicknameWithAvatar,
   getAvatarById,
   getParticipantIdentity,
-  preloadAvatarImages,
 } from '@/avatars'
+import { UniverseTheme, getUniverseTheme } from '@/themes'
 import { getClientSessionId, Participant, supabase } from '@/types/types'
 import { FormEvent, useCallback, useEffect, useState } from 'react'
 
 export default function Lobby({
   gameId,
   onRegisterCompleted,
+  themeId,
 }: {
   gameId: string
   onRegisterCompleted: (participant: Participant) => void
+  themeId?: string | null
 }) {
+  const theme = getUniverseTheme(themeId)
   const [participant, setParticipant] = useState<Participant | null>(null)
   const [allParticipants, setAllParticipants] = useState<Participant[]>([])
   const [isEditing, setIsEditing] = useState(false)
@@ -46,7 +48,6 @@ export default function Lobby({
   }, [gameId, onRegisterCompleted, participant])
 
   useEffect(() => {
-    preloadAvatarImages()
     fetchLobbyParticipants()
 
     const channel = supabase
@@ -76,10 +77,13 @@ export default function Lobby({
   const identity = getParticipantIdentity(participant)
 
   return (
-    <div className="bg-gradient-to-br from-rose-950 via-slate-900 to-indigo-950 flex justify-center items-start min-h-screen p-4 md:p-6">
+    <div
+      className={`bg-gradient-to-br ${theme.pageBg} flex justify-center items-start min-h-screen p-4 md:p-6`}
+    >
       <div className="bg-slate-900/95 border border-white/15 p-5 md:p-7 rounded-3xl max-w-2xl w-full shadow-2xl my-auto">
         {(!participant || isEditing) && (
           <Register
+            theme={theme}
             gameId={gameId}
             existingParticipant={participant}
             allParticipants={allParticipants}
@@ -96,7 +100,7 @@ export default function Lobby({
         {participant && !isEditing && (
           <div className="text-white text-center space-y-6">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-rose-500/20 border border-rose-400/30 text-rose-300 text-xs font-bold uppercase tracking-widest">
-              🎄 En scène pour Love Actually
+              {theme.playerLobbyBadge}
             </div>
 
             {/* Carte Héros du Joueur */}
@@ -209,12 +213,14 @@ export default function Lobby({
 }
 
 function Register({
+  theme,
   onRegisterCompleted,
   onCancelEdit,
   gameId,
   existingParticipant,
   allParticipants,
 }: {
+  theme: UniverseTheme
   onRegisterCompleted: (player: Participant) => void
   onCancelEdit?: () => void
   gameId: string
@@ -247,23 +253,27 @@ function Register({
 
   // Auto-select first free avatar if none selected or if selected was just taken
   useEffect(() => {
-    if (selectedAvatarId && !takenAvatars.has(selectedAvatarId)) return
-    const firstAvailable = LOVE_ACTUALLY_AVATARS.find(
+    const isInTheme = theme.avatars.some((a) => a.id === selectedAvatarId)
+    if (selectedAvatarId && isInTheme && !takenAvatars.has(selectedAvatarId)) return
+    const firstAvailable = theme.avatars.find(
       (a) => !takenAvatars.has(a.id)
     )
     if (firstAvailable) {
       setSelectedAvatarId(firstAvailable.id)
     }
-  }, [allParticipants, selectedAvatarId]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [allParticipants, selectedAvatarId, theme]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const selectedAvatar = getAvatarById(selectedAvatarId)
+  // Un avatar d'un autre univers (thème pas encore chargé) n'est jamais conservé
+  const selectedAvatar = theme.avatars.some((a) => a.id === selectedAvatarId)
+    ? getAvatarById(selectedAvatarId)
+    : null
 
   const onFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setErrorMsg(null)
 
-    if (!selectedAvatarId) {
-      setErrorMsg('Choisis ton personnage de Love Actually !')
+    if (!selectedAvatarId || !selectedAvatar) {
+      setErrorMsg(theme.playerRegisterMissing)
       return
     }
 
@@ -336,7 +346,7 @@ function Register({
     <form onSubmit={onFormSubmit} className="space-y-4">
       <div className="text-center">
         <div className="inline-block px-3 py-0.5 rounded-full bg-rose-500/20 border border-rose-400/30 text-rose-300 text-[11px] font-bold uppercase tracking-widest mb-1">
-          ❤️ Thème Love Actually
+          {theme.playerRegisterBadge}
         </div>
         <h2 className="text-2xl font-black text-white">
           Incarne ton personnage !
@@ -372,9 +382,9 @@ function Register({
         </div>
       )}
 
-      {/* Grille des 15 avatars Love Actually */}
+      {/* Grille des avatars de l'univers du pack */}
       <div className="grid grid-cols-3 sm:grid-cols-5 gap-2.5 max-h-[340px] overflow-y-auto p-1">
-        {LOVE_ACTUALLY_AVATARS.map((avatar) => {
+        {theme.avatars.map((avatar) => {
           const takenBy = takenAvatars.get(avatar.id)
           const isSelected = selectedAvatarId === avatar.id
           return (
@@ -459,7 +469,7 @@ function Register({
         )}
         <button
           type="submit"
-          disabled={sending || !selectedAvatarId}
+          disabled={sending || !selectedAvatar}
           className="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-rose-600 to-indigo-600 hover:from-rose-500 hover:to-indigo-500 disabled:opacity-40 text-white font-black text-base transition shadow-lg"
         >
           {sending

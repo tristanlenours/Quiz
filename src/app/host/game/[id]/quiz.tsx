@@ -1,4 +1,5 @@
 import { getParticipantIdentity } from '@/avatars'
+import { getUniverseTheme } from '@/themes'
 import {
   DEFAULT_QUESTION_DURATION_SEC,
   TIME_TIL_CHOICE_REVEAL,
@@ -20,12 +21,14 @@ export default function Quiz({
   gameId,
   participants,
   isAnswerRevealedProp = false,
+  themeId,
 }: {
   question: Question
   questionCount: number
   gameId: string
   participants: Participant[]
   isAnswerRevealedProp?: boolean
+  themeId?: string | null
 }) {
   const [isAnswerRevealed, setIsAnswerRevealed] = useState(isAnswerRevealedProp)
   const [hasShownChoices, setHasShownChoices] = useState(isAnswerRevealedProp)
@@ -663,7 +666,9 @@ export default function Quiz({
           Manche {question.order + 1} / {questionCount}
         </div>
         <div className="text-sm text-slate-400">
-          {isBlindTest ? '🎵 Mode Blind Test' : '🎬 Mode Quiz Love Actually'}
+          {isBlindTest
+            ? '🎵 Mode Blind Test'
+            : getUniverseTheme(themeId).quizModeLabel}
         </div>
       </div>
     </div>

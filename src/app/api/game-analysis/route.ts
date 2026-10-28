@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { getParticipantIdentity } from '@/avatars'
+import {
+  resolveAvatarTheme,
+  HOGWARTS_HOUSES,
+  HouseId,
+  getParticipantIdentity,
+} from '@/avatars'
 
 export const dynamic = 'force-dynamic'
 
@@ -14,7 +19,17 @@ export interface GameAward {
   description: string
 }
 
+export interface HouseCupEntry {
+  house: HouseId
+  label: string
+  crest: string
+  points: number
+  members: string[]
+}
+
 export interface GameAnalysisPayload {
+  themeId: string
+  houseCup?: HouseCupEntry[]
   headline: string
   chronicle: string
   awards: GameAward[]
@@ -60,6 +75,7 @@ interface PlayerComputedStats {
   characterName: string | null
   avatarId: string | null
   avatarUrl: string | null
+  house: HouseId | null
   totalScore: number
   rank: number
   answeredCount: number
@@ -86,6 +102,7 @@ function buildDeterministicAnalysis(
       hardestQuestionText: null,
       hardestQuestionSuccessPct: null,
       source: 'deterministic',
+      themeId: 'love_actually',
     }
   }
 
@@ -230,26 +247,308 @@ function buildDeterministicAnalysis(
     hardestQuestionText: hardestQ?.body ?? null,
     hardestQuestionSuccessPct: hardestQ?.pct ?? null,
     source: 'deterministic',
+    themeId: 'love_actually',
   }
 }
 
-async function tryGenerateGeminiChronicle(
+// ==============================================================================
+// Thème Harry Potter (D29) : banquet de fin d'année, discours de Dumbledore
+// et Coupe des Quatre Maisons
+// ==============================================================================
+
+const WIZARD_VICTORY_QUIPS: Record<string, string> = {
+  hp_harry:
+    'a encore survécu à tout, y compris aux questions les plus vicieuses, avec la chance insolente de celui qui attrape le Vif d’or à la dernière seconde',
+  hp_hermione:
+    'levait la main avant même la fin de chaque question, et je soupçonne fortement un Retourneur de Temps dissimulé sous sa robe',
+  hp_ron:
+    'a joué cette partie comme une partie d’échecs version sorcier : sacrifices audacieux, coups de génie, et pas une seule araignée en vue',
+  hp_neville:
+    'nous rappelle qu’il faut du courage pour tenir tête à ses amis, et visiblement encore plus pour les écraser au classement',
+  hp_twins:
+    'a remporté la victoire avec un sens du spectacle digne d’un feu d’artifice Weasley, et je préfère ne pas savoir ce qui a été caché dans mon bureau',
+  hp_hagrid:
+    'a tout raflé avec la délicatesse d’un Norvégien à crête… je n’aurais pas dû dire ça, je n’aurais VRAIMENT pas dû dire ça',
+  hp_dumbledore:
+    'l’emporte, ce qui est fort embarrassant pour l’homme qui prononce ce discours : je vous jure que je n’ai pas consulté la Pensine',
+  hp_mcgonagall:
+    'a dominé la soirée avec une rigueur de Métamorphose, et la rumeur dit qu’un sourire a presque été aperçu',
+  hp_draco:
+    'triomphe, et nous serons tous informés dans les plus brefs délais que son père en a entendu parler',
+  hp_snape:
+    'a remporté la partie sans jamais hausser le ton, en dosant ses réponses au gramme près comme un Maître des Potions',
+  hp_bellatrix:
+    'a semé un chaos ricanant dans le classement, et je prie les préfets de surveiller l’argenterie',
+  hp_voldemort:
+    'a conquis la première place, ce que je me contenterai d’appeler « Vous-Savez-Quoi »',
+  hp_luna:
+    'a trouvé les bonnes réponses grâce à une paire de Lorgnospectres et à un sérieux coup de pouce des Joncheruines',
+  hp_lockhart:
+    'repart avec la couronne : un sixième Prix du Sourire le plus charmeur est déjà en gravure, il me l’a demandé trois fois',
+  hp_myrtle:
+    'a hanté le sommet du classement, et pour une fois personne ne pleure dans les toilettes du deuxième étage',
+  hp_cedric:
+    'a prouvé qu’il était le seul, le vrai champion de la soirée, sans aucun nom glissé en douce dans la Coupe',
+  hp_tonks:
+    'a changé de couleur de cheveux à chaque bonne réponse, si bien que nous avons fini par compter un arc-en-ciel complet',
+  hp_dobby:
+    'gagne en elfe libre, et n’a eu besoin d’aucune maison pour briller',
+}
+
+function computeHouseCup(players: PlayerComputedStats[]): HouseCupEntry[] {
+  const byHouse = new Map<HouseId, PlayerComputedStats[]>()
+  for (const p of players) {
+    if (!p.house || p.house === 'aucune') continue
+    byHouse.set(p.house, [...(byHouse.get(p.house) ?? []), p])
+  }
+  // Moyenne par membre présent : une maison nombreuse n'est pas avantagée
+  return Array.from(byHouse.entries())
+    .map(([house, members]) => ({
+      house,
+      label: HOGWARTS_HOUSES[house].label,
+      crest: HOGWARTS_HOUSES[house].crest,
+      points: Math.round(
+        members.reduce((sum, m) => sum + m.totalScore, 0) / members.length
+      ),
+      members: members.map((m) => m.displayName),
+    }))
+    .sort((a, b) => b.points - a.points)
+}
+
+function buildHarryPotterAnalysis(
   quizName: string,
   players: PlayerComputedStats[],
-  awards: GameAward[],
   hardestQ: { body: string; pct: number } | null,
   totalQuestions: number
-): Promise<{ headline: string; chronicle: string } | null> {
-  const env = process.env
-  const apiKey = (
-    env['GEMINI_API_KEY'] ||
-    env['GOOGLE_API_KEY'] ||
-    env['NEXT_PUBLIC_GEMINI_API_KEY'] ||
-    ''
-  ).trim()
+): GameAnalysisPayload {
+  if (players.length === 0) {
+    return {
+      headline: '🦉 Hibou perdu : aucune réponse n’est arrivée à la Grande Salle',
+      chronicle:
+        'Les bougies flottent encore, les assiettes attendent le dessert, mais aucun sorcier n’a répondu cette fois-ci. Le Choixpeau reste disponible pour la prochaine rentrée !',
+      awards: [],
+      hardestQuestionText: null,
+      hardestQuestionSuccessPct: null,
+      source: 'deterministic',
+      themeId: 'harry_potter',
+      houseCup: [],
+    }
+  }
 
-  if (!apiKey) return null
+  const houseCup = computeHouseCup(players)
+  const winner = players[0]
+  const second = players[1] ?? null
+  const third = players[2] ?? null
+  const labelOf = (p: PlayerComputedStats) =>
+    p.characterName ? `${p.displayName} (alias ${p.characterName})` : p.displayName
 
+  const headline =
+    second && winner.totalScore - second.totalScore <= 400
+      ? `🦉 La Gazette du Sorcier : ${winner.displayName} arrache « ${quizName} » d’un battement d’ailes de Vif d’or !`
+      : `🦉 La Gazette du Sorcier : ${winner.displayName} écrase « ${quizName} » sous les vivats de la Grande Salle !`
+
+  const parts: string[] = [
+    'Une nouvelle partie s’achève ! Avant que les elfes de maison ne servent le pudding, permettez à un vieil homme de retenir encore un instant vos estomacs affamés.',
+  ]
+
+  if (houseCup.length >= 2) {
+    const ascending = [...houseCup].reverse()
+    const leader = houseCup[0]
+    const standings = ascending
+      .slice(0, -1)
+      .map(
+        (h, i) =>
+          `${i === 0 ? 'en dernière place' : 'puis'} ${h.label} avec ${h.points} points`
+      )
+      .join(', ')
+    parts.push(
+      `La Coupe des Quatre Maisons, donc : ${standings}… et en tête, avec ${leader.points} points, ${leader.label} ${leader.crest} ! Je crois qu’un petit changement de décoration s’impose.`
+    )
+  } else if (houseCup.length === 1) {
+    parts.push(
+      `${houseCup[0].label} ${houseCup[0].crest} remporte la Coupe des Quatre Maisons sans le moindre rival : une victoire écrasante… et un peu solitaire.`
+    )
+  }
+
+  const quip =
+    (winner.avatarId && WIZARD_VICTORY_QUIPS[winner.avatarId]) ||
+    'a dominé la soirée avec un talent que même le Choixpeau n’avait pas vu venir'
+  parts.push(
+    `Mais les derniers points de la soirée reviennent à ${labelOf(winner)}, qui ${quip} : ${winner.totalScore} points et ${winner.correctCount}/${totalQuestions} bonnes réponses.`
+  )
+
+  if (second) {
+    const gap = winner.totalScore - second.totalScore
+    parts.push(
+      gap === 0
+        ? `${labelOf(second)} termine à égalité parfaite : je propose un duel amical, sans Sortilège Impardonnable, cela va de soi.`
+        : gap <= 450
+        ? `${labelOf(second)} échoue à ${gap} petits points, l’épaisseur d’une plume de phénix${third ? `, devant ${third.displayName} qui complète le podium avec ${third.totalScore} points` : ''}.`
+        : `${labelOf(second)} décroche une belle deuxième place (${second.totalScore} points)${third ? `, et ${third.displayName} se hisse sur la troisième marche avec ${third.totalScore} points` : ''}.`
+    )
+  }
+
+  if (hardestQ) {
+    parts.push(
+      `Quant à la question « ${hardestQ.body} », seuls ${hardestQ.pct}% d’entre vous y ont survécu : même le Choixpeau en a perdu une couture.`
+    )
+  }
+  parts.push(
+    'Bonne nuit à tous, et prenez garde aux escaliers : ils adorent changer d’avis.'
+  )
+
+  const awards: GameAward[] = []
+  const giveAward = (
+    id: string,
+    emoji: string,
+    title: string,
+    p: PlayerComputedStats,
+    description: string
+  ) =>
+    awards.push({
+      id,
+      emoji,
+      title,
+      winnerName: p.displayName,
+      winnerCharacter: p.characterName,
+      winnerAvatarUrl: p.avatarUrl,
+      description,
+    })
+
+  const scorers = players.filter((p) => p.correctCount > 0)
+  const fastest = [...scorers].sort(
+    (a, b) => b.bestSingleScore - a.bestSingleScore || b.avgSpeedScore - a.avgSpeedScore
+  )[0]
+  if (fastest) {
+    giveAward(
+      'speed',
+      '🧹',
+      'Éclair de Feu du Buzzer',
+      fastest,
+      `Plus rapide qu’un balai de course : une pointe à ${fastest.bestSingleScore} pts sur une seule question !`
+    )
+  }
+
+  const sniper = [...scorers].sort(
+    (a, b) => b.maxStreak - a.maxStreak || b.accuracyPct - a.accuracyPct
+  )[0]
+  if (sniper && (sniper.maxStreak >= 2 || players.length === 1)) {
+    giveAward(
+      'sniper',
+      '⏳',
+      'Retourneur de Temps d’Hermione',
+      sniper,
+      `${sniper.maxStreak} bonnes réponses d’affilée (${sniper.accuracyPct}% de réussite) : on soupçonne un voyage dans le temps.`
+    )
+  }
+
+  if (players.length >= 2) {
+    const careful = scorers
+      .filter((p) => p.participantId !== fastest?.participantId)
+      .sort((a, b) => a.avgSpeedScore - b.avgSpeedScore)[0]
+    if (careful) {
+      giveAward(
+        'careful',
+        '👻',
+        'Prix du Professeur Binns',
+        careful,
+        `Réfléchit comme un fantôme qui a l’éternité devant lui (${careful.avgSpeedScore} pts de moyenne par bonne réponse).`
+      )
+    }
+  }
+
+  const finisher = players
+    .filter((p) => p.lateGameScore > 0)
+    .sort((a, b) => b.lateGameScore - a.lateGameScore)[0]
+  if (finisher && finisher.lateGameScore >= 600) {
+    giveAward(
+      'finisher',
+      '🦁',
+      'Dix points pour Neville',
+      finisher,
+      `La remontada de dernière minute : ${finisher.lateGameScore} pts sur les 3 dernières manches.`
+    )
+  }
+
+  if (players.length >= 3) {
+    const brave = players[players.length - 1]
+    giveAward(
+      'brave',
+      '🧦',
+      'Chaussette de Dobby',
+      brave,
+      `${brave.answeredCount} manches jouées sans jamais lâcher sa baguette : un Gallion d’or pour le courage !`
+    )
+  }
+
+  return {
+    headline,
+    chronicle: parts.join(' '),
+    awards: awards.slice(0, 4),
+    hardestQuestionText: hardestQ?.body ?? null,
+    hardestQuestionSuccessPct: hardestQ?.pct ?? null,
+    source: 'deterministic',
+    themeId: 'harry_potter',
+    houseCup,
+  }
+}
+
+interface ChronicleContext {
+  quizName: string
+  players: PlayerComputedStats[]
+  awards: GameAward[]
+  hardestQ: { body: string; pct: number } | null
+  totalQuestions: number
+  houseCup?: HouseCupEntry[]
+}
+
+function buildHarryPotterPrompt({
+  quizName,
+  players,
+  awards,
+  hardestQ,
+  totalQuestions,
+  houseCup,
+}: ChronicleContext): string {
+  const summaryLines = players.map(
+    (p) =>
+      `- #${p.rank} ${p.displayName} (incarne ${p.characterName || 'un Moldu sans avatar'}, maison ${p.house ? HOGWARTS_HOUSES[p.house].label : 'aucune'}) : ${p.totalScore} pts, ${p.correctCount}/${totalQuestions} bonnes réponses, série max ${p.maxStreak}, pic vitesse ${p.bestSingleScore} pts`
+  )
+  const houseLines = (houseCup ?? []).map(
+    (h, i) => `- ${i + 1}. ${h.label} : ${h.points} pts (moyenne de ${h.members.join(', ')})`
+  )
+  const awardsLines = awards.map(
+    (a) => `- ${a.emoji} ${a.title} : ${a.winnerName} (${a.description})`
+  )
+
+  return `Tu incarnes Albus Dumbledore prononçant le discours du banquet de fin d'année dans la Grande Salle de Poudlard, après une soirée Quiz & Blind Test Harry Potter entre amis (pack "${quizName}", ${totalQuestions} questions).
+Ton ton : malicieux, chaleureux, un brin excentrique, avec des digressions loufoques (bonbons, chaussettes en laine, escaliers capricieux). Tu restes bienveillant : on taquine, on n'humilie jamais.
+
+Classement individuel :
+${summaryLines.join('\n')}
+
+Coupe des Quatre Maisons (moyenne des scores des membres présents) :
+${houseLines.length > 0 ? houseLines.join('\n') : '- Aucune maison représentée'}
+
+Points spéciaux déjà attribués :
+${awardsLines.join('\n')}
+${hardestQ ? `Question la plus meurtrière : "${hardestQ.body}" (${hardestQ.pct}% de réussite).` : ''}
+
+Rédige en français un JSON strict avec 2 clés :
+- "headline": Une manchette de La Gazette du Sorcier façon Rita Skeeter, sensationnaliste et drôle, avec un emoji (max 100 caractères).
+- "chronicle": Le discours de Dumbledore en 5 à 6 phrases, à la première personne, qui (1) annonce la Coupe des Quatre Maisons de la dernière à la première place avec suspense, (2) accorde les « derniers points » au vainqueur en jouant sur le personnage qu'il incarne, (3) taquine 2 ou 3 autres joueurs via leur personnage, (4) évoque la question la plus meurtrière, (5) se termine par une formule de clôture typiquement dumbledorienne.
+N'invente aucun score : utilise uniquement les chiffres fournis.
+
+Réponds UNIQUEMENT avec l'objet JSON valide, sans balises markdown.`
+}
+
+function buildLoveActuallyPrompt({
+  quizName,
+  players,
+  awards,
+  hardestQ,
+  totalQuestions,
+}: ChronicleContext): string {
   const summaryLines = players.map(
     (p) =>
       `- #${p.rank} ${p.displayName} (Avatar Love Actually: ${p.characterName || 'Aucun'}) : ${p.totalScore} pts, ${p.correctCount}/${totalQuestions} bonnes réponses, série max ${p.maxStreak}, pic vitesse ${p.bestSingleScore} pts`
@@ -259,7 +558,7 @@ async function tryGenerateGeminiChronicle(
     (a) => `- ${a.emoji} ${a.title} attribué à ${a.winnerName} (${a.description})`
   )
 
-  const prompt = `Tu es le présentateur survolté, drôle et bienveillant d'une soirée Quiz & Blind Test entre amis sur le thème de "Love Actually".
+  return `Tu es le présentateur survolté, drôle et bienveillant d'une soirée Quiz & Blind Test entre amis sur le thème de "Love Actually".
 Voici les résultats réels de la partie sur le pack "${quizName}" (${totalQuestions} questions) :
 
 Classement :
@@ -274,6 +573,21 @@ Rédige en français un JSON strict avec 2 clés :
 - "chronicle": Un débrief humoristique, chaleureux et rythmé de 3 à 4 phrases maximum qui commente le podium, taquine gentiment les joueurs en faisant des clins d'œil aux personnages de Love Actually qu'ils ont choisis comme avatars, et mentionne un fait marquant de la partie.
 
 Réponds UNIQUEMENT avec l'objet JSON valide, sans balises markdown.`
+}
+
+async function tryGenerateGeminiChronicle(
+  prompt: string,
+  maxOutputTokens: number
+): Promise<{ headline: string; chronicle: string } | null> {
+  const env = process.env
+  const apiKey = (
+    env['GEMINI_API_KEY'] ||
+    env['GOOGLE_API_KEY'] ||
+    env['NEXT_PUBLIC_GEMINI_API_KEY'] ||
+    ''
+  ).trim()
+
+  if (!apiKey) return null
 
   const models = [
     'gemini-3.5-flash',
@@ -294,7 +608,7 @@ Réponds UNIQUEMENT avec l'objet JSON valide, sans balises markdown.`
             contents: [{ parts: [{ text: prompt }] }],
             generationConfig: {
               temperature: 0.85,
-              maxOutputTokens: 450,
+              maxOutputTokens,
               responseMimeType: 'application/json',
             },
           }),
@@ -370,7 +684,11 @@ export async function POST(request: Request) {
     ])
 
     const quizSetId = gameRes.data?.quiz_set_id
-    const quizName = (gameRes.data as any)?.quiz_sets?.name || 'Quiz Love Actually'
+    const quizSetRow = (gameRes.data as any)?.quiz_sets
+    const themeId = resolveAvatarTheme(quizSetRow)
+    const isHarryPotter = themeId === 'harry_potter'
+    const quizName =
+      quizSetRow?.name || (isHarryPotter ? 'Quiz Harry Potter' : 'Quiz Love Actually')
 
     let questions: { id: string; body: string; order: number }[] = []
     if (quizSetId) {
@@ -452,6 +770,7 @@ export async function POST(request: Request) {
         characterName: identity.characterName,
         avatarId: identity.avatarId,
         avatarUrl: identity.avatar?.imageUrl ?? null,
+        house: identity.avatar?.house ?? null,
         totalScore: r.total_score ?? 0,
         rank: idx + 1,
         answeredCount: myAnswers.length,
@@ -480,19 +799,24 @@ export async function POST(request: Request) {
       }
     }
 
-    const baseAnalysis = buildDeterministicAnalysis(
-      quizName,
-      playerStats,
-      hardestQ,
-      totalQuestions
-    )
+    const baseAnalysis = (
+      isHarryPotter ? buildHarryPotterAnalysis : buildDeterministicAnalysis
+    )(quizName, playerStats, hardestQ, totalQuestions)
 
-    const geminiOut = await tryGenerateGeminiChronicle(
+    const promptContext: ChronicleContext = {
       quizName,
-      playerStats,
-      baseAnalysis.awards,
+      players: playerStats,
+      awards: baseAnalysis.awards,
       hardestQ,
-      totalQuestions
+      totalQuestions,
+      houseCup: baseAnalysis.houseCup,
+    }
+    // Le discours de Dumbledore est plus long (et les modèles "thinking" consomment des tokens)
+    const geminiOut = await tryGenerateGeminiChronicle(
+      isHarryPotter
+        ? buildHarryPotterPrompt(promptContext)
+        : buildLoveActuallyPrompt(promptContext),
+      isHarryPotter ? 1500 : 450
     )
 
     const finalPayload: GameAnalysisPayload = geminiOut

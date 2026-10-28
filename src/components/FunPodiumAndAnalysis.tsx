@@ -2,6 +2,7 @@
 
 import { getParticipantIdentity } from '@/avatars'
 import type { GameAnalysisPayload } from '@/app/api/game-analysis/route'
+import { getUniverseTheme } from '@/themes'
 import { GameResult, Participant } from '@/types/types'
 import { useEffect, useState } from 'react'
 
@@ -45,6 +46,8 @@ export function FunPodiumAndAnalysis({
       cancelled = true
     }
   }, [gameId, gameResults.length])
+
+  const theme = getUniverseTheme(analysis?.themeId)
 
   const participantById = new Map(
     (participants ?? []).map((p) => [p.id, p])
@@ -168,13 +171,13 @@ export function FunPodiumAndAnalysis({
       <div className="max-w-4xl mx-auto bg-gradient-to-br from-rose-950/80 via-slate-900/95 to-indigo-950/80 border border-rose-400/30 rounded-3xl p-5 md:p-7 shadow-2xl text-left">
         <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/20 border border-rose-400/30 text-rose-300 text-xs font-bold uppercase tracking-widest">
-            🎬 Le Débrief du Réalisateur & Trophées
+            {theme.debriefBadge}
           </div>
           {analysis && (
             <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-white/10 text-slate-300">
               {analysis.source === 'gemini'
                 ? '✨ Chronique générée par Gemini IA'
-                : '🎄 Chronique Studio Love Actually'}
+                : theme.deterministicChronicleLabel}
             </span>
           )}
         </div>
@@ -194,6 +197,39 @@ export function FunPodiumAndAnalysis({
                 {analysis.chronicle}
               </p>
             </div>
+
+            {analysis.houseCup && analysis.houseCup.length > 0 && (
+              <div>
+                <div className="text-xs font-bold uppercase tracking-widest text-amber-300 mb-2.5">
+                  🏆 Coupe des Quatre Maisons
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+                  {analysis.houseCup.map((house, idx) => (
+                    <div
+                      key={house.house}
+                      className={`p-3 rounded-2xl border text-center ${
+                        idx === 0
+                          ? 'bg-amber-500/20 border-amber-400 shadow-lg shadow-amber-500/20'
+                          : 'bg-slate-950/80 border-white/10'
+                      }`}
+                    >
+                      <div className="text-2xl">
+                        {idx === 0 ? '🏆' : house.crest}
+                      </div>
+                      <div className="text-sm font-black text-white">
+                        {house.label}
+                      </div>
+                      <div className="text-lg font-mono font-black text-amber-300">
+                        {house.points} pts
+                      </div>
+                      <div className="text-[10px] text-slate-400 leading-tight">
+                        {house.members.join(', ')}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {analysis.awards.length > 0 && (
               <div>

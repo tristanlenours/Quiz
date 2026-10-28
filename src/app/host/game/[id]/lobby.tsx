@@ -1,34 +1,24 @@
 import { getParticipantIdentity } from '@/avatars'
+import { getUniverseTheme } from '@/themes'
 import { Participant, supabase } from '@/types/types'
 import { useQRCode } from 'next-qrcode'
 import { useEffect, useRef, useState } from 'react'
-
-const LOBBY_PLAYLIST = [
-  {
-    title: 'All You Need Is Love (Scène du mariage)',
-    url: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/87/93/1d/87931d5c-beda-7647-7b7c-5d89a88ad755/mzaf_16168889973628785460.plus.aac.p.m4a',
-  },
-  {
-    title: 'God Only Knows — The Beach Boys',
-    url: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/3b/17/e6/3b17e6c0-5a2a-2226-7c3f-6d0f57be6de9/mzaf_2188717033219073832.plus.aac.p.m4a',
-  },
-  {
-    title: 'White Christmas — Otis Redding',
-    url: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/4a/67/15/4a671528-6b4d-4932-f7ab-7212db98f0a4/mzaf_10429321169689904795.plus.aac.p.m4a',
-  },
-]
 
 export default function Lobby({
   participants,
   gameId,
   pinCode,
   quizName,
+  themeId,
 }: {
   participants: Participant[]
   gameId: string
   pinCode?: string
   quizName?: string
+  themeId?: string | null
 }) {
+  const theme = getUniverseTheme(themeId)
+  const LOBBY_PLAYLIST = theme.lobbyPlaylist
   const { Canvas } = useQRCode()
   const [joinUrl, setJoinUrl] = useState('')
   const [trackIndex, setTrackIndex] = useState(0)
@@ -81,7 +71,7 @@ export default function Lobby({
   }
 
   return (
-    <div className="flex flex-col justify-between min-h-screen bg-gradient-to-br from-rose-950 via-slate-900 to-indigo-950 text-white p-6 md:p-8">
+    <div className={`flex flex-col justify-between min-h-screen bg-gradient-to-br ${theme.pageBg} text-white p-6 md:p-8`}>
       <audio
         ref={audioRef}
         src={LOBBY_PLAYLIST[trackIndex].url}
@@ -91,7 +81,7 @@ export default function Lobby({
 
       <div className="flex flex-wrap items-center justify-between gap-4 max-w-6xl w-full mx-auto">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-500/20 border border-rose-400/30 text-rose-300 text-xs font-bold uppercase tracking-widest">
-          📺 ÉCRAN HÔTE (TV) • CASTING LOVE ACTUALLY
+          {theme.hostLobbyBadge}
         </div>
 
         <button
@@ -105,7 +95,7 @@ export default function Lobby({
         >
           {isMusicPlaying
             ? `🔊 Ambiance BO : ${LOBBY_PLAYLIST[trackIndex].title} (Pause)`
-            : '🎵 Activer la musique d’ambiance Love Actually'}
+            : `🎵 Activer la musique d’ambiance ${theme.universe}`}
         </button>
       </div>
 
@@ -114,8 +104,9 @@ export default function Lobby({
           {quizName || 'Prêts à jouer ?'}
         </h1>
         <p className="text-slate-300 text-sm mt-1">
-          Scannez le QR code sur votre téléphone et choisissez votre personnage
-          de <strong>Love Actually</strong> avant qu&apos;on vous le pique !
+          Scannez le QR code sur votre téléphone et{' '}
+          <strong>{theme.hostLobbyIntro}</strong> avant qu&apos;on vous le
+          pique !
         </p>
       </div>
 
@@ -138,7 +129,7 @@ export default function Lobby({
                 Personnages en scène
               </span>
               <span className="px-3.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 font-bold text-sm">
-                {participants.length} / 15 joueurs
+                {participants.length} / {theme.avatars.length} joueurs
               </span>
             </div>
           </div>
@@ -146,8 +137,7 @@ export default function Lobby({
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 min-h-[210px] p-4 rounded-2xl bg-slate-950/60 border border-white/10 content-start max-h-[340px] overflow-y-auto">
             {participants.length === 0 ? (
               <div className="col-span-full text-slate-400 text-sm m-auto text-center py-12">
-                🎄 En attente des premiers acteurs... Scannez le QR code avec
-                votre téléphone pour choisir votre avatar Love Actually !
+                {theme.hostLobbyEmpty}
               </div>
             ) : (
               participants.map((participant) => {
@@ -235,8 +225,7 @@ export default function Lobby({
       </div>
 
       <div className="text-center text-slate-400 text-xs">
-        « Whenever I get gloomy with the state of the world, I think about the
-        arrivals gate at Heathrow Airport... » ❤️
+        {theme.hostLobbyQuote}
       </div>
     </div>
   )

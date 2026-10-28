@@ -1,5 +1,6 @@
 'use client'
 
+import { resolveAvatarTheme } from '@/avatars'
 import { DEFAULT_QUESTION_DURATION_SEC } from '@/constants'
 import {
   isSupabaseClientConfigured,
@@ -296,24 +297,39 @@ export default function HostDashboardPage() {
     name: string,
     description: string,
     mode: 'quiz' | 'blind_test' | 'mixed',
-    questions: DraftQuestion[]
+    questions: DraftQuestion[],
+    avatarTheme?: string
   ) => {
     let targetSetId = setId
+    // Thème d'avatars (D21) : uniquement transmis quand il est connu (import JSON), sinon défaut SQL.
+    // Si la colonne n'existe pas encore (migration D21 non jouée), on réessaie sans : le thème
+    // est alors déduit du nom du pack (resolveAvatarTheme, D29).
+    const withTheme = avatarTheme
+      ? { name, description, mode, avatar_theme: avatarTheme }
+      : { name, description, mode }
+    const isMissingThemeColumn = (message?: string) =>
+      Boolean(avatarTheme && message?.includes('avatar_theme'))
 
     if (!targetSetId) {
-      const { data: createdSet, error: setErr } = await supabase
-        .from('quiz_sets')
-        .insert({ name, description, mode })
-        .select()
-        .single()
-      if (setErr) throw new Error(setErr.message)
-      targetSetId = createdSet.id
+      let created = await supabase.from('quiz_sets').insert(withTheme).select().single()
+      if (isMissingThemeColumn(created.error?.message)) {
+        created = await supabase
+          .from('quiz_sets')
+          .insert({ name, description, mode })
+          .select()
+          .single()
+      }
+      if (created.error) throw new Error(created.error.message)
+      targetSetId = created.data.id
     } else {
-      const { error: updateErr } = await supabase
-        .from('quiz_sets')
-        .update({ name, description, mode })
-        .eq('id', targetSetId)
-      if (updateErr) throw new Error(updateErr.message)
+      let updated = await supabase.from('quiz_sets').update(withTheme).eq('id', targetSetId)
+      if (isMissingThemeColumn(updated.error?.message)) {
+        updated = await supabase
+          .from('quiz_sets')
+          .update({ name, description, mode })
+          .eq('id', targetSetId)
+      }
+      if (updated.error) throw new Error(updated.error.message)
 
       await supabase
         .from('quiz_questions')
@@ -482,6 +498,7 @@ export default function HostDashboardPage() {
       name: set.name,
       description: set.description,
       mode: set.mode,
+      avatar_theme: resolveAvatarTheme(set),
       questions: (set.questions || []).map((q) => ({
         question_type: q.question_type,
         body: q.body,
@@ -521,7 +538,8 @@ export default function HostDashboardPage() {
         parsed.name,
         parsed.description || '',
         parsed.mode || 'mixed',
-        parsed.questions
+        parsed.questions,
+        parsed.avatar_theme
       )
       setShowImportModal(false)
       setImportJsonText('')
