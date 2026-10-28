@@ -203,12 +203,27 @@ export default function Quiz({
 
     setHasShownChoices(false)
 
-    const revealTimer = setTimeout(() => {
-      if (currentQuestionIdRef.current === question.id) {
+    const syncChannel = supabase.channel(`quiz_sync_${gameId}`)
+    syncChannel.subscribe()
+
+    const triggerShowChoices = () => {
+      if (
+        currentQuestionIdRef.current === question.id &&
+        !hasShownChoicesRef.current
+      ) {
         hasShownChoicesRef.current = true
         setHasShownChoices(true)
         fetchAnswers()
+        syncChannel.send({
+          type: 'broadcast',
+          event: 'show_choices',
+          payload: { questionId: question.id },
+        })
       }
+    }
+
+    const revealTimer = setTimeout(() => {
+      triggerShowChoices()
     }, TIME_TIL_CHOICE_REVEAL)
 
     const channel = supabase
@@ -239,6 +254,7 @@ export default function Quiz({
       clearTimeout(revealTimer)
       clearInterval(pollInterval)
       supabase.removeChannel(channel)
+      supabase.removeChannel(syncChannel)
     }
   }, [gameId, question.id])
 
@@ -334,7 +350,7 @@ export default function Quiz({
 
       <div className="flex-grow min-h-0 text-white px-8 flex flex-col justify-center">
         {!hasShownChoices && !isAnswerRevealed && (
-          <div className="flex flex-col items-center justify-center gap-6 flex-grow min-h-0 py-4">
+          <div className="flex flex-col items-center justify-center gap-5 flex-grow min-h-0 py-4">
             {/* Illustration visible dès l'affichage de la question (Décision D17) */}
             {!isBlindTest && question.image_url && (
               <img
@@ -343,10 +359,37 @@ export default function Quiz({
                 className="min-h-0 max-h-full max-w-full rounded-2xl shadow-lg object-contain"
               />
             )}
-            <div className="text-center text-2xl text-slate-300 animate-pulse font-semibold">
-              {isBlindTest
-                ? '🎧 Préparez vos oreilles...'
-                : '👀 Lisez bien la question...'}
+            <div className="flex items-center gap-4 bg-slate-800/80 border border-white/10 px-6 py-3 rounded-2xl shadow-xl">
+              <CountdownCircleTimer
+                key={`host_preview_${question.id}`}
+                isPlaying={!hasShownChoices}
+                duration={TIME_TIL_CHOICE_REVEAL / 1000}
+                size={64}
+                strokeWidth={6}
+                colors={['#f43f5e', '#6366f1', '#F7B801', '#ef4444']}
+                trailColor={'transparent' as any}
+                colorsTime={[
+                  Math.round((TIME_TIL_CHOICE_REVEAL / 1000) * 0.75),
+                  Math.round((TIME_TIL_CHOICE_REVEAL / 1000) * 0.5),
+                  2,
+                  0,
+                ]}
+                onComplete={() => {
+                  hasShownChoicesRef.current = true
+                  setHasShownChoices(true)
+                }}
+              >
+                {({ remainingTime }) => (
+                  <span className="text-2xl font-black text-white">
+                    {remainingTime}
+                  </span>
+                )}
+              </CountdownCircleTimer>
+              <div className="text-xl text-slate-200 font-bold">
+                {isBlindTest
+                  ? '🎧 Préparez vos oreilles... Écoute dans un instant !'
+                  : '👀 Lisez bien la question... Les choix arrivent !'}
+              </div>
             </div>
           </div>
         )}

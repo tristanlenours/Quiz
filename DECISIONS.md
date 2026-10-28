@@ -51,6 +51,7 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **D24** | 2026-10-28 | Isolation des réponses par partie & Verrou anti-révélation prématurée | Dans `src/app/host/game/[id]/quiz.tsx`, filtrer `quiz_answers` par `.in('participant_id', currentParticipantIds)` (pour ne jamais compter les réponses d'anciennes parties sur la même question) et verrouiller `onTimeUp` / `getNextQuestion` via `hasRevealedRef` et `isTransitioningRef` + `key={question.id}` afin d'empêcher le polling de 1,5 s de révéler prématurément la manche suivante. | Adopté |
 | **D25** | 2026-10-28 | Cycle de vie stable de l'Écran Hôte (TV), synchronisation de l'état `is_answer_revealed` & déverrouillage de `getNextQuestion` | Découpler le hook de manche de `participants` (stocké via `useRef`) pour empêcher le polling 1,5s de réinitialiser le timer de 5s en boucle (`hasShownChoices` bloqué à faux). Transmettre `is_answer_revealed` depuis `HostGamePage`, trier formellement `quizSet.questions` par `order` en JS, et rendre le bouton « ⏭️ Révéler maintenant » disponible immédiatement. | Adopté |
 | **D26** | 2026-10-28 | Écran Hôte (TV) comme diffuseur sonore unique & suppression de l'audio mobile (Zéro cacophonie) | Supprimer tout élément `<audio>`, état `mobileAudioEnabled` et bouton d'écoute sur la Manette Joueur (`/game/[id]/quiz.tsx`). Toute la musique et les effets sonores (Blind Test, quiz sonorisé, salon, podium) sont joués exclusivement sur l'Écran Hôte / les enceintes de la pièce. | Adopté |
+| **D27** | 2026-10-28 | Synchronisation stricte Hôte ⇄ Participants du décompte de lecture & révélation des choix (Équité totale) | Aligner le décompte de lecture sur `TIME_TIL_CHOICE_REVEAL` (5s) avec `CountdownCircleTimer` visuel identique sur TV et mobile. Révélation instantanée et simultanée des choix via canal Supabase Realtime Broadcast (`quiz_sync_${gameId}`), garantissant zéro affichage prématuré sur mobile et une équité temps réel parfaite. | Adopté |
 
 ---
 
@@ -208,4 +209,16 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 - **Contexte** : Demande explicite de l'auteur ("il ne doit pas être possible d'écouter la musique sur l'écran de participant, ça va être la cacophonie").
 - **Décision** : Remplacer la micro-décision D08 en supprimant intégralement la balise `<audio>`, l'état `mobileAudioEnabled` et le bouton « 🎧 Écouter la musique sur mon téléphone » de la Manette Joueur (`/game/[id]/quiz.tsx`).
 - **Résultat** : L'Écran Hôte (TV / Enceintes de la pièce) est le diffuseur sonore unique et exclusif (Blind Test, quiz sonorisé, salon, podium). Les smartphones des joueurs restent des manettes silencieuses et réactives.
+
+### 2026-10-28 — D27 : Synchronisation stricte Hôte ⇄ Participants du décompte de lecture & révélation des choix (Équité totale)
+- **Contexte** : L'auteur signale que sur l'écran participant, les choix s'affichaient au milieu du décompte (avant qu'il arrive à 0) et avant que les choix ne s'affichent sur l'Écran Hôte (TV), brisant l'équité du jeu.
+- **Cause identifiée** :
+  1. Sur la Manette Joueur (`src/app/game/[id]/quiz.tsx`), un `setTimeout` bridé à `mobileRevealMs = Math.min(TIME_TIL_CHOICE_REVEAL, 2500)` coupait le décompte visuel de 5 s en plein milieu (à 2,5 s) et affichait prématurément les 4 boutons de réponse.
+  2. L'Écran Hôte utilisait `TIME_TIL_CHOICE_REVEAL = 5000` (5 s) et n'avait pas de compte à rebours visuel pendant la phase de lecture. Les joueurs mobiles disposaient donc de 2,5 secondes d'avance pour lire et répondre avant même que les choix n'apparaissent sur la TV.
+- **Décision** :
+  1. Harmonisation stricte : Mobile et Hôte utilisent le même `TIME_TIL_CHOICE_REVEAL` (5 s) et un `CountdownCircleTimer` visuel identique (5... 4... 3... 2... 1...).
+  2. Sur Mobile, les choix ne peuvent plus s'afficher avant que le décompte atteigne 0.
+  3. Canal de Broadcast Realtime (`quiz_sync_${gameId}`) : L'Hôte diffuse un événement instantané `show_choices` au moment exact où la TV révèle les choix (ou si l'hôte clique « Révéler maintenant »), synchronisant tous les mobiles à la milliseconde près.
+  4. Le chronomètre de score du joueur (`questionStartTime`) ne démarre qu'au moment précis où les choix deviennent visibles.
+
 

@@ -100,15 +100,37 @@ export default function Quiz({
         }
       })
 
-    // Délai court (2.5s) côté mobile pour garantir que les boutons sont toujours prêts dès que le chrono TV démarre (Décision D24)
-    const mobileRevealMs = Math.min(TIME_TIL_CHOICE_REVEAL, 2500)
-    const timer = setTimeout(() => {
-      setHasShownChoices(true)
-      setQuestionStartTime(Date.now())
-    }, mobileRevealMs)
+    const revealChoices = () => {
+      setHasShownChoices((prev) => {
+        if (!prev) {
+          setQuestionStartTime(Date.now())
+          return true
+        }
+        return prev
+      })
+    }
 
-    return () => clearTimeout(timer)
-  }, [question.id, question.choices, playerId])
+    // Le décompte est STRICTEMENT synchronisé avec TIME_TIL_CHOICE_REVEAL (Décision D27)
+    const timer = setTimeout(revealChoices, TIME_TIL_CHOICE_REVEAL)
+
+    // Écoute du broadcast temps réel envoyé par l'Écran Hôte
+    const syncChannel = supabase
+      .channel(`quiz_sync_${gameId}`)
+      .on('broadcast', { event: 'show_choices' }, (payload) => {
+        if (
+          !payload?.payload?.questionId ||
+          payload.payload.questionId === question.id
+        ) {
+          revealChoices()
+        }
+      })
+      .subscribe()
+
+    return () => {
+      clearTimeout(timer)
+      supabase.removeChannel(syncChannel)
+    }
+  }, [gameId, question.id, question.choices, playerId])
 
   const answer = async (choice: Choice) => {
     setChosenChoice(choice)
@@ -224,20 +246,39 @@ export default function Quiz({
       {!hasShownChoices && !isAnswerRevealed && (
         <div className="flex-grow min-h-0 text-white flex flex-col items-center justify-center">
           {questionImage}
-          <CountdownCircleTimer
-            isPlaying
-            duration={TIME_TIL_CHOICE_REVEAL / 1000}
-            size={questionImage ? 68 : 150}
-            strokeWidth={questionImage ? 6 : 10}
-            colors={['#f43f5e', '#6366f1', '#f43f5e', '#6366f1']}
-            trailColor={'transparent' as ColorFormat}
-            colorsTime={[5, 3, 1, 0]}
-          >
-            {({ remainingTime }) => (
-              <span className="text-3xl font-black">{remainingTime}</span>
-            )}
-          </CountdownCircleTimer>
-          <p className="mt-2 mb-2 text-slate-400 text-xs">Préparez-vous...</p>
+          <div className="py-2">
+            <CountdownCircleTimer
+              key={`mobile_preview_${question.id}`}
+              isPlaying={!hasShownChoices}
+              duration={TIME_TIL_CHOICE_REVEAL / 1000}
+              size={questionImage ? 80 : 130}
+              strokeWidth={questionImage ? 6 : 8}
+              colors={['#f43f5e', '#6366f1', '#F7B801', '#ef4444']}
+              trailColor={'transparent' as ColorFormat}
+              colorsTime={[
+                Math.round((TIME_TIL_CHOICE_REVEAL / 1000) * 0.75),
+                Math.round((TIME_TIL_CHOICE_REVEAL / 1000) * 0.5),
+                2,
+                0,
+              ]}
+              onComplete={() => {
+                setHasShownChoices((prev) => {
+                  if (!prev) {
+                    setQuestionStartTime(Date.now())
+                    return true
+                  }
+                  return prev
+                })
+              }}
+            >
+              {({ remainingTime }) => (
+                <span className="text-3xl font-black">{remainingTime}</span>
+              )}
+            </CountdownCircleTimer>
+          </div>
+          <p className="mt-1 mb-2 text-slate-400 text-xs font-semibold animate-pulse">
+            👀 Lisez la question... Préparez-vous !
+          </p>
         </div>
       )}
 
