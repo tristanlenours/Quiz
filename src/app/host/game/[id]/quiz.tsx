@@ -542,6 +542,7 @@ export default function Quiz({
                     ></div>
                   </div>
                   <div
+                    data-testid={`host-choice-count-${index}`}
                     className={`mt-1 text-white text-lg font-bold text-center py-1.5 rounded-b ${
                       index === 0
                         ? 'bg-red-500'
