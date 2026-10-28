@@ -1,5 +1,6 @@
 'use client'
 
+import { preloadAvatarImages } from '@/avatars'
 import {
   Game,
   Participant,
@@ -32,6 +33,8 @@ export default function HostGamePage({
   const [currentQuestionSequence, setCurrentQuestionSequence] = useState(0)
 
   useEffect(() => {
+    preloadAvatarImages()
+
     const getQuestions = async () => {
       const { data: gameData, error: gameError } = await supabase
         .from('quiz_games')
@@ -89,19 +92,13 @@ export default function HostGamePage({
       .on(
         'postgres_changes',
         {
-          event: 'INSERT',
+          event: '*',
           schema: 'public',
           table: 'quiz_participants',
           filter: `game_id=eq.${gameId}`,
         },
-        (payload) => {
-          setParticipants((currentParticipants) => {
-            const exists = currentParticipants.some(
-              (p) => p.id === (payload.new as Participant).id
-            )
-            if (exists) return currentParticipants
-            return [...currentParticipants, payload.new as Participant]
-          })
+        () => {
+          fetchHostState()
         }
       )
       .on(

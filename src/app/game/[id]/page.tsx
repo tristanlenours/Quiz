@@ -1,6 +1,8 @@
 'use client'
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { getParticipantIdentity, preloadAvatarImages } from '@/avatars'
+import { FunPodiumAndAnalysis } from '@/components/FunPodiumAndAnalysis'
 import {
   Game,
   GameResult,
@@ -81,6 +83,8 @@ export default function PlayerGamePage({
   )
 
   useEffect(() => {
+    preloadAvatarImages()
+
     const gameChannel = supabase
       .channel(`game_participant_${gameId}`)
       .on(
@@ -101,6 +105,8 @@ export default function PlayerGamePage({
             setCurrentScreen(Screens.quiz)
             setCurrentQuestionSequence(game.current_question_sequence)
             setIsAnswerRevealed(game.is_answer_revealed)
+          } else {
+            setCurrentScreen(Screens.lobby)
           }
         }
       )
@@ -131,7 +137,8 @@ export default function PlayerGamePage({
           <Quiz
             question={questions[currentQuestionSequence]}
             questionCount={questions.length}
-            participantId={participant.id}
+            participant={participant}
+            gameId={gameId}
             isAnswerRevealed={isAnswerRevealed}
           />
         )}
@@ -149,20 +156,32 @@ function Results({
   participant: Participant
   gameId: string
 }) {
+  const [gameResults, setGameResults] = useState<GameResult[]>([])
+  const [allParticipants, setAllParticipants] = useState<Participant[]>([])
   const [myResult, setMyResult] = useState<GameResult | null>(null)
   const [rank, setRank] = useState<number | null>(null)
 
+  const identity = getParticipantIdentity(participant)
+
   useEffect(() => {
     const fetchScore = async () => {
-      const { data } = await supabase
-        .from('quiz_game_results')
-        .select()
-        .eq('game_id', gameId)
-        .order('total_score', { ascending: false })
-      if (data) {
-        const idx = data.findIndex((r) => r.participant_id === participant.id)
+      const [{ data: resData }, { data: pData }] = await Promise.all([
+        supabase
+          .from('quiz_game_results')
+          .select()
+          .eq('game_id', gameId)
+          .order('total_score', { ascending: false }),
+        supabase.from('quiz_participants').select().eq('game_id', gameId),
+      ])
+
+      if (pData) setAllParticipants(pData)
+      if (resData) {
+        setGameResults(resData)
+        const idx = resData.findIndex(
+          (r) => r.participant_id === participant.id
+        )
         if (idx !== -1) {
-          setMyResult(data[idx])
+          setMyResult(resData[idx])
           setRank(idx + 1)
         }
       }
@@ -171,26 +190,76 @@ function Results({
   }, [gameId, participant.id])
 
   return (
-    <div className="flex justify-center items-center min-h-screen text-center p-6 bg-gradient-to-br from-indigo-950 via-slate-900 to-purple-950">
-      <div className="p-8 bg-slate-900 border border-white/15 text-white rounded-3xl max-w-sm w-full shadow-2xl space-y-4">
-        <div className="text-5xl">
-          {rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '🎉'}
-        </div>
-        <h2 className="text-2xl font-black">Bravo {participant.nickname} !</h2>
-        {myResult && (
-          <div className="bg-slate-950 rounded-2xl p-4 border border-indigo-500/30">
-            <div className="text-xs uppercase tracking-widest text-slate-400">
-              Score Final {rank ? `• #${rank}` : ''}
+    <div className="min-h-screen text-center p-4 md:p-8 bg-gradient-to-br from-rose-950 via-slate-900 to-indigo-950 text-white space-y-6">
+      {/* Carte Trophée Personnel du Joueur */}
+      <div className="p-6 bg-slate-900/95 border-2 border-rose-400/40 text-white rounded-3xl max-w-lg mx-auto shadow-2xl space-y-3">
+        <div className="flex flex-col items-center">
+          {identity.avatar ? (
+            <div className="relative">
+              <img
+                src={identity.avatar.imageUrl}
+                alt={identity.avatar.name}
+                className="w-24 h-24 rounded-full object-cover border-4 border-rose-400 shadow-2xl"
+              />
+              <span className="absolute -bottom-1 -right-1 w-9 h-9 rounded-full bg-slate-900 border-2 border-rose-400 flex items-center justify-center text-xl shadow">
+                {rank === 1
+                  ? '🥇'
+                  : rank === 2
+                  ? '🥈'
+                  : rank === 3
+                  ? '🥉'
+                  : identity.avatar.emoji}
+              </span>
             </div>
-            <div className="text-4xl font-mono font-black text-indigo-400 mt-1">
-              {myResult.total_score} pts
+          ) : (
+            <div className="text-5xl">
+              {rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '🎉'}
+            </div>
+          )}
+        </div>
+
+        <div>
+          <h2 className="text-2xl font-black">
+            Bravo {identity.displayName} !
+          </h2>
+          {identity.characterName && (
+            <div className="text-xs font-bold text-rose-300">
+              alias {identity.characterName} ({identity.avatar?.actor})
+            </div>
+          )}
+        </div>
+
+        {myResult && (
+          <div className="bg-slate-950 rounded-2xl p-4 border border-indigo-500/30 flex justify-around items-center">
+            <div>
+              <div className="text-[11px] uppercase tracking-widest text-slate-400">
+                Ton Rang
+              </div>
+              <div className="text-2xl font-black text-amber-400 mt-0.5">
+                {rank ? `#${rank}` : '-'} / {gameResults.length}
+              </div>
+            </div>
+            <div className="h-8 w-px bg-white/10" />
+            <div>
+              <div className="text-[11px] uppercase tracking-widest text-slate-400">
+                Score Final
+              </div>
+              <div className="text-3xl font-mono font-black text-indigo-400 mt-0.5">
+                {myResult.total_score} pts
+              </div>
             </div>
           </div>
         )}
-        <p className="text-slate-400 text-sm">
-          Regarde le podium sur l&apos;écran principal !
-        </p>
       </div>
+
+      {/* Podium Top 3, Débrief IA / Déterministe & Classement complet */}
+      <FunPodiumAndAnalysis
+        gameId={gameId}
+        gameResults={gameResults}
+        participants={allParticipants}
+        highlightParticipantId={participant.id}
+        compact
+      />
     </div>
   )
 }

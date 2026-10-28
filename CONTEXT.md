@@ -43,6 +43,12 @@ L'interface mobile minimaliste du participant, focalisée sur la rapidité de r�
 **Score de rapidité** :
 Calcul de points récompensant à la fois l'exactitude et la vitesse de réponse par rapport au début effectif de la question ou de l'Extrait Audio (de 0 à 1 000 points par manche).
 
+**Avatar Exclusif (`src/avatars.ts`, `quiz_participants.avatar_id`)** :
+Personnage issu du thème associé au pack (par défaut *Love Actually* et ses 15 personnages emblématiques) choisi par un participant dans le Salon d'attente. Dès qu'un personnage est sélectionné dans une Session de jeu, il est verrouillé en temps réel pour les autres participants et accompagne le joueur à tous les étages (salon, bandeau joueur, mini-podium de manche, grand Podium Top 3 final).
+
+**Débrief du Réalisateur & Trophées Spéciaux (`/api/game-analysis`)** :
+Analyse humoristique de fin de partie générée à partir des statistiques réelles des joueurs (vitesse, précision, séries, remontada), combinant des **Trophées déterministes** (*Lucky Luke du Buzzer*, *Sniper de Downing Street*, *Prix Mr Bean de l'Emballage*, *Sprint Final à Heathrow*) et une **chronique personnalisée** propulsée par l'API gratuite **Gemini** (`GEMINI_API_KEY`) avec repli déterministe automatique.
+
 ---
 
 ## 3. Architecture & Cohabitation Supabase / Railway

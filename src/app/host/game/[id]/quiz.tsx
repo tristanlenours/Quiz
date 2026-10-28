@@ -1,6 +1,11 @@
-import { DEFAULT_QUESTION_DURATION_SEC, TIME_TIL_CHOICE_REVEAL } from '@/constants'
+import { getParticipantIdentity } from '@/avatars'
+import {
+  DEFAULT_QUESTION_DURATION_SEC,
+  TIME_TIL_CHOICE_REVEAL,
+} from '@/constants'
 import {
   Answer,
+  GameResult,
   Participant,
   Question,
   getYouTubeEmbedUrl,
@@ -24,13 +29,15 @@ export default function Quiz({
   const [hasShownChoices, setHasShownChoices] = useState(false)
   const [answers, setAnswers] = useState<Answer[]>([])
   const [isAudioPlaying, setIsAudioPlaying] = useState(false)
+  const [liveStandings, setLiveStandings] = useState<GameResult[]>([])
 
   const answerStateRef = useRef<Answer[]>()
   answerStateRef.current = answers
 
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const isBlindTest = question.question_type === 'blind_test'
-  const answerDurationSec = question.audio_duration_sec || DEFAULT_QUESTION_DURATION_SEC
+  const answerDurationSec =
+    question.audio_duration_sec || DEFAULT_QUESTION_DURATION_SEC
   const videoEmbedUrl = isBlindTest
     ? null
     : getYouTubeEmbedUrl(
@@ -38,6 +45,7 @@ export default function Quiz({
         question.audio_start_sec || 0,
         answerDurationSec
       )
+  const hasAudioTrack = Boolean(question.audio_url && !videoEmbedUrl)
   // Zone image / vidéo agrandie : elle occupe toute la hauteur disponible (Décision D20)
   const hasMedia = !isBlindTest && Boolean(videoEmbedUrl || question.image_url)
 
@@ -62,6 +70,15 @@ export default function Quiz({
     }
   }
 
+  const fetchStandings = useCallback(async () => {
+    const { data } = await supabase
+      .from('quiz_game_results')
+      .select()
+      .eq('game_id', gameId)
+      .order('total_score', { ascending: false })
+    if (data) setLiveStandings(data)
+  }, [gameId])
+
   const onTimeUp = useCallback(async () => {
     setIsAnswerRevealed(true)
     await supabase
@@ -70,7 +87,8 @@ export default function Quiz({
         is_answer_revealed: true,
       })
       .eq('id', gameId)
-  }, [gameId])
+    fetchStandings()
+  }, [gameId, fetchStandings])
 
   const fetchAnswers = useCallback(async () => {
     const { data } = await supabase
@@ -120,15 +138,11 @@ export default function Quiz({
     }
   }, [question.id, fetchAnswers])
 
-  // Déclencher la lecture audio sur l'Écran Hôte dès que les choix s'affichent (Décision D08)
+  // Déclencher la lecture audio sur l'Écran Hôte dès que les choix s'affichent (Blind Test ET Quiz sonorisé — Décisions D08 & D23)
   useEffect(() => {
-    if (
-      hasShownChoices &&
-      isBlindTest &&
-      question.audio_url &&
-      audioRef.current
-    ) {
+    if (hasShownChoices && hasAudioTrack && audioRef.current) {
       const audio = audioRef.current
+      audio.volume = isBlindTest ? 1.0 : 0.65
       audio.currentTime = question.audio_start_sec || 0
       audio
         .play()
@@ -140,6 +154,7 @@ export default function Quiz({
     }
   }, [
     hasShownChoices,
+    hasAudioTrack,
     isBlindTest,
     question.audio_url,
     question.audio_start_sec,
@@ -155,9 +170,11 @@ export default function Quiz({
     }
   }
 
+  const participantById = new Map(participants.map((p) => [p.id, p]))
+
   return (
     <div className="h-screen flex flex-col items-stretch bg-slate-900 relative overflow-hidden">
-      {isBlindTest && question.audio_url && (
+      {hasAudioTrack && question.audio_url && (
         <audio
           ref={audioRef}
           src={question.audio_url}
@@ -167,6 +184,15 @@ export default function Quiz({
       )}
 
       <div className="absolute right-6 top-6 z-20 flex items-center gap-3">
+        {hasAudioTrack && hasShownChoices && (
+          <button
+            type="button"
+            onClick={toggleAudio}
+            className="px-3.5 py-2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-xl transition"
+          >
+            {isAudioPlaying ? '🔊 Son actif (Pause)' : '▶️ Relancer la musique'}
+          </button>
+        )}
         {!isAnswerRevealed && hasShownChoices && (
           <button
             className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm font-semibold rounded-xl transition"
@@ -177,21 +203,27 @@ export default function Quiz({
         )}
         {isAnswerRevealed && (
           <button
-            className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg transition"
+            className="px-6 py-3 bg-gradient-to-r from-rose-600 to-indigo-600 hover:from-rose-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg transition"
             onClick={getNextQuestion}
           >
             {questionCount === question.order + 1
-              ? '🏆 Voir le Podium'
+              ? '🏆 Voir le Podium Final'
               : 'Manche suivante →'}
           </button>
         )}
       </div>
 
-      <div className="text-center pt-8 px-6">
-        <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-white/10 text-indigo-300 text-xs font-bold uppercase tracking-widest mb-3">
-          {isBlindTest ? '🎵 Blind Test Musical' : '❓ Question Quiz'}
+      <div className="text-center pt-6 px-6">
+        <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-white/10 text-rose-300 text-xs font-bold uppercase tracking-widest mb-2">
+          {isBlindTest
+            ? '🎵 Blind Test Musical'
+            : videoEmbedUrl
+            ? '🎬 Extrait Vidéo Culte'
+            : hasAudioTrack
+            ? '🎶 Question Quiz & Bande-Son'
+            : '❓ Question Quiz'}
         </div>
-        <h2 className="text-3xl md:text-4xl bg-white text-slate-900 font-black mx-auto max-w-4xl p-5 rounded-2xl shadow-xl block">
+        <h2 className="text-2xl md:text-4xl bg-white text-slate-900 font-black mx-auto max-w-4xl p-4 md:p-5 rounded-2xl shadow-xl block">
           {question.body}
         </h2>
       </div>
@@ -228,7 +260,7 @@ export default function Quiz({
                 }}
                 isPlaying
                 duration={answerDurationSec}
-                colors={['#6366f1', '#F7B801', '#ef4444', '#ef4444']}
+                colors={['#f43f5e', '#6366f1', '#F7B801', '#ef4444']}
                 colorsTime={[
                   Math.round(answerDurationSec * 0.6),
                   Math.round(answerDurationSec * 0.3),
@@ -246,13 +278,13 @@ export default function Quiz({
                 <div className="flex flex-col items-center gap-4">
                   <div
                     onClick={toggleAudio}
-                    className={`cursor-pointer w-36 h-36 rounded-full border-8 border-slate-700 bg-gradient-to-tr from-indigo-900 via-slate-950 to-purple-900 flex items-center justify-center shadow-2xl ${
+                    className={`cursor-pointer w-36 h-36 rounded-full border-8 border-slate-700 bg-gradient-to-tr from-rose-900 via-slate-950 to-indigo-900 flex items-center justify-center shadow-2xl ${
                       isAudioPlaying ? 'animate-spin' : ''
                     }`}
                     style={{ animationDuration: '4s' }}
                     title="Cliquer pour lecture/pause"
                   >
-                    <div className="w-12 h-12 rounded-full bg-indigo-500 flex items-center justify-center text-2xl">
+                    <div className="w-12 h-12 rounded-full bg-rose-500 flex items-center justify-center text-2xl">
                       🎵
                     </div>
                   </div>
@@ -286,7 +318,7 @@ export default function Quiz({
             </div>
 
             <div className="text-center bg-slate-800/80 px-8 py-5 rounded-2xl border border-white/10">
-              <div className="text-6xl font-black pb-1 text-indigo-400">
+              <div className="text-6xl font-black pb-1 text-rose-400">
                 {answers.length}
                 <span className="text-2xl text-slate-400">
                   /{participants.length}
@@ -300,24 +332,24 @@ export default function Quiz({
         )}
 
         {isAnswerRevealed && (
-          <div className="flex flex-col md:flex-row items-center justify-center gap-10 max-w-5xl w-full mx-auto">
+          <div className="flex flex-col lg:flex-row items-center justify-center gap-8 max-w-6xl w-full mx-auto">
             {/* Carte de révélation Blind Test (Décision D04) */}
             {isBlindTest &&
               (question.reveal_title || question.reveal_artist) && (
-                <div className="flex items-center gap-5 bg-slate-800/90 border border-indigo-500/40 p-5 rounded-2xl shadow-2xl max-w-md">
+                <div className="flex items-center gap-5 bg-slate-800/90 border border-rose-500/40 p-5 rounded-2xl shadow-2xl max-w-md">
                   {question.reveal_cover_url ? (
                     <img
                       src={question.reveal_cover_url}
                       alt={question.reveal_title || 'Pochette'}
-                      className="w-28 h-28 rounded-xl object-cover shadow-md"
+                      className="w-24 h-24 rounded-xl object-cover shadow-md"
                     />
                   ) : (
-                    <div className="w-28 h-28 rounded-xl bg-indigo-600/30 flex items-center justify-center text-4xl">
+                    <div className="w-24 h-24 rounded-xl bg-rose-600/30 flex items-center justify-center text-4xl">
                       💿
                     </div>
                   )}
                   <div>
-                    <div className="text-xs uppercase tracking-widest text-indigo-400 font-bold mb-1">
+                    <div className="text-xs uppercase tracking-widest text-rose-400 font-bold mb-1">
                       Révélation Musicale
                     </div>
                     <div className="text-2xl font-black text-white leading-tight">
@@ -337,7 +369,7 @@ export default function Quiz({
               {question.choices.map((choice, index) => (
                 <div
                   key={choice.id}
-                  className="mx-2 h-44 w-20 flex flex-col items-stretch justify-end"
+                  className="mx-2 h-40 w-16 md:w-20 flex flex-col items-stretch justify-end"
                 >
                   <div className="flex-grow relative">
                     <div
@@ -362,7 +394,7 @@ export default function Quiz({
                     ></div>
                   </div>
                   <div
-                    className={`mt-1 text-white text-lg font-bold text-center py-2 rounded-b ${
+                    className={`mt-1 text-white text-lg font-bold text-center py-1.5 rounded-b ${
                       index === 0
                         ? 'bg-red-500'
                         : index === 1
@@ -380,6 +412,59 @@ export default function Quiz({
                 </div>
               ))}
             </div>
+
+            {/* Mini-Podium Top 3 en direct sur l'Écran Hôte (Décision D21) */}
+            {liveStandings.length > 0 && (
+              <div className="bg-slate-950/90 border border-white/15 rounded-2xl p-4 min-w-[290px] shadow-xl">
+                <div className="text-xs font-bold uppercase tracking-widest text-amber-300 text-center mb-3">
+                  🏆 Top 3 Provisoire
+                </div>
+                <div className="space-y-2">
+                  {liveStandings.slice(0, 3).map((row, idx) => {
+                    const pRow = row.participant_id
+                      ? participantById.get(row.participant_id)
+                      : null
+                    const idInfo = getParticipantIdentity({
+                      nickname: row.nickname ?? pRow?.nickname,
+                      avatar_id:
+                        (row as any).avatar_id ?? (pRow as any)?.avatar_id,
+                    })
+                    return (
+                      <div
+                        key={row.participant_id}
+                        className="flex items-center justify-between gap-3 bg-slate-900/90 border border-white/10 px-3 py-2 rounded-xl"
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <span className="text-lg">
+                            {idx === 0 ? '🥇' : idx === 1 ? '🥈' : '🥉'}
+                          </span>
+                          {idInfo.avatar ? (
+                            <img
+                              src={idInfo.avatar.imageUrl}
+                              alt={idInfo.avatar.name}
+                              className="w-9 h-9 rounded-full object-cover border border-rose-400"
+                            />
+                          ) : null}
+                          <div className="min-w-0">
+                            <div className="text-sm font-black text-white truncate">
+                              {idInfo.displayName}
+                            </div>
+                            {idInfo.characterName && (
+                              <div className="text-[10px] text-rose-300 truncate">
+                                {idInfo.characterName}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <span className="text-sm font-mono font-black text-indigo-400 flex-shrink-0">
+                          {row.total_score} pts
+                        </span>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -429,7 +514,7 @@ export default function Quiz({
           Manche {question.order + 1} / {questionCount}
         </div>
         <div className="text-sm text-slate-400">
-          {isBlindTest ? '🎵 Mode Blind Test' : '❓ Mode Quiz'}
+          {isBlindTest ? '🎵 Mode Blind Test' : '🎬 Mode Quiz Love Actually'}
         </div>
       </div>
     </div>

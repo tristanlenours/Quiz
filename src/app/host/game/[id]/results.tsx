@@ -1,3 +1,4 @@
+import { FunPodiumAndAnalysis } from '@/components/FunPodiumAndAnalysis'
 import {
   GameResult,
   Participant,
@@ -5,11 +6,15 @@ import {
   supabase,
 } from '@/types/types'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Confetti from 'react-confetti'
 import useWindowSize from 'react-use/lib/useWindowSize'
 
+const PODIUM_FANFARE_URL =
+  'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/3b/17/e6/3b17e6c0-5a2a-2226-7c3f-6d0f57be6de9/mzaf_2188717033219073832.plus.aac.p.m4a'
+
 export default function Results({
+  participants,
   quizSet,
   gameId,
 }: {
@@ -18,6 +23,8 @@ export default function Results({
   gameId: string
 }) {
   const [gameResults, setGameResults] = useState<GameResult[]>([])
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
   const { width, height } = useWindowSize()
 
   useEffect(() => {
@@ -33,10 +40,31 @@ export default function Results({
       if (data) setGameResults(data)
     }
     getResults()
+
+    // Lancer la musique du final Love Actually (God Only Knows — The Beach Boys)
+    if (audioRef.current) {
+      audioRef.current.volume = 0.6
+      audioRef.current
+        .play()
+        .then(() => setIsMusicPlaying(true))
+        .catch(() => setIsMusicPlaying(false))
+    }
   }, [gameId])
 
+  const toggleMusic = () => {
+    if (!audioRef.current) return
+    if (audioRef.current.paused) {
+      audioRef.current.play().then(() => setIsMusicPlaying(true))
+    } else {
+      audioRef.current.pause()
+      setIsMusicPlaying(false)
+    }
+  }
+
   const handleReplayGame = async () => {
-    // Supprimer les anciennes réponses des participants de cette session et relancer à la question 0
+    if (audioRef.current) {
+      audioRef.current.pause()
+    }
     const participantIds = gameResults
       .map((r) => r.participant_id)
       .filter(Boolean) as string[]
@@ -57,60 +85,46 @@ export default function Results({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-slate-900 to-purple-950 text-white p-8 flex flex-col justify-between">
-      <div className="text-center pt-4">
-        <div className="text-sm uppercase tracking-widest text-indigo-400 font-bold mb-2">
-          🏆 CLASSEMENT FINAL
+    <div className="min-h-screen bg-gradient-to-br from-rose-950 via-slate-900 to-indigo-950 text-white p-6 md:p-8 flex flex-col justify-between">
+      <audio
+        ref={audioRef}
+        src={PODIUM_FANFARE_URL}
+        loop
+        preload="auto"
+      />
+
+      <div className="text-center pt-2 space-y-2">
+        <div className="flex justify-center items-center gap-3 flex-wrap">
+          <span className="text-xs uppercase tracking-widest text-amber-300 font-bold px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/30">
+            🏆 GRAND PODIUM & CÉRÉMONIE DES AWARDS
+          </span>
+          <button
+            type="button"
+            onClick={toggleMusic}
+            className="text-xs font-bold px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 text-slate-200 transition"
+          >
+            {isMusicPlaying
+              ? '🔊 Final : God Only Knows (Pause)'
+              : '🎵 Jouer la musique du Podium'}
+          </button>
         </div>
-        <h1 className="text-4xl font-black py-3 px-10 bg-white text-slate-900 inline-block rounded-2xl shadow-xl">
+        <h1 className="text-3xl md:text-4xl font-black py-2.5 px-8 bg-white text-slate-900 inline-block rounded-2xl shadow-xl">
           {quizSet.name}
         </h1>
       </div>
 
-      <div className="max-w-2xl w-full mx-auto my-8 space-y-4">
-        {gameResults.map((gameResult, index) => (
-          <div
-            key={gameResult.participant_id}
-            className={`flex justify-between items-center bg-slate-900/90 border py-4 px-6 rounded-2xl w-full transition ${
-              index === 0
-                ? 'border-yellow-400 shadow-xl shadow-yellow-500/20 scale-105'
-                : index === 1
-                ? 'border-slate-300 shadow-lg'
-                : index === 2
-                ? 'border-amber-600 shadow-lg'
-                : 'border-white/10'
-            }`}
-          >
-            <div className="pr-4 text-3xl font-black w-14">
-              {index === 0
-                ? '🥇'
-                : index === 1
-                ? '🥈'
-                : index === 2
-                ? '🥉'
-                : `#${index + 1}`}
-            </div>
-            <div
-              className={`flex-grow font-black ${
-                index < 3 ? 'text-3xl text-white' : 'text-xl text-slate-200'
-              }`}
-            >
-              {gameResult.nickname}
-            </div>
-            <div className="pl-4 text-right">
-              <span className="text-2xl font-mono font-black text-indigo-400">
-                {gameResult.total_score}
-              </span>
-              <span className="text-sm text-slate-400 ml-1">pts</span>
-            </div>
-          </div>
-        ))}
+      <div className="my-6">
+        <FunPodiumAndAnalysis
+          gameId={gameId}
+          gameResults={gameResults}
+          participants={participants}
+        />
       </div>
 
       <div className="text-center pb-4 flex justify-center gap-4">
         <button
           onClick={handleReplayGame}
-          className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-bold text-white shadow-lg transition"
+          className="px-6 py-3 rounded-xl bg-gradient-to-r from-rose-600 to-indigo-600 hover:from-rose-500 hover:to-indigo-500 font-bold text-white shadow-lg transition"
         >
           🔄 Rejouer ce Pack
         </button>

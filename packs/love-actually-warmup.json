@@ -1,0 +1,103 @@
+{
+  "name": "🎄 Love Actually — Le Warm-Up (5 manches)",
+  "description": "5 questions cultes et accessibles (Images, Blind Test musical, Extrait Vidéo YouTube & Bande-son) pour se chauffer les pouces dans l'ambiance magique du film avant le grand quiz !",
+  "mode": "mixed",
+  "avatar_theme": "love_actually",
+  "questions": [
+    {
+      "order": 0,
+      "question_type": "quiz",
+      "body": "« Love actually is all around... » Dans quel lieu chargé d'émotion s'ouvrent et se referment le film avec la voix off de Hugh Grant ?",
+      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q13.png",
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/ec/0b/eb/ec0bebde-df81-1b0c-6563-5eb7783d81dd/mzaf_5359795691279455145.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "Le hall des arrivées de l'aéroport d'Heathrow", "is_correct": true },
+        { "body": "La gare de King's Cross (Quai 9¾)", "is_correct": false },
+        { "body": "Le palais de Buckingham", "is_correct": false },
+        { "body": "Le grand magasin Harrods", "is_correct": false }
+      ]
+    },
+    {
+      "order": 1,
+      "question_type": "blind_test",
+      "body": "🎵 Blind Test : Quel hymne retentit par surprise dans l'église (avec trompettes et choristes cachés dans les bancs) à la sortie du mariage de Juliet et Peter ?",
+      "image_url": null,
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/87/93/1d/87931d5c-beda-7647-7b7c-5d89a88ad755/mzaf_16168889973628785460.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": "All You Need Is Love (Scène du mariage)",
+      "reveal_artist": "Lynden David Hall (The Beatles)",
+      "reveal_cover_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/a3/23/dc/a323dcd2-5791-be52-ef95-0c59f63978ce/5055283461111.jpg/600x600bb.jpg",
+      "choices": [
+        { "body": "All You Need Is Love", "is_correct": true },
+        { "body": "Here Comes The Sun", "is_correct": false },
+        { "body": "Let It Be", "is_correct": false },
+        { "body": "Can't Buy Me Love", "is_correct": false }
+      ]
+    },
+    {
+      "order": 2,
+      "question_type": "quiz",
+      "body": "🎬 Regardez l'extrait : Quel mot le rockeur Billy Mack remplace-t-il par « Christmas » pour toucher le jackpot de Noël avec son vieux tube ?",
+      "image_url": null,
+      "audio_url": null,
+      "audio_start_sec": 32,
+      "audio_duration_sec": 30,
+      "video_url": "https://www.youtube.com/watch?v=K9rVsTbscfo",
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "Love (Love Is All Around)", "is_correct": true },
+        { "body": "Snow (Snow Is All Around)", "is_correct": false },
+        { "body": "Rock (Rock Is All Around)", "is_correct": false },
+        { "body": "Peace (Peace Is All Around)", "is_correct": false }
+      ]
+    },
+    {
+      "order": 3,
+      "question_type": "quiz",
+      "body": "À quelle célèbre adresse londonienne s'installe David (Hugh Grant), le nouveau Premier Ministre célibataire du Royaume-Uni ?",
+      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q06.png",
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/4a/67/15/4a671528-6b4d-4932-f7ab-7212db98f0a4/mzaf_10429321169689904795.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "Au 10 Downing Street", "is_correct": true },
+        { "body": "Au 221B Baker Street", "is_correct": false },
+        { "body": "À Abbey Road", "is_correct": false },
+        { "body": "À Notting Hill", "is_correct": false }
+      ]
+    },
+    {
+      "order": 4,
+      "question_type": "blind_test",
+      "body": "🎵 Blind Test : Quel chef-d'œuvre des Beach Boys accompagne les retrouvailles finales et la mosaïque de baisers à l'aéroport ?",
+      "image_url": null,
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/3b/17/e6/3b17e6c0-5a2a-2226-7c3f-6d0f57be6de9/mzaf_2188717033219073832.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": "God Only Knows",
+      "reveal_artist": "The Beach Boys",
+      "reveal_cover_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/d4/22/97/d422973f-c3ff-0600-2b6b-a22f7c0cf0f9/16UMGIM17479.rgb.jpg/600x600bb.jpg",
+      "choices": [
+        { "body": "God Only Knows — The Beach Boys", "is_correct": true },
+        { "body": "Good Vibrations — The Beach Boys", "is_correct": false },
+        { "body": "Wouldn't It Be Nice — The Beach Boys", "is_correct": false },
+        { "body": "California Dreamin' — The Mamas & The Papas", "is_correct": false }
+      ]
+    }
+  ]
+}

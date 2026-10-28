@@ -11,8 +11,11 @@ create table if not exists public.quiz_sets (
     created_at timestamp with time zone default now() not null,
     name text not null,
     description text,
-    mode text default 'mixed' not null check (mode in ('quiz', 'blind_test', 'mixed'))
+    mode text default 'mixed' not null check (mode in ('quiz', 'blind_test', 'mixed')),
+    avatar_theme text default 'love_actually' not null
 );
+
+alter table public.quiz_sets add column if not exists avatar_theme text default 'love_actually' not null;
 
 -- 2. Table des Questions / Manches (Quiz classique + Blind Test musical — Décision D04)
 create table if not exists public.quiz_questions (
@@ -62,15 +65,21 @@ create table if not exists public.quiz_games (
 
 create index if not exists idx_quiz_games_pin_code on public.quiz_games(pin_code);
 
--- 5. Table des Participants (Sans friction Auth obligatoire — Décision D05)
+-- 5. Table des Participants (Sans friction Auth obligatoire — Décision D05 + Avatars D21)
 create table if not exists public.quiz_participants (
     id uuid default gen_random_uuid() not null primary key,
     created_at timestamp with time zone default now() not null,
     nickname text not null,
+    avatar_id text,
     game_id uuid not null references public.quiz_games(id) on delete cascade on update cascade,
     client_session_id text not null,
     unique (game_id, client_session_id)
 );
+
+alter table public.quiz_participants add column if not exists avatar_id text;
+create unique index if not exists idx_quiz_participants_unique_avatar
+    on public.quiz_participants (game_id, avatar_id)
+    where avatar_id is not null;
 
 -- 6. Table des Réponses Joueurs
 create table if not exists public.quiz_answers (
@@ -90,11 +99,12 @@ create or replace view public.quiz_game_results as
         p.id as participant_id,
         p.nickname,
         coalesce(sum(a.score), 0)::integer as total_score,
-        g.id as game_id
+        g.id as game_id,
+        p.avatar_id
     from public.quiz_games g
     inner join public.quiz_participants p on g.id = p.game_id
     left join public.quiz_answers a on p.id = a.participant_id
-    group by g.id, p.id, p.nickname;
+    group by g.id, p.id, p.nickname, p.avatar_id;
 
 -- 8. Activer Supabase Realtime de manière idempotente
 do $$
@@ -153,6 +163,8 @@ drop policy if exists "Lecture publique quiz_participants" on public.quiz_partic
 create policy "Lecture publique quiz_participants" on public.quiz_participants for select using (true);
 drop policy if exists "Insertion quiz_participants" on public.quiz_participants;
 create policy "Insertion quiz_participants" on public.quiz_participants for insert with check (true);
+drop policy if exists "Mise a jour quiz_participants" on public.quiz_participants;
+create policy "Mise a jour quiz_participants" on public.quiz_participants for update using (true) with check (true);
 
 drop policy if exists "Lecture publique quiz_answers" on public.quiz_answers;
 create policy "Lecture publique quiz_answers" on public.quiz_answers for select using (true);

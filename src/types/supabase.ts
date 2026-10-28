@@ -140,6 +140,7 @@ export type Database = {
       }
       quiz_participants: {
         Row: {
+          avatar_id?: string | null
           client_session_id: string
           created_at: string
           game_id: string
@@ -147,6 +148,7 @@ export type Database = {
           nickname: string
         }
         Insert: {
+          avatar_id?: string | null
           client_session_id: string
           created_at?: string
           game_id: string
@@ -154,6 +156,7 @@ export type Database = {
           nickname: string
         }
         Update: {
+          avatar_id?: string | null
           client_session_id?: string
           created_at?: string
           game_id?: string
@@ -231,6 +234,7 @@ export type Database = {
       }
       quiz_sets: {
         Row: {
+          avatar_theme?: string
           created_at: string
           description: string | null
           id: string
@@ -238,6 +242,7 @@ export type Database = {
           name: string
         }
         Insert: {
+          avatar_theme?: string
           created_at?: string
           description?: string | null
           id?: string
@@ -245,6 +250,7 @@ export type Database = {
           name: string
         }
         Update: {
+          avatar_theme?: string
           created_at?: string
           description?: string | null
           id?: string
@@ -257,6 +263,7 @@ export type Database = {
     Views: {
       quiz_game_results: {
         Row: {
+          avatar_id?: string | null
           game_id: string | null
           nickname: string | null
           participant_id: string | null
