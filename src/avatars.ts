@@ -55,7 +55,7 @@ export const LOVE_ACTUALLY_AVATARS: AvatarCharacter[] = [
     tagline: 'La mariée au chapeau gavroche & Banoffee Pie',
     emoji: '🥧',
     accent: 'from-purple-500 to-fuchsia-700 border-purple-400',
-    imageUrl: `${STORAGE_BASE}/juliet.png`,
+    imageUrl: `${STORAGE_BASE}/juliet.png?v=2`,
   },
   {
     id: 'jamie',
@@ -100,7 +100,7 @@ export const LOVE_ACTUALLY_AVATARS: AvatarCharacter[] = [
     tagline: 'Batteur par amour & sprinteur d’aéroport',
     emoji: '🥁',
     accent: 'from-sky-500 to-indigo-700 border-sky-400',
-    imageUrl: `${STORAGE_BASE}/sam.png`,
+    imageUrl: `${STORAGE_BASE}/sam.png?v=2`,
   },
   {
     id: 'joanna',
@@ -127,7 +127,7 @@ export const LOVE_ACTUALLY_AVATARS: AvatarCharacter[] = [
     tagline: 'Dieu du sexe en partance pour le Wisconsin',
     emoji: '🇺🇸',
     accent: 'from-orange-500 to-red-700 border-orange-400',
-    imageUrl: `${STORAGE_BASE}/colin.png`,
+    imageUrl: `${STORAGE_BASE}/colin.png?v=2`,
   },
   {
     id: 'mia',
