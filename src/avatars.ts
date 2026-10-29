@@ -167,23 +167,15 @@ export const HOGWARTS_HOUSES: Record<
   aucune: { label: 'Elfe libre', crest: '✨', from: '#3f3f46', to: '#a3e635' },
 }
 
-/**
- * Portrait SVG généré (dégradé aux couleurs de la maison + emblème du personnage).
- * Aucune image à héberger : remplaçable plus tard par un PNG dans
- * `quiz-media/avatars/harry-potter/<id>.png`.
- */
-function wizardPortrait(glyph: string, house: HouseId): string {
-  const { from, to } = HOGWARTS_HOUSES[house]
-  const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><radialGradient id='g' cx='35%' cy='30%' r='85%'><stop offset='0%' stop-color='${to}'/><stop offset='100%' stop-color='${from}'/></radialGradient></defs><rect width='120' height='120' fill='url(#g)'/><circle cx='60' cy='60' r='49' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2.5' stroke-dasharray='3 6'/><text x='60' y='64' font-size='56' text-anchor='middle' dominant-baseline='middle'>${glyph}</text></svg>`
-  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`
-}
+// Photos des personnages tirées des films (D34), recadrées en carré sur le visage
+const HP_STORAGE_BASE =
+  'https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/avatars/harry-potter'
 
 function wizard(
   id: string,
   name: string,
   actor: string,
   tagline: string,
-  glyph: string,
   house: HouseId
 ): AvatarCharacter {
   return {
@@ -193,31 +185,31 @@ function wizard(
     tagline,
     emoji: HOGWARTS_HOUSES[house].crest,
     accent: house,
-    imageUrl: wizardPortrait(glyph, house),
+    imageUrl: `${HP_STORAGE_BASE}/${id}.jpg`,
     house,
   }
 }
 
 // Identifiants préfixés `hp_` : pas de collision avec Love Actually (ex. `harry`)
 export const HARRY_POTTER_AVATARS: AvatarCharacter[] = [
-  wizard('hp_harry', 'Harry Potter', 'Daniel Radcliffe', 'Le Survivant, cicatrice en éclair incluse', '⚡', 'gryffondor'),
-  wizard('hp_hermione', 'Hermione Granger', 'Emma Watson', '« C’est Levi-o-sa, pas Levio-sa ! »', '📚', 'gryffondor'),
-  wizard('hp_ron', 'Ron Weasley', 'Rupert Grint', 'Roi des échecs sorciers, terrifié par les araignées', '♟️', 'gryffondor'),
-  wizard('hp_neville', 'Neville Londubat', 'Matthew Lewis', 'Botaniste timide devenu tueur de serpent', '🌱', 'gryffondor'),
-  wizard('hp_twins', 'Fred & George', 'James & Oliver Phelps', 'Jumeaux farceurs, Carte du Maraudeur en poche', '🎆', 'gryffondor'),
-  wizard('hp_hagrid', 'Rubeus Hagrid', 'Robbie Coltrane', '« Tu es un sorcier, Harry ! »', '🐉', 'gryffondor'),
-  wizard('hp_dumbledore', 'Albus Dumbledore', 'Michael Gambon', 'Directeur qui rêve de grosses chaussettes en laine', '🧙‍♂️', 'gryffondor'),
-  wizard('hp_mcgonagall', 'Minerva McGonagall', 'Maggie Smith', 'Animagus chat à la discipline de fer', '🐈', 'gryffondor'),
-  wizard('hp_draco', 'Drago Malefoy', 'Tom Felton', '« Mon père en entendra parler ! »', '🧹', 'serpentard'),
-  wizard('hp_snape', 'Severus Rogue', 'Alan Rickman', '« Toujours. »', '🧪', 'serpentard'),
-  wizard('hp_bellatrix', 'Bellatrix Lestrange', 'Helena Bonham Carter', 'Rire hystérique et poignard d’argent', '🗡️', 'serpentard'),
-  wizard('hp_voldemort', 'Lord Voldemort', 'Ralph Fiennes', 'Celui-Dont-On-Ne-Doit-Pas-Prononcer-Le-Nom', '💀', 'serpentard'),
-  wizard('hp_luna', 'Luna Lovegood', 'Evanna Lynch', 'Lectrice du Chicaneur, traqueuse de Joncheruines', '🌙', 'serdaigle'),
-  wizard('hp_lockhart', 'Gilderoy Lockhart', 'Kenneth Branagh', 'Cinq fois lauréat du Prix du Sourire le plus charmeur', '📸', 'serdaigle'),
-  wizard('hp_myrtle', 'Mimi Geignarde', 'Shirley Henderson', 'Fantôme des toilettes du deuxième étage', '🚽', 'serdaigle'),
-  wizard('hp_cedric', 'Cedric Diggory', 'Robert Pattinson', 'Le VRAI champion de Poudlard', '🏆', 'poufsouffle'),
-  wizard('hp_tonks', 'Nymphadora Tonks', 'Natalia Tena', 'Métamorphomage — ne l’appelez surtout pas Nymphadora', '💗', 'poufsouffle'),
-  wizard('hp_dobby', 'Dobby', 'Toby Jones', '« Dobby est un elfe libre ! »', '🧦', 'aucune'),
+  wizard('hp_harry', 'Harry Potter', 'Daniel Radcliffe', 'Le Survivant, cicatrice en éclair incluse', 'gryffondor'),
+  wizard('hp_hermione', 'Hermione Granger', 'Emma Watson', '« C’est Levi-o-sa, pas Levio-sa ! »', 'gryffondor'),
+  wizard('hp_ron', 'Ron Weasley', 'Rupert Grint', 'Roi des échecs sorciers, terrifié par les araignées', 'gryffondor'),
+  wizard('hp_neville', 'Neville Londubat', 'Matthew Lewis', 'Botaniste timide devenu tueur de serpent', 'gryffondor'),
+  wizard('hp_twins', 'Fred & George', 'James & Oliver Phelps', 'Jumeaux farceurs, Carte du Maraudeur en poche', 'gryffondor'),
+  wizard('hp_hagrid', 'Rubeus Hagrid', 'Robbie Coltrane', '« Tu es un sorcier, Harry ! »', 'gryffondor'),
+  wizard('hp_dumbledore', 'Albus Dumbledore', 'Michael Gambon', 'Directeur qui rêve de grosses chaussettes en laine', 'gryffondor'),
+  wizard('hp_mcgonagall', 'Minerva McGonagall', 'Maggie Smith', 'Animagus chat à la discipline de fer', 'gryffondor'),
+  wizard('hp_draco', 'Drago Malefoy', 'Tom Felton', '« Mon père en entendra parler ! »', 'serpentard'),
+  wizard('hp_snape', 'Severus Rogue', 'Alan Rickman', '« Toujours. »', 'serpentard'),
+  wizard('hp_bellatrix', 'Bellatrix Lestrange', 'Helena Bonham Carter', 'Rire hystérique et poignard d’argent', 'serpentard'),
+  wizard('hp_voldemort', 'Lord Voldemort', 'Ralph Fiennes', 'Celui-Dont-On-Ne-Doit-Pas-Prononcer-Le-Nom', 'serpentard'),
+  wizard('hp_luna', 'Luna Lovegood', 'Evanna Lynch', 'Lectrice du Chicaneur, traqueuse de Joncheruines', 'serdaigle'),
+  wizard('hp_lockhart', 'Gilderoy Lockhart', 'Kenneth Branagh', 'Cinq fois lauréat du Prix du Sourire le plus charmeur', 'serdaigle'),
+  wizard('hp_myrtle', 'Mimi Geignarde', 'Shirley Henderson', 'Fantôme des toilettes du deuxième étage', 'serdaigle'),
+  wizard('hp_cedric', 'Cedric Diggory', 'Robert Pattinson', 'Le VRAI champion de Poudlard', 'poufsouffle'),
+  wizard('hp_tonks', 'Nymphadora Tonks', 'Natalia Tena', 'Métamorphomage — ne l’appelez surtout pas Nymphadora', 'poufsouffle'),
+  wizard('hp_dobby', 'Dobby', 'Toby Jones', '« Dobby est un elfe libre ! »', 'aucune'),
 ]
 
 export const DEFAULT_AVATAR_THEME = 'love_actually'

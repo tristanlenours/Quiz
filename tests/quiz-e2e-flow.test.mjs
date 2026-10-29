@@ -68,6 +68,22 @@ test('1. Catalogue des 15 Avatars Love Actually : fichier source et images Supab
   }
 })
 
+test('1 bis. Catalogue des 18 sorciers Harry Potter : photos des films sur Supabase Storage (D34)', async () => {
+  const avatarsSrc = fs.readFileSync(
+    path.resolve(process.cwd(), 'src/avatars.ts'),
+    'utf8'
+  )
+  const ids = [...avatarsSrc.matchAll(/wizard\('(hp_[a-z]+)'/g)].map((m) => m[1])
+  assert.equal(ids.length, 18, 'Le thème Harry Potter doit compter 18 sorciers')
+
+  for (const id of ids) {
+    const imgUrl = `${supabaseUrl}/storage/v1/object/public/quiz-media/avatars/harry-potter/${id}.jpg`
+    const res = await fetch(imgUrl, { method: 'HEAD' })
+    assert.equal(res.status, 200, `La photo de '${id}' doit être accessible (${imgUrl})`)
+    assert.match(res.headers.get('content-type') ?? '', /^image\//, `'${id}' doit être une image`)
+  }
+})
+
 test('2. Pack « 🎄 Love Actually — Le Warm-Up (5 manches) » : présence en base, couverture multi-formats et médias valides', async () => {
   const { data: sets, error } = await supabase
     .from('quiz_sets')

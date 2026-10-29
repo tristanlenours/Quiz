@@ -34,8 +34,6 @@ export default function HostGamePage({
   const [isAnswerRevealed, setIsAnswerRevealed] = useState(false)
 
   useEffect(() => {
-    preloadAvatarImages()
-
     const getQuestions = async () => {
       const { data: gameData, error: gameError } = await supabase
         .from('quiz_games')
@@ -144,7 +142,11 @@ export default function HostGamePage({
 
   return (
     <main className="bg-slate-950 min-h-screen">
-      {currentScreen === AdminScreens.lobby && (
+      {/* Salon (avatars, musique) affiché seulement une fois le pack chargé : jamais l'univers d'un autre quiz */}
+      {currentScreen === AdminScreens.lobby && !quizSet && (
+        <div className="min-h-screen bg-slate-950" />
+      )}
+      {currentScreen === AdminScreens.lobby && quizSet && (
         <Lobby
           participants={participants}
           gameId={gameId}

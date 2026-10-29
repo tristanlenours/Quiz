@@ -48,11 +48,15 @@ export default function PlayerGamePage({
         .eq('id', gameId)
         .single()
       if (!game?.quiz_set_id) return
-      const { data: set } = await supabase
+      const { data: set, error } = await supabase
         .from('quiz_sets')
         .select('*')
         .eq('id', game.quiz_set_id)
         .single()
+      if (error) {
+        console.error(error.message)
+        return
+      }
       const resolved = resolveAvatarTheme(set)
       setThemeId(resolved)
       preloadAvatarImages(resolved)
@@ -150,13 +154,17 @@ export default function PlayerGamePage({
 
   return (
     <main className="bg-slate-950 min-h-screen">
-      {currentScreen === Screens.lobby && (
-        <Lobby
-          onRegisterCompleted={onRegisterCompleted}
-          gameId={gameId}
-          themeId={themeId}
-        />
-      )}
+      {/* Salon affiché seulement une fois l'univers du pack connu : jamais d'avatars d'un autre quiz */}
+      {currentScreen === Screens.lobby &&
+        (themeId ? (
+          <Lobby
+            onRegisterCompleted={onRegisterCompleted}
+            gameId={gameId}
+            themeId={themeId}
+          />
+        ) : (
+          <div className="min-h-screen bg-slate-950" />
+        ))}
       {currentScreen === Screens.quiz &&
         questions &&
         questions[currentQuestionSequence] &&

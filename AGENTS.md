@@ -31,7 +31,7 @@ Avant toute modification de schéma, d'interface ou de logique de jeu, lire :
    À chaque nouvelle décision `Dxx`, se demander si elle crée, change ou rend caduque une règle de travail durable (commande, convention, invariant, piège connu). Si oui, mettre à jour `AGENTS.md` **dans le même tour de travail**, sans attendre une révision d'ensemble ; une règle caduque est corrigée ou retirée, pas laissée en place.
    Dans tous les cas, avancer le marqueur ci-dessous jusqu'à la dernière décision relue. `npm test` échoue tant qu'une décision de `DECISIONS.md` est plus récente que ce marqueur.
 
-   **Dernière revue d'AGENTS.md : D33**
+   **Dernière revue d'AGENTS.md : D34**
 
 ---
 
@@ -59,6 +59,8 @@ Avant toute modification de schéma, d'interface ou de logique de jeu, lire :
 - **Son** : extraits iTunes (`audio-ssl.itunes.apple.com`, 30 s) et pochettes `mzstatic.com` en `600x600bb`.
 - **Zéro spoil hors des questions** : sous-titres d'avatars (`src/avatars.ts`), citation et playlist du Salon (`src/themes.ts`), chronique déterministe et prompt Gemini (`src/app/api/game-analysis/route.ts`) ne doivent dévoiler **aucune réponse** d'un pack du même thème. Le Warm-Up ne recoupe pas le Grand Quiz (D30).
 - **Thèmes** : un pack porte son univers dans `quiz_sets.avatar_theme` (`love_actually`, `harry_potter`) ; habillage dans `src/themes.ts`, avatars dans `src/avatars.ts` (préfixe `hp_` pour Harry Potter, D29).
+- **Avatars = photos des personnages des films**, hébergées dans `quiz-media/avatars/<univers>/` (pas de lien direct vers un site tiers ni de portrait généré, D34).
+- **Jamais l'univers d'un autre pack à l'écran** : tant que le thème du pack n'est pas résolu, ne pas se rabattre sur le thème par défaut ; afficher un écran neutre (D34).
 
 ---
 
