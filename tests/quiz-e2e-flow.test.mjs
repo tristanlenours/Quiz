@@ -135,38 +135,40 @@ test('2. Pack « 🎄 Love Actually — Le Warm-Up (5 manches) » : présence en
   }
 })
 
-test('3. Grand Quiz « Do you really love Love actually ? » (17 questions) : intégrité des questions, choix et images en base', async () => {
+test('3. Grand Quiz « 🎄 Love Actually — Le Grand Quiz (18 manches) » : intégrité des questions, choix et médias en base', async () => {
   const { data: sets, error } = await supabase
     .from('quiz_sets')
     .select('*, questions:quiz_questions(*, choices:quiz_choices(*))')
-    .ilike('name', '%Do you really love Love actually%')
+    .ilike('name', '%Love Actually — Le Grand Quiz%')
 
   assert.ifError(error)
   assert.ok(sets && sets.length >= 1, 'Le pack Love actually principal doit exister')
 
   const mainPack = sets[0]
   const questions = [...mainPack.questions].sort((a, b) => a.order - b.order)
-  assert.equal(questions.length, 17, 'Le grand quiz Love actually doit avoir 17 questions')
+  assert.equal(questions.length, 18, 'Le grand quiz Love actually doit avoir 18 questions')
+
+  // D30 : des blind tests et des extraits vidéo ponctuent le quiz
+  assert.ok(
+    questions.filter((q) => q.question_type === 'blind_test' && q.audio_url && q.reveal_title).length >= 3,
+    'Le grand quiz doit inclure au moins 3 Blind Tests'
+  )
+  assert.ok(
+    questions.filter((q) => q.video_url).length >= 2,
+    'Le grand quiz doit inclure au moins 2 extraits vidéo'
+  )
 
   for (const q of questions) {
-    assert.ok(
-      q.choices.length >= 2,
-      `Question "${q.body}" doit avoir au moins 2 choix`
-    )
-    assert.ok(
-      q.choices.some((c) => c.is_correct),
-      `Question "${q.body}" doit avoir au moins 1 choix correct`
-    )
-    assert.ok(
-      q.image_url,
-      `Question "${q.body}" doit avoir une illustration`
-    )
-    const res = await fetch(q.image_url, { method: 'HEAD' })
+    assert.equal(q.choices.length, 4, `Question "${q.body}" doit avoir 4 choix`)
     assert.equal(
-      res.status,
-      200,
-      `L'illustration de "${q.body}" doit répondre HTTP 200 (${q.image_url})`
+      q.choices.filter((c) => c.is_correct).length,
+      1,
+      `Question "${q.body}" doit avoir exactement 1 bonne réponse`
     )
+    for (const url of [q.image_url, q.audio_url, q.reveal_cover_url].filter(Boolean)) {
+      const res = await fetch(url, { method: 'HEAD' })
+      assert.equal(res.status, 200, `Le média de "${q.body}" doit répondre HTTP 200 (${url})`)
+    }
   }
 })
 

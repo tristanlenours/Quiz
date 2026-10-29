@@ -1,14 +1,14 @@
 {
   "name": "🎄 Love Actually — Le Warm-Up (5 manches)",
-  "description": "5 questions cultes et accessibles (Images, Blind Test musical, Extrait Vidéo YouTube & Bande-son) pour se chauffer les pouces dans l'ambiance magique du film avant le grand quiz !",
+  "description": "5 questions faciles et cultes (image, blind test musical, extrait vidéo YouTube, bande-son) pour prendre en main la manette dans l'ambiance du film, sans rien dévoiler du grand quiz.",
   "mode": "mixed",
   "avatar_theme": "love_actually",
   "questions": [
     {
       "order": 0,
       "question_type": "quiz",
-      "body": "« Love actually is all around... » Dans quel lieu chargé d'émotion s'ouvrent et se referment le film avec la voix off de Hugh Grant ?",
-      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q13.png",
+      "body": "« Love actually is all around... » Dans quel lieu s'ouvre et se referme le film ?",
+      "image_url": "https://is1-ssl.mzstatic.com/image/thumb/Features124/v4/95/09/e9/9509e928-9968-3741-6007-64db9481c5af/dj.xwzhbsih.jpg/600x600bb.jpg",
       "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/ec/0b/eb/ec0bebde-df81-1b0c-6563-5eb7783d81dd/mzaf_5359795691279455145.plus.aac.p.m4a",
       "audio_start_sec": 0,
       "audio_duration_sec": 30,
@@ -37,9 +37,9 @@
       "reveal_cover_url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/a3/23/dc/a323dcd2-5791-be52-ef95-0c59f63978ce/5055283461111.jpg/600x600bb.jpg",
       "choices": [
         { "body": "All You Need Is Love", "is_correct": true },
-        { "body": "Here Comes The Sun", "is_correct": false },
-        { "body": "Let It Be", "is_correct": false },
-        { "body": "Can't Buy Me Love", "is_correct": false }
+        { "body": "La Marche nuptiale", "is_correct": false },
+        { "body": "Jingle Bells", "is_correct": false },
+        { "body": "Hallelujah", "is_correct": false }
       ]
     },
     {
@@ -64,9 +64,9 @@
     {
       "order": 3,
       "question_type": "quiz",
-      "body": "À quelle célèbre adresse londonienne s'installe David (Hugh Grant), le nouveau Premier Ministre célibataire du Royaume-Uni ?",
-      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q06.png",
-      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/4a/67/15/4a671528-6b4d-4932-f7ab-7212db98f0a4/mzaf_10429321169689904795.plus.aac.p.m4a",
+      "body": "Quel instrument le petit Sam apprend-il en secret pour impressionner Joanna ?",
+      "image_url": null,
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/4a/47/ca/4a47ca71-5932-8a7e-fe49-b22ee9b973cd/mzaf_15384950070654149640.plus.aac.p.m4a",
       "audio_start_sec": 0,
       "audio_duration_sec": 30,
       "video_url": null,
@@ -74,10 +74,10 @@
       "reveal_artist": null,
       "reveal_cover_url": null,
       "choices": [
-        { "body": "Au 10 Downing Street", "is_correct": true },
-        { "body": "Au 221B Baker Street", "is_correct": false },
-        { "body": "À Abbey Road", "is_correct": false },
-        { "body": "À Notting Hill", "is_correct": false }
+        { "body": "La batterie", "is_correct": true },
+        { "body": "La guitare", "is_correct": false },
+        { "body": "Le piano", "is_correct": false },
+        { "body": "La trompette", "is_correct": false }
       ]
     },
     {
@@ -94,9 +94,9 @@
       "reveal_cover_url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/d4/22/97/d422973f-c3ff-0600-2b6b-a22f7c0cf0f9/16UMGIM17479.rgb.jpg/600x600bb.jpg",
       "choices": [
         { "body": "God Only Knows — The Beach Boys", "is_correct": true },
-        { "body": "Good Vibrations — The Beach Boys", "is_correct": false },
-        { "body": "Wouldn't It Be Nice — The Beach Boys", "is_correct": false },
-        { "body": "California Dreamin' — The Mamas & The Papas", "is_correct": false }
+        { "body": "Wonderwall — Oasis", "is_correct": false },
+        { "body": "Jingle Bell Rock — Bobby Helms", "is_correct": false },
+        { "body": "Fairytale of New York — The Pogues", "is_correct": false }
       ]
     }
   ]

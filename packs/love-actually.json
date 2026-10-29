@@ -1,389 +1,349 @@
 {
-  "name": "Do you really love Love actually ?",
-  "description": "Importé depuis Kahoot (aaedfcd7-d74d-4283-8c8d-c475882e2218)",
-  "mode": "quiz",
+  "name": "🎄 Love Actually — Le Grand Quiz (18 manches)",
+  "description": "Le quiz des vrais fans, en trois actes : on s'échauffe sur les chansons et les scènes cultes, on monte en puissance avec des extraits vidéo et des blind tests, puis on finit sur les détails que seuls les obsessionnels ont remarqués. Adapté du Kahoot « Do you really love Love actually ? ».",
+  "mode": "mixed",
+  "avatar_theme": "love_actually",
   "questions": [
     {
+      "order": 0,
       "question_type": "quiz",
-      "body": "Où est situé le tatouage d'Aurelia (la portugaise)?",
-      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q01.png",
-      "choices": [
-        {
-          "body": "À la cheville",
-          "is_correct": false
-        },
-        {
-          "body": "Bas du dos",
-          "is_correct": true
-        },
-        {
-          "body": "Épaule droite",
-          "is_correct": false
-        },
-        {
-          "body": "Épaule gauche",
-          "is_correct": false
-        }
-      ]
-    },
-    {
-      "question_type": "quiz",
-      "body": "Qui est l'américaine la plus fans des anglais ?",
-      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q02.png",
-      "choices": [
-        {
-          "body": "Carol-Anne",
-          "is_correct": true
-        },
-        {
-          "body": "Jenny",
-          "is_correct": false
-        },
-        {
-          "body": "Harriet",
-          "is_correct": false
-        },
-        {
-          "body": "Stacy",
-          "is_correct": false
-        }
-      ]
-    },
-    {
-      "question_type": "quiz",
-      "body": "Quelle scène suit juste après la dance de Hugh Grant ?",
-      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q03.gif",
-      "choices": [
-        {
-          "body": "Jamie et Aurélia et les feuilles du bouquin dans l'étang",
-          "is_correct": true
-        },
-        {
-          "body": "Juliett et Mark avec la VHS du mariage",
-          "is_correct": false
-        },
-        {
-          "body": "Hugh Grant qui humilie le président Américain",
-          "is_correct": false
-        },
-        {
-          "body": "Sam et son beau père qui mettent en place le plan de séduction de Johana",
-          "is_correct": false
-        }
-      ]
-    },
-    {
-      "question_type": "quiz",
-      "body": "Sur les panneaux tenus par Mark face à Juliet (Keira Knightley), on peut lire :",
-      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q04.png",
-      "choices": [
-        {
-          "body": "A Noël, on dit la vérité, pour moi tu es parfaite",
-          "is_correct": true
-        },
-        {
-          "body": "A Noël, on dit la vérité, je t’aime",
-          "is_correct": false
-        },
-        {
-          "body": "A Noël, on dit la vérité, tu es la femme de ma vie",
-          "is_correct": false
-        },
-        {
-          "body": "A Noël, on dit joyeux Noël",
-          "is_correct": false
-        }
-      ]
-    },
-    {
-      "question_type": "quiz",
-      "body": "Quelle chanson est diffusée pendant l’enterrement de la mère de Sam ?",
-      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q05.png",
-      "choices": [
-        {
-          "body": "« Good Vibrations » des Beach Boys",
-          "is_correct": false
-        },
-        {
-          "body": "« Turn Me on » de Norah Jones",
-          "is_correct": false
-        },
-        {
-          "body": "« Bye Bye Baby » des Bay City Rollers",
-          "is_correct": true
-        },
-        {
-          "body": "Highway to hell, ACDC",
-          "is_correct": false
-        }
-      ]
-    },
-    {
-      "question_type": "quiz",
-      "body": "Sur quelle chanson des Pointer Sisters Hugh Grant fait-il une danse dans ses appartements du 10 Downing Street ?",
-      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q06.png",
-      "choices": [
-        {
-          "body": "I'm so exited",
-          "is_correct": false
-        },
-        {
-          "body": "Jump",
-          "is_correct": true
-        },
-        {
-          "body": "Having a party",
-          "is_correct": false
-        }
-      ]
-    },
-    {
-      "question_type": "quiz",
-      "body": "Dans la meilleure scène du film avec Mr Bean qui prépare un paquet cadeau, quel végétal n' est pas utilisé ?",
-      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q07.png",
-      "choices": [
-        {
-          "body": "Du houx",
-          "is_correct": false
-        },
-        {
-          "body": "Des roses",
-          "is_correct": false
-        },
-        {
-          "body": "De la lavande",
-          "is_correct": false
-        },
-        {
-          "body": "Du sapin",
-          "is_correct": true
-        }
-      ]
-    },
-    {
-      "question_type": "quiz",
-      "body": "Quel mot se prononce de façon identique en anglais et en américain",
-      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q08.png",
-      "choices": [
-        {
-          "body": "Bottle",
-          "is_correct": false
-        },
-        {
-          "body": "Straw",
-          "is_correct": false
-        },
-        {
-          "body": "Table",
-          "is_correct": true
-        }
-      ]
-    },
-    {
-      "question_type": "quiz",
-      "body": "Quel magnifique Cd est offert à Karen ?",
-      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q09.png",
-      "choices": [
-        {
-          "body": "Maria Callas",
-          "is_correct": false
-        },
-        {
-          "body": "Joni Mitchell",
-          "is_correct": true
-        },
-        {
-          "body": "Billy Mack",
-          "is_correct": false
-        },
-        {
-          "body": "The beatles",
-          "is_correct": false
-        }
-      ]
-    },
-    {
-      "question_type": "quiz",
-      "body": "Quelle est la proposition faite à Judy à ce moment?",
-      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q10.png",
-      "choices": [
-        {
-          "body": "Boire un verre",
-          "is_correct": true
-        },
-        {
-          "body": "Devenir sa femme",
-          "is_correct": false
-        },
-        {
-          "body": "Rencontrer sa mère",
-          "is_correct": false
-        },
-        {
-          "body": "Aller acheter un mini-village de noel Lemax",
-          "is_correct": false
-        }
-      ]
-    },
-    {
-      "question_type": "quiz",
-      "body": "Où habite Mia ?",
-      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q11.png",
-      "choices": [
-        {
-          "body": "Lombard avenue",
-          "is_correct": false
-        },
-        {
-          "body": "Downing street",
-          "is_correct": false
-        },
-        {
-          "body": "Harris Street",
-          "is_correct": true
-        },
-        {
-          "body": "Nakatomi plaza",
-          "is_correct": false
-        }
-      ]
-    },
-    {
-      "question_type": "quiz",
-      "body": "Quelle est la chanson du spectacle de l'école ?",
+      "body": "Quelle chanson la petite Joanna interprète-t-elle au spectacle de Noël de l'école ?",
       "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q12.png",
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 20,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
       "choices": [
-        {
-          "body": "All I want for Christmas is you",
-          "is_correct": true
-        },
-        {
-          "body": "Last Christmas",
-          "is_correct": false
-        },
-        {
-          "body": "Christmas is in the air",
-          "is_correct": false
-        },
-        {
-          "body": "Make my wish come true",
-          "is_correct": false
-        }
+        { "body": "All I Want for Christmas Is You", "is_correct": true },
+        { "body": "Last Christmas", "is_correct": false },
+        { "body": "Christmas Is in the Air", "is_correct": false },
+        { "body": "Make My Wish Come True", "is_correct": false }
       ]
     },
     {
-      "question_type": "quiz",
-      "body": "Quelle est ville que rejoint Joana juste après le spectacle ?",
-      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q13.png",
+      "order": 1,
+      "question_type": "blind_test",
+      "body": "🎵 Blind Test : Sur quel tube des Pointer Sisters le Premier ministre se déhanche-t-il dans les couloirs du 10 Downing Street ?",
+      "image_url": null,
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/a9/b6/16/a9b61684-87c1-2b2a-b255-5b951a4dcaff/mzaf_17251563327851743190.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": "Jump (For My Love)",
+      "reveal_artist": "The Pointer Sisters",
+      "reveal_cover_url": "https://is1-ssl.mzstatic.com/image/thumb/Features124/v4/95/09/e9/9509e928-9968-3741-6007-64db9481c5af/dj.xwzhbsih.jpg/600x600bb.jpg",
       "choices": [
-        {
-          "body": "Los Angeles",
-          "is_correct": false
-        },
-        {
-          "body": "Milwaukee",
-          "is_correct": false
-        },
-        {
-          "body": "New York",
-          "is_correct": true
-        },
-        {
-          "body": "Miami",
-          "is_correct": false
-        }
+        { "body": "Jump (For My Love)", "is_correct": true },
+        { "body": "I'm So Excited", "is_correct": false },
+        { "body": "Neutron Dance", "is_correct": false },
+        { "body": "Having a Party", "is_correct": false }
       ]
     },
     {
-      "question_type": "quiz",
-      "body": "Avec qui la sœur d'Aurelia lui conseille de se marier à la place de Jamie ?",
-      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q14.png",
-      "choices": [
-        {
-          "body": "Le prince William",
-          "is_correct": true
-        },
-        {
-          "body": "Robbie Williams",
-          "is_correct": false
-        },
-        {
-          "body": "Prince Harry",
-          "is_correct": false
-        },
-        {
-          "body": "David Beckham",
-          "is_correct": false
-        }
-      ]
-    },
-    {
-      "question_type": "quiz",
-      "body": "Qu'apporte Juliett à Marc qd elle passe récupérer sa cassette de mariage ?",
-      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q15.png",
-      "choices": [
-        {
-          "body": "Du pudding gallois",
-          "is_correct": false
-        },
-        {
-          "body": "Un banofee pie",
-          "is_correct": true
-        },
-        {
-          "body": "Une part tarte au citron meringuée",
-          "is_correct": false
-        },
-        {
-          "body": "Un choux à la crème",
-          "is_correct": false
-        }
-      ]
-    },
-    {
-      "question_type": "quiz",
-      "body": "Combien de temps prend l'emballage du collier ? (temps réel non ressenti)",
-      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q16.png",
-      "choices": [
-        {
-          "body": "Environ une minute",
-          "is_correct": false
-        },
-        {
-          "body": "Environ deux minutes",
-          "is_correct": false
-        },
-        {
-          "body": "Environ trois minutes",
-          "is_correct": true
-        },
-        {
-          "body": "Deux bonnes heures",
-          "is_correct": false
-        }
-      ]
-    },
-    {
+      "order": 2,
       "question_type": "quiz",
       "body": "Contre quel boys band Billy Mack se bat-il pour la place de numéro 1 à Noël ?",
       "image_url": null,
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 20,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
       "choices": [
-        {
-          "body": "Blue",
-          "is_correct": true
-        },
-        {
-          "body": "Westlife",
-          "is_correct": false
-        },
-        {
-          "body": "Boyzone",
-          "is_correct": false
-        },
-        {
-          "body": "Take That",
-          "is_correct": false
-        }
+        { "body": "Blue", "is_correct": true },
+        { "body": "Westlife", "is_correct": false },
+        { "body": "Boyzone", "is_correct": false },
+        { "body": "Take That", "is_correct": false }
+      ]
+    },
+    {
+      "order": 3,
+      "question_type": "quiz",
+      "body": "Quel magnifique CD Harry offre-t-il à Karen pour Noël ?",
+      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q09.png",
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 20,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "Maria Callas", "is_correct": false },
+        { "body": "Joni Mitchell", "is_correct": true },
+        { "body": "Billy Mack", "is_correct": false },
+        { "body": "The Beatles", "is_correct": false }
+      ]
+    },
+    {
+      "order": 4,
+      "question_type": "blind_test",
+      "body": "🎵 Blind Test : Karen s'isole dans sa chambre pour pleurer sur ce morceau de Joni Mitchell. Lequel ?",
+      "image_url": null,
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/65/31/e2/6531e209-4a87-583e-f3ed-24b87a91b443/mzaf_7139891475603500190.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": "Both Sides Now",
+      "reveal_artist": "Joni Mitchell",
+      "reveal_cover_url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/2f/59/98/2f599823-b3c8-405e-baee-9da542323837/093624762027.jpg/600x600bb.jpg",
+      "choices": [
+        { "body": "Both Sides Now", "is_correct": true },
+        { "body": "River", "is_correct": false },
+        { "body": "Big Yellow Taxi", "is_correct": false },
+        { "body": "A Case of You", "is_correct": false }
+      ]
+    },
+    {
+      "order": 5,
+      "question_type": "blind_test",
+      "body": "🎵 Blind Test : Quelle chanson est diffusée pendant l'enterrement de la mère de Sam ?",
+      "image_url": null,
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/43/2a/ea/432aea14-8cc3-dbcc-4c1a-c663d98c0d39/mzaf_13808471937844259709.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": "Bye Bye Baby",
+      "reveal_artist": "Bay City Rollers",
+      "reveal_cover_url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/08/07/56/0807561b-72ae-afd9-445c-616861584d0e/884977504354.jpg/600x600bb.jpg",
+      "choices": [
+        { "body": "« Bye Bye Baby » — Bay City Rollers", "is_correct": true },
+        { "body": "« Good Vibrations » — The Beach Boys", "is_correct": false },
+        { "body": "« Turn Me On » — Norah Jones", "is_correct": false },
+        { "body": "« Highway to Hell » — AC/DC", "is_correct": false }
+      ]
+    },
+    {
+      "order": 6,
+      "question_type": "quiz",
+      "body": "🎬 Regardez l'extrait : « Et à Noël, on dit la vérité… » Quelle pancarte Mark montre-t-il ensuite à Juliet ?",
+      "image_url": null,
+      "audio_url": null,
+      "audio_start_sec": 30,
+      "audio_duration_sec": 30,
+      "video_url": "https://www.youtube.com/watch?v=HdFtO-1dzdU",
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "Pour moi, tu es parfaite", "is_correct": true },
+        { "body": "Je t'aime", "is_correct": false },
+        { "body": "Tu es la femme de ma vie", "is_correct": false },
+        { "body": "Je t'attendrai toujours", "is_correct": false }
+      ]
+    },
+    {
+      "order": 7,
+      "question_type": "quiz",
+      "body": "Au bar de Milwaukee, quelle Américaine est « folle des Anglais » d'après ses copines ?",
+      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q02.png",
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "Carol-Anne", "is_correct": true },
+        { "body": "Jeannie", "is_correct": false },
+        { "body": "Harriet", "is_correct": false },
+        { "body": "Stacey", "is_correct": false }
+      ]
+    },
+    {
+      "order": 8,
+      "question_type": "quiz",
+      "body": "Au bar de Milwaukee, quel mot se prononce de la même façon avec l'accent anglais de Colin et l'accent américain ?",
+      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q08.png",
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "Bottle", "is_correct": false },
+        { "body": "Straw", "is_correct": false },
+        { "body": "Table", "is_correct": true },
+        { "body": "Water", "is_correct": false }
+      ]
+    },
+    {
+      "order": 9,
+      "question_type": "quiz",
+      "body": "Quelle est la proposition faite à Judy à ce moment ?",
+      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q10.png",
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 20,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "Boire un verre", "is_correct": true },
+        { "body": "Devenir sa femme", "is_correct": false },
+        { "body": "Rencontrer sa mère", "is_correct": false },
+        { "body": "Aller acheter un mini-village de Noël Lemax", "is_correct": false }
+      ]
+    },
+    {
+      "order": 10,
+      "question_type": "quiz",
+      "body": "Avec qui la sœur d'Aurelia lui conseille-t-elle de se marier à la place de Jamie ?",
+      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q14.png",
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "Le prince William", "is_correct": true },
+        { "body": "Robbie Williams", "is_correct": false },
+        { "body": "Le prince Harry", "is_correct": false },
+        { "body": "David Beckham", "is_correct": false }
+      ]
+    },
+    {
+      "order": 11,
+      "question_type": "quiz",
+      "body": "Qu'apporte Juliet à Mark quand elle passe récupérer la cassette de son mariage ?",
+      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q15.png",
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 20,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "Du pudding gallois", "is_correct": false },
+        { "body": "Une banoffee pie", "is_correct": true },
+        { "body": "Une part de tarte au citron meringuée", "is_correct": false },
+        { "body": "Un chou à la crème", "is_correct": false }
+      ]
+    },
+    {
+      "order": 12,
+      "question_type": "quiz",
+      "body": "Où repart Joanna juste après le spectacle de l'école ?",
+      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q13.png",
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 20,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "Aux États-Unis", "is_correct": true },
+        { "body": "Au Canada", "is_correct": false },
+        { "body": "En Écosse", "is_correct": false },
+        { "body": "En Australie", "is_correct": false }
+      ]
+    },
+    {
+      "order": 13,
+      "question_type": "quiz",
+      "body": "Quelle scène suit juste après la danse de Hugh Grant ?",
+      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q03.gif",
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "Jamie & Aurelia : les pages du roman dans l'étang", "is_correct": true },
+        { "body": "Juliet & Mark : la cassette du mariage", "is_correct": false },
+        { "body": "David humilie le président américain", "is_correct": false },
+        { "body": "Daniel & Sam : le plan pour séduire Joanna", "is_correct": false }
+      ]
+    },
+    {
+      "order": 14,
+      "question_type": "quiz",
+      "body": "Quand Rufus (Mr Bean) emballe le collier, quel végétal n'utilise-t-il pas ?",
+      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q07.png",
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "Du houx", "is_correct": false },
+        { "body": "Des roses", "is_correct": false },
+        { "body": "De la lavande", "is_correct": false },
+        { "body": "Du sapin", "is_correct": true }
+      ]
+    },
+    {
+      "order": 15,
+      "question_type": "quiz",
+      "body": "🎬 Regardez l'extrait : Combien de temps dure l'emballage du collier dans le film (temps réel, pas ressenti) ?",
+      "image_url": null,
+      "audio_url": null,
+      "audio_start_sec": 40,
+      "audio_duration_sec": 30,
+      "video_url": "https://www.youtube.com/watch?v=1C_hd1y8ncU",
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "Moins d'une minute", "is_correct": false },
+        { "body": "Entre 1 et 2 minutes", "is_correct": false },
+        { "body": "Entre 2 et 3 minutes", "is_correct": true },
+        { "body": "Deux bonnes heures", "is_correct": false }
+      ]
+    },
+    {
+      "order": 16,
+      "question_type": "quiz",
+      "body": "Dans quelle rue habite Mia, la secrétaire de Harry ?",
+      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q11.png",
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "Lombard Avenue", "is_correct": false },
+        { "body": "Downing Street", "is_correct": false },
+        { "body": "Harris Street", "is_correct": true },
+        { "body": "Nakatomi Plaza", "is_correct": false }
+      ]
+    },
+    {
+      "order": 17,
+      "question_type": "quiz",
+      "body": "Où est situé le tatouage d'Aurelia, la Portugaise ?",
+      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q01.png",
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "À la cheville", "is_correct": false },
+        { "body": "En bas du dos", "is_correct": true },
+        { "body": "Sur l'épaule droite", "is_correct": false },
+        { "body": "Sur l'épaule gauche", "is_correct": false }
       ]
     }
   ]
