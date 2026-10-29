@@ -39,18 +39,22 @@ const LOVE_ACTUALLY_THEME: UniverseTheme = {
   hostLobbyEmpty:
     '🎄 En attente des premiers acteurs... Scannez le QR code avec votre téléphone pour choisir votre avatar Love Actually !',
   hostLobbyQuote:
-    '« Whenever I get gloomy with the state of the world, I think about the arrivals gate at Heathrow Airport... » ❤️',
+    '« Let’s go get the shit kicked out of us by love. » — Daniel ❤️',
   playerRegisterBadge: '❤️ Thème Love Actually',
   playerRegisterMissing: 'Choisis ton personnage de Love Actually !',
   playerLobbyBadge: '🎄 En scène pour Love Actually',
   lobbyPlaylist: [
     {
-      title: 'All You Need Is Love (Scène du mariage)',
-      url: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/87/93/1d/87931d5c-beda-7647-7b7c-5d89a88ad755/mzaf_16168889973628785460.plus.aac.p.m4a',
+      title: 'Glasgow Love Theme — Craig Armstrong',
+      url: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/4a/47/ca/4a47ca71-5932-8a7e-fe49-b22ee9b973cd/mzaf_15384950070654149640.plus.aac.p.m4a',
     },
     {
-      title: 'God Only Knows — The Beach Boys',
-      url: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/3b/17/e6/3b17e6c0-5a2a-2226-7c3f-6d0f57be6de9/mzaf_2188717033219073832.plus.aac.p.m4a',
+      title: 'Here With Me — Dido',
+      url: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/ff/ba/9e/ffba9e3f-266a-4360-3f6c-54992863d4c1/mzaf_16126666409101033333.plus.aac.p.m4a',
+    },
+    {
+      title: 'Wherever You Will Go — The Calling',
+      url: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/54/a8/ba/54a8bae5-9413-ea4a-563b-2cd122d53601/mzaf_2561284396060967938.plus.aac.p.m4a',
     },
     {
       title: 'White Christmas — Otis Redding',

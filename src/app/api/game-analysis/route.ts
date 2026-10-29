@@ -42,27 +42,27 @@ const analysisCache = new Map<string, GameAnalysisPayload>()
 
 const CHARACTER_VICTORY_QUIPS: Record<string, string> = {
   david:
-    'a littéralement dansé sur la concurrence dans les couloirs du 10 Downing Street au son des Pointer Sisters',
+    'a littéralement dansé sur la concurrence dans les couloirs du 10 Downing Street',
   natalie:
     'a conquis tout le quartier de Wandsworth avec un naturel désarmant (« Oh, et puis merde ! »)',
   billy_mack:
-    'décroche la place de numéro 1 de Noël devant le boys band Blue et gagne le droit de fêter ça avec son manager Joe',
-  mark: 'n’a même pas eu besoin de sortir ses pancartes « To me, you are perfect » pour mettre tout le monde d’accord',
+    'décroche la place de numéro 1 de Noël devant tous les boys bands du royaume et gagne le droit de fêter ça avec son manager Joe',
+  mark: 'n’a même pas eu besoin de sortir ses pancartes pour mettre tout le monde d’accord',
   juliet:
-    'repart avec la cassette du mariage, son chapeau gavroche et une part bien méritée de Banoffee Pie',
+    'repart avec la cassette du mariage, son chapeau gavroche et un sourire aux dents si nombreuses que ses amies jalouses ont renoncé à les compter',
   jamie:
     'a tapé un sans-faute digne de son meilleur roman avant de plonger dans le lac pour célébrer son triomphe',
   aurelia:
     'a traversé toute la brasserie portugaise sous les applaudissements pour s’emparer de la couronne',
   karen:
-    'prend une revanche éclatante, bien loin des larmes sur Joni Mitchell et avec la grâce d’un homard de crèche',
+    'prend une revanche éclatante, bien loin des larmes de Noël et avec la grâce d’un homard de crèche',
   harry:
     'a validé ses réponses en cachette au comptoir de la bijouterie avant même que sa femme ne revienne',
   sam: 'a sprinté à travers tout l’aéroport d’Heathrow pour arracher la victoire à la dernière seconde',
   joanna:
     'a électrisé toute la salle du spectacle de Noël avec une voix (et un score) de diva absolue',
   rufus:
-    'a pris le temps d’emballer la première place avec du papier transparent, de la lavande et un bâton de cannelle',
+    'a pris le temps d’emballer la première place avec du papier transparent et un ruban noué à la perfection',
   colin:
     'prouve qu’il n’avait même pas besoin d’aller dans le Wisconsin pour régner sans partage sur la soirée',
   mia: 'a sorti ses cornes de diable rouges de la soirée de Noël pour chiper le trophée sous le nez des favoris',
@@ -135,7 +135,7 @@ function buildDeterministicAnalysis(
       : second.displayName
     if (gap === 0) {
       parts.push(
-        `Égalité parfaite au sommet avec ${secondLabel} qui affiche exactement le même score : il va falloir partager le Banoffee Pie !`
+        `Égalité parfaite au sommet avec ${secondLabel} qui affiche exactement le même score : il va falloir partager la dinde de Noël !`
       )
     } else if (gap <= 450) {
       parts.push(
@@ -203,7 +203,7 @@ function buildDeterministicAnalysis(
         winnerName: careful.displayName,
         winnerCharacter: careful.characterName,
         winnerAvatarUrl: careful.avatarUrl,
-        description: `Prend soin d'ajouter la lavande et le bâton de cannelle avant de buzzer (${careful.avgSpeedScore} pts de moyenne par bonne réponse) : lentement mais sûrement !`,
+        description: `Peaufine son paquet cadeau avant de buzzer (${careful.avgSpeedScore} pts de moyenne par bonne réponse) : lentement mais sûrement !`,
       })
     }
   }
@@ -571,6 +571,7 @@ ${hardestQ ? `Question la plus difficile : "${hardestQ.body}" (${hardestQ.pct}% 
 Rédige en français un JSON strict avec 2 clés :
 - "headline": Un titre accrocheur et fun avec un emoji (max 90 caractères).
 - "chronicle": Un débrief humoristique, chaleureux et rythmé de 3 à 4 phrases maximum qui commente le podium, taquine gentiment les joueurs en faisant des clins d'œil aux personnages de Love Actually qu'ils ont choisis comme avatars, et mentionne un fait marquant de la partie.
+Ne dévoile aucune réponse du grand quiz (le débrief du Warm-Up passe avant lui) : ne cite jamais de chanson ou d'artiste, de dessert, de texte des pancartes de Mark, de groupe rival de Billy Mack, de nom de rue, de pays ou de ville, ni le contenu du paquet cadeau de Rufus.
 
 Réponds UNIQUEMENT avec l'objet JSON valide, sans balises markdown.`
 }
