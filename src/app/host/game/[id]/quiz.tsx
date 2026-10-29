@@ -630,6 +630,7 @@ export default function Quiz({
               className={`${hasMedia ? 'w-1/4' : 'w-1/2'} p-1.5`}
             >
               <div
+                data-testid={`host-choice-tile-${index}`}
                 className={`px-6 ${
                   hasMedia ? 'py-4 text-xl' : 'py-5 text-2xl'
                 } w-full h-full rounded-xl font-bold text-white flex justify-between items-center shadow-lg

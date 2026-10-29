@@ -59,25 +59,6 @@ export default function Quiz({
   const myTotalScore =
     myRankIndex !== -1 ? leaderboard[myRankIndex]?.total_score ?? 0 : 0
 
-  // Illustration affichée dès l'apparition de la question, en grand dans l'espace libre (Décision D17)
-  const questionImage =
-    !isBlindTest && question.image_url ? (
-      <div className="flex-grow min-h-0 w-full flex items-center justify-center px-4 pt-3">
-        <img
-          src={question.image_url}
-          alt="Illustration question"
-          className="max-h-full max-w-full rounded-2xl shadow-lg object-contain"
-        />
-      </div>
-    ) : !isBlindTest && question.video_url ? (
-      // L'extrait vidéo n'est joué que sur l'Écran Hôte (Décision D19)
-      <div className="flex-grow min-h-0 w-full flex items-center justify-center px-4 pt-3">
-        <div className="text-white text-lg font-bold text-center p-5 bg-slate-800/80 rounded-2xl border border-white/10">
-          📺 Regardez l&apos;extrait vidéo sur l&apos;écran principal !
-        </div>
-      </div>
-    ) : null
-
   useEffect(() => {
     setChosenChoice(null)
     setHasShownChoices(false)
@@ -245,14 +226,13 @@ export default function Quiz({
 
       {!hasShownChoices && !isAnswerRevealed && (
         <div className="flex-grow min-h-0 text-white flex flex-col items-center justify-center">
-          {questionImage}
           <div className="py-2">
             <CountdownCircleTimer
               key={`mobile_preview_${question.id}`}
               isPlaying={!hasShownChoices}
               duration={TIME_TIL_CHOICE_REVEAL / 1000}
-              size={questionImage ? 80 : 130}
-              strokeWidth={questionImage ? 6 : 8}
+              size={130}
+              strokeWidth={8}
               colors={['#f43f5e', '#6366f1', '#F7B801', '#ef4444']}
               trailColor={'transparent' as ColorFormat}
               colorsTime={[
@@ -284,7 +264,8 @@ export default function Quiz({
 
       {hasShownChoices && !isAnswerRevealed && !chosenChoice && (
         <div className="flex-grow min-h-0 flex flex-col items-stretch">
-          {questionImage || <div className="flex-grow"></div>}
+          {/* Manette = question + réponses uniquement : ni image ni vidéo, quel que soit le téléphone (Décision D31) */}
+          <div className="flex-grow"></div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-3.5">
             {question.choices.map((choice, index) => (
               <button
@@ -352,13 +333,6 @@ export default function Quiz({
           {/* Révélation du morceau sur mobile en mode Blind Test */}
           {isBlindTest && (question.reveal_title || question.reveal_artist) && (
             <div className="flex items-center gap-3.5 bg-slate-800 border border-indigo-500/40 p-3.5 rounded-2xl max-w-sm w-full">
-              {question.reveal_cover_url && (
-                <img
-                  src={question.reveal_cover_url}
-                  alt={question.reveal_title || 'Cover'}
-                  className="w-14 h-14 rounded-xl object-cover"
-                />
-              )}
               <div className="text-left min-w-0">
                 <div className="text-[10px] uppercase text-indigo-400 font-bold">
                   🎵 Morceau mystère

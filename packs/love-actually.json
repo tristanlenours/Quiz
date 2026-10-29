@@ -45,20 +45,20 @@
     {
       "order": 2,
       "question_type": "quiz",
-      "body": "Contre quel boys band Billy Mack se bat-il pour la place de numéro 1 à Noël ?",
+      "body": "🎬 Regardez l'extrait : « Un message important de votre oncle Bill : n'achetez pas de drogue… » Comment Billy Mack termine-t-il sa phrase ?",
       "image_url": null,
       "audio_url": null,
-      "audio_start_sec": 0,
-      "audio_duration_sec": 20,
-      "video_url": null,
+      "audio_start_sec": 33,
+      "audio_duration_sec": 30,
+      "video_url": "https://www.youtube.com/watch?v=EPZCstZqKj4",
       "reveal_title": null,
       "reveal_artist": null,
       "reveal_cover_url": null,
       "choices": [
-        { "body": "Blue", "is_correct": true },
-        { "body": "Westlife", "is_correct": false },
-        { "body": "Boyzone", "is_correct": false },
-        { "body": "Take That", "is_correct": false }
+        { "body": "Devenez pop star, on vous la donne gratuitement", "is_correct": true },
+        { "body": "Achetez plutôt mon single", "is_correct": false },
+        { "body": "Et surtout, ne votez pas pour Blue", "is_correct": false },
+        { "body": "Mangez vos légumes", "is_correct": false }
       ]
     },
     {
