@@ -41,12 +41,37 @@ Avant toute modification de schéma, d'interface ou de logique de jeu, lire :
   - Les URLs de QR code et de partage ne doivent jamais être codées en dur sur un domaine tiers : utiliser `window.location.origin` ou `NEXT_PUBLIC_APP_URL`.
 - **Sécurité** :
   - Ne jamais commiter `.env` ou `.env.local`.
-  - Seules `NEXT_PUBLIC_SUPABASE_URL` et `NEXT_PUBLIC_SUPABASE_ANON_KEY` sont exposées au client navigateur.
+  - Seules l'URL Supabase et la clé **anon** atteignent le navigateur : `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY`, ou `SUPABASE_URL` / `SUPABASE_ANON_KEY` injectées au runtime par `RootLayout` (`window.__QUIZ_SUPABASE__`, D18).
+  - `SUPABASE_SERVICE_ROLE_KEY`, `SITE_PASSWORD` et les clés Gemini restent **côté serveur** (routes API, scripts, tests) : jamais dans un composant client ni une variable `NEXT_PUBLIC_*`.
 
 ---
 
-## 4. Commandes de Développement & Qualité
+## 4. Écrans, médias & anti-spoil
+
+- **Écran Hôte (TV) = seul diffuseur de médias** : image, extrait YouTube, son (D19, D26).
+- **Manette Joueur = texte seul** : la question et les 4 réponses, sans image de question, vidéo, son ni pochette, pour un rendu garanti sur tous les téléphones (D31). Seuls les avatars s'y affichent.
+- **Extraits YouTube** : vérifier qu'ils sont intégrables (oEmbed HTTP 200 et `playableInEmbed: true`) et caler `audio_start_sec` / `audio_duration_sec` pour que l'extrait **ne montre pas la réponse** (l'extrait s'arrête à début + temps de réponse).
+- **Son** : extraits iTunes (`audio-ssl.itunes.apple.com`, 30 s) et pochettes `mzstatic.com` en `600x600bb`.
+- **Zéro spoil hors des questions** : sous-titres d'avatars (`src/avatars.ts`), citation et playlist du Salon (`src/themes.ts`), chronique déterministe et prompt Gemini (`src/app/api/game-analysis/route.ts`) ne doivent dévoiler **aucune réponse** d'un pack du même thème. Le Warm-Up ne recoupe pas le Grand Quiz (D30).
+- **Thèmes** : un pack porte son univers dans `quiz_sets.avatar_theme` (`love_actually`, `harry_potter`) ; habillage dans `src/themes.ts`, avatars dans `src/avatars.ts` (préfixe `hp_` pour Harry Potter, D29).
+
+---
+
+## 5. Packs de questions
+
+- `packs/*.json` est la **source de vérité** du contenu (format Import/Export du Studio, D09). Toute modification d'un pack se fait dans le JSON **puis** en base, dans le même tour de travail.
+- Règles de contenu : **4 choix et 1 seule bonne réponse** par question ; faits vérifiés sur une source (script, transcript) avant d'être posés ; un fait invérifiable est signalé dans `DECISIONS.md`.
+- Mise en base d'un pack existant : `npm run pack:sync -- packs/<pack>.json` (simulation), puis `--apply`. La mise à jour se fait **sur place** pour conserver les identifiants et l'historique `quiz_answers` ; ajouter `--set-id <uuid>` si le pack a été renommé. Un nouveau pack s'importe depuis le Studio (`/host/dashboard`).
+- Après un changement de pack, mettre à jour les attentes des tests (nombre de questions, nom du pack).
+
+---
+
+## 6. Commandes de Développement & Qualité
 
 - `npm run dev` — Serveur de développement Next.js (`http://localhost:3000`).
 - `npm run build` — Compilation de production Next.js + vérification TypeScript.
 - `npm run lint` — Vérification ESLint.
+- `npm test` — Intégrité des packs en base (choix, bonne réponse unique, médias accessibles en HTTP), avatars, partie simulée, moteur d'analyse. Rapide, contre la vraie base Supabase.
+- `npm run test:e2e` — Parties complètes en navigateur (Playwright) : 1 TV + 4 manettes sur la vraie base, pour le Warm-Up et le Grand Quiz (~15 min). Lance son propre `next dev` sur le port 3100 ; `E2E_BASE_URL` cible un serveur existant, `E2E_KEEP_GAME=1` conserve la partie de test. Le moteur commun est `tests/e2e/full-game.ts`, avec un fichier de scénario par pack.
+
+**Fiabilité avant tout** (I13) : avant de livrer une modification de jeu, d'écran ou de pack, `npm test` **et** `npm run test:e2e` doivent passer. Le Chromium de Playwright ne lit ni l'AAC ni le H.264 : les tests vérifient la présence et le calage des médias, **pas leur lecture effective**, à contrôler en répétition sur la vraie TV.

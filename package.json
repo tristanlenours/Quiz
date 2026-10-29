@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "test": "node --test tests/quiz-e2e-flow.test.mjs",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "pack:sync": "node scripts/sync-pack.mjs"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.0.1",
