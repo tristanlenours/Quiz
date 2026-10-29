@@ -27,6 +27,11 @@ Avant toute modification de schéma, d'interface ou de logique de jeu, lire :
    Si une nouvelle orientation remplace une décision précédente, marquer l'ancienne décision comme `Remplacée par Dyy` dans `DECISIONS.md` plutôt que de l'effacer.
 4. **Distinguer les statuts** :
    Séparer clairement ce qui relève d'une `Intention auteur` (`Ixx`), d'une `Décision adoptée` (`Dxx`) et d'une `Question ouverte` (`Qxx`).
+5. **Tenir ce fichier à jour au fil de l'eau** :
+   À chaque nouvelle décision `Dxx`, se demander si elle crée, change ou rend caduque une règle de travail durable (commande, convention, invariant, piège connu). Si oui, mettre à jour `AGENTS.md` **dans le même tour de travail**, sans attendre une révision d'ensemble ; une règle caduque est corrigée ou retirée, pas laissée en place.
+   Dans tous les cas, avancer le marqueur ci-dessous jusqu'à la dernière décision relue. `npm test` échoue tant qu'une décision de `DECISIONS.md` est plus récente que ce marqueur.
+
+   **Dernière revue d'AGENTS.md : D33**
 
 ---
 

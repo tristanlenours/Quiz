@@ -318,3 +318,16 @@ test('6. Non-régression D24 : isolation des réponses par partie en cours et ve
     'Les verrous synchrones hasRevealedRef et isTransitioningRef doivent protéger onTimeUp et getNextQuestion'
   )
 })
+
+test('7. AGENTS.md relu jusqu’à la dernière décision de DECISIONS.md (D33)', () => {
+  const decisions = fs.readFileSync(path.resolve(process.cwd(), 'DECISIONS.md'), 'utf8')
+  const agents = fs.readFileSync(path.resolve(process.cwd(), 'AGENTS.md'), 'utf8')
+  const latest = Math.max(...[...decisions.matchAll(/^\| \*\*D(\d+)\*\* \|/gm)].map((m) => Number(m[1])))
+  const marker = agents.match(/Dernière revue d'AGENTS\.md : D(\d+)/)
+  assert.ok(marker, 'AGENTS.md doit porter le marqueur « Dernière revue d’AGENTS.md : Dxx »')
+  assert.ok(
+    Number(marker[1]) >= latest,
+    `DECISIONS.md va jusqu’à D${latest} mais AGENTS.md n’a été relu que jusqu’à D${marker[1]} : ` +
+      `vérifier si les décisions récentes changent une règle de travail, mettre AGENTS.md à jour si besoin, puis avancer le marqueur.`
+  )
+})
