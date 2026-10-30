@@ -107,9 +107,42 @@ const HARRY_POTTER_THEME: UniverseTheme = {
   deterministicChronicleLabel: '🦉 Discours de Dumbledore, de mémoire',
 }
 
+const RETRO_2026_THEME: UniverseTheme = {
+  id: 'retro_2026',
+  universe: 'Rétro 2026',
+  avatars: getThemeAvatars('retro_2026'),
+  pageBg: 'from-indigo-950 via-slate-900 to-amber-950',
+  hostLobbyBadge: '📺 ÉCRAN HÔTE (TV) • RÉTRO 2026',
+  hostLobbyIntro: 'choisissez qui vous incarnez pour la soirée',
+  hostLobbyEmpty:
+    '🗓️ L’année attend ses invités... Scannez le QR code avec votre téléphone pour choisir votre personnalité de 2026 !',
+  hostLobbyQuote: '« Une année, ça passe vite. Surtout quand on la refait en quiz. » 🗓️',
+  playerRegisterBadge: '🗓️ Thème Rétro 2026',
+  playerRegisterMissing: 'Choisis ta personnalité de l’année !',
+  playerLobbyBadge: '🗓️ En scène pour 2026',
+  lobbyPlaylist: [
+    {
+      title: 'Golden — HUNTR/X',
+      url: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/4a/9d/a1/4a9da1c4-096f-8f45-4a3b-c883c45ca451/mzaf_3059921854949935161.plus.aac.p.m4a',
+    },
+    {
+      title: 'DtMF — Bad Bunny',
+      url: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/28/ad/eb/28adeb53-5969-35a0-e136-28767f0d6144/mzaf_15250745364174301370.plus.aac.p.m4a',
+    },
+  ],
+  podiumTrack: {
+    title: 'Dai Dai',
+    url: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/56/7a/bc/567abc01-853d-946a-a47d-e75cb69b5b13/mzaf_345300859410957179.plus.aac.p.m4a',
+  },
+  quizModeLabel: '🗓️ Mode Quiz Rétro 2026',
+  debriefBadge: '🗓️ Le Bêtisier de l’année & Trophées',
+  deterministicChronicleLabel: '🗓️ Revue de presse de la soirée',
+}
+
 const THEMES: Record<string, UniverseTheme> = {
   love_actually: LOVE_ACTUALLY_THEME,
   harry_potter: HARRY_POTTER_THEME,
+  retro_2026: RETRO_2026_THEME,
 }
 
 export function getUniverseTheme(themeId?: string | null): UniverseTheme {

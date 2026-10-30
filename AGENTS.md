@@ -31,7 +31,7 @@ Avant toute modification de schéma, d'interface ou de logique de jeu, lire :
    À chaque nouvelle décision `Dxx`, se demander si elle crée, change ou rend caduque une règle de travail durable (commande, convention, invariant, piège connu). Si oui, mettre à jour `AGENTS.md` **dans le même tour de travail**, sans attendre une révision d'ensemble ; une règle caduque est corrigée ou retirée, pas laissée en place.
    Dans tous les cas, avancer le marqueur ci-dessous jusqu'à la dernière décision relue. `npm test` échoue tant qu'une décision de `DECISIONS.md` est plus récente que ce marqueur.
 
-   **Dernière revue d'AGENTS.md : D45**
+   **Dernière revue d'AGENTS.md : D46**
 
 ---
 
@@ -58,9 +58,9 @@ Avant toute modification de schéma, d'interface ou de logique de jeu, lire :
 - **Extraits YouTube** : vérifier qu'ils sont intégrables (oEmbed HTTP 200 et `playableInEmbed: true`) et caler `audio_start_sec` / `audio_duration_sec` pour que l'extrait **ne montre pas la réponse** (l'extrait s'arrête à début + temps de réponse).
 - **Son** : extraits iTunes (`audio-ssl.itunes.apple.com`, 30 s) et pochettes `mzstatic.com` en `600x600bb`.
 - **Zéro spoil hors des questions** : sous-titres d'avatars (`src/avatars.ts`), citation et playlist du Salon (`src/themes.ts`), chronique déterministe et prompt Gemini (`src/app/api/game-analysis/route.ts`) ne doivent dévoiler **aucune réponse** d'un pack du même thème. Le Warm-Up ne recoupe pas le Grand Quiz (D30).
-- **Thèmes** : un pack porte son univers dans `quiz_sets.avatar_theme` (`love_actually`, `harry_potter`) ; habillage dans `src/themes.ts`, avatars dans `src/avatars.ts` (préfixe `hp_` pour Harry Potter, D29).
+- **Thèmes** : un pack porte son univers dans `quiz_sets.avatar_theme` (`love_actually`, `harry_potter`, `retro_2026`) ; habillage dans `src/themes.ts`, avatars dans `src/avatars.ts` (préfixes `hp_` et `r26_`, D29, D46). Un nouveau thème doit aussi avoir sa chronique et son prompt dans `src/app/api/game-analysis/route.ts`, sinon il hérite de ceux de Love Actually.
 - **Thème Harry Potter = ton « à peu près »** : vrais noms, descriptions très approximatives de quelqu'un qui a vu les films de loin (avatars, Salon, chronique, prompt Gemini). Ne pas le corriger (D41).
-- **Avatars = photos des personnages des films**, hébergées dans `quiz-media/avatars/<univers>/` (pas de lien direct vers un site tiers ni de portrait généré, D34).
+- **Avatars = photos des personnages des films**, ou de vraies personnes pour Rétro 2026 (Wikimedia Commons, crédits dans D46), hébergées dans `quiz-media/avatars/<univers>/` (pas de lien direct vers un site tiers ni de portrait généré, D34). Sous-titres sans accusation sur des personnes réelles.
 - **15 personnages maximum par univers**, pour que le choix d'avatar tienne sans ascenseur imbriqué : sur la manette, seule la page défile (D35).
 - **Jamais l'univers d'un autre pack à l'écran** : tant que le thème du pack n'est pas résolu, ne pas se rabattre sur le thème par défaut ; afficher un écran neutre (D34).
 

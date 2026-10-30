@@ -27,7 +27,8 @@
           "body": "Spike Jonze",
           "is_correct": false
         }
-      ]
+      ],
+      "order": 0
     },
     {
       "question_type": "quiz",
@@ -50,7 +51,8 @@
           "body": "Nancy",
           "is_correct": false
         }
-      ]
+      ],
+      "order": 1
     },
     {
       "question_type": "quiz",
@@ -73,10 +75,42 @@
           "body": "Brésil",
           "is_correct": false
         }
-      ]
+      ],
+      "order": 2
     },
     {
       "order": 3,
+      "question_type": "quiz",
+      "body": "🎬 Regardez l'extrait ! Shakira en finale de la Coupe du monde : comment s'appelle cet hymne officiel ?",
+      "image_url": null,
+      "audio_url": null,
+      "audio_start_sec": 6,
+      "audio_duration_sec": 30,
+      "video_url": "https://www.youtube.com/watch?v=T3thHUtPdhc",
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        {
+          "body": "Dai Dai",
+          "is_correct": true
+        },
+        {
+          "body": "Waka Waka",
+          "is_correct": false
+        },
+        {
+          "body": "Dale Dale",
+          "is_correct": false
+        },
+        {
+          "body": "La La La",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 4,
       "question_type": "quiz",
       "body": "🏝️ Battu aux municipales de Brest, où est parti François Cuillandre ?",
       "image_url": null,
@@ -107,7 +141,7 @@
       ]
     },
     {
-      "order": 4,
+      "order": 5,
       "question_type": "quiz",
       "body": "🕯️ Parmi ces personnalités, laquelle n'est PAS décédée en 2026 ?",
       "image_url": null,
@@ -138,7 +172,7 @@
       ]
     },
     {
-      "order": 5,
+      "order": 6,
       "question_type": "quiz",
       "body": "🎬 Regardez l'extrait ! Rosalía chante Berghain aux BRIT Awards. Quelle invitée surprise la rejoint juste après sur scène ?",
       "image_url": null,
@@ -169,7 +203,7 @@
       ]
     },
     {
-      "order": 6,
+      "order": 7,
       "question_type": "quiz",
       "body": "🎮 GTA 6, enfin ! Comment s'appellent les deux protagonistes du jeu ?",
       "image_url": null,
@@ -199,5 +233,6 @@
         }
       ]
     }
-  ]
+  ],
+  "avatar_theme": "retro_2026"
 }

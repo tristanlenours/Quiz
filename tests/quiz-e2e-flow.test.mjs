@@ -85,6 +85,21 @@ test('1 bis. Catalogue des 15 sorciers Harry Potter : photos des films sur Supab
   }
 })
 
+test('1 ter. Catalogue des 15 personnalités Rétro 2026 : photos sur Supabase Storage (D46)', async () => {
+  const avatarsSrc = fs.readFileSync(
+    path.resolve(process.cwd(), 'src/avatars.ts'),
+    'utf8'
+  )
+  const ids = [...avatarsSrc.matchAll(/star\('(r26_[a-z]+)'/g)].map((m) => m[1])
+  assert.equal(ids.length, 15, 'Le thème Rétro 2026 doit compter 15 personnalités')
+
+  for (const id of ids) {
+    const imgUrl = `${supabaseUrl}/storage/v1/object/public/quiz-media/avatars/retro-2026/${id}.jpg`
+    const res = await fetch(imgUrl, { method: 'HEAD' })
+    assert.equal(res.status, 200, `La photo de '${id}' doit être accessible (${imgUrl})`)
+  }
+})
+
 test('2. Pack « 🎄 Love Actually — Le Warm-Up (5 manches) » : présence en base, couverture multi-formats et médias valides', async () => {
   const { data: sets, error } = await supabase
     .from('quiz_sets')

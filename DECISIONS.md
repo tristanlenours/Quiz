@@ -80,6 +80,7 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **D43** | 2026-10-30 | Extrait Rosalía aux BRIT Awards dans Rétro 2026 | Vidéo `7fyufPkXLbs` (RosaliaVEVO) de 65 s à 95 s, coupée avant l'arrivée de Björk (100 s). Question : quelle invitée surprise la rejoint ? | Adopté |
 | **D44** | 2026-10-30 | Question GTA 6 dans Rétro 2026 | « Comment s'appellent les deux protagonistes ? » : Lucia et Jason, contre des héros des anciens GTA (Franklin et Michael, Niko et Trevor, Tommy et CJ). | Adopté |
 | **D45** | 2026-10-30 | E2E light du Grand Quiz & numérotation des manches jouées | `npm run test:e2e:light` joue un tirage aléatoire de 5 manches sur un pack temporaire. Le test complet reste obligatoire avant livraison. Écran Hôte et Manette renumérotent `order` selon la position jouée, car les manches désactivées laissaient des trous qui faisaient finir la partie trop tôt. | Adopté |
+| **D46** | 2026-10-30 | Thème Rétro 2026 : 15 personnalités, habillage, chronique & extrait Shakira | Nouveau thème `retro_2026` (photos Wikimedia Commons recadrées, préfixe `r26_`), Salon et chronique propres, sans Love Actually. Question ajoutée sur l'hymne *Dai Dai* avec le live officiel FIFA `T3thHUtPdhc`, de 6 s à 36 s. | Adopté |
 
 ---
 
@@ -388,3 +389,15 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
   3. **Test complet inchangé** : `npm run test:e2e` joue toutes les manches actives et reste obligatoire avant livraison. Le light ne voit pas les trous de numérotation, car son pack est numéroté de 0 à n-1.
 - **Alternatives écartées** : désactiver des manches au hasard dans le vrai pack (risque si une partie tourne, état à restaurer) ; paramètre de partie « questions limitées » dans l'application (code de test en production).
 - **Limites** : le scénario du Grand Quiz a une entrée par manche active. Activer ou désactiver une manche demande d'ajuster `SCENARIO` dans `grand-quiz-full-game.spec.ts`, sinon le test s'arrête avec un message explicite. Un run interrompu peut laisser un pack « E2E light » visible dans le Studio jusqu'au lancement suivant.
+
+### 2026-10-30 — D46 : Thème Rétro 2026
+- **Contexte** : l'auteur veut des personnalités de 2026 comme avatars et une question sur l'hymne de la Coupe du monde avec le live de Shakira. Le pack tombait sur le thème par défaut Love Actually (Salon, avatars, chronique).
+- **Décision** :
+  1. **15 personnalités** validées par l'auteur : Shakira, Mbappé, Wembanyama, Trump, Lecornu, Yung Lean, Léon XIV, Cuillandre, Roudaut, Madonna, Burna Boy, Sansal, Le Pen, Sarkozy, Yamal. Photos de l'infobox Wikipédia, recadrées en carré 400×400 et hébergées dans `quiz-media/avatars/retro-2026/r26_<id>.jpg`.
+  2. **Crédits photos (Wikimedia Commons)** : Junta de Andalucía CC BY-SA 2.0 (Shakira) ; Bryan Berlin CC BY-SA 4.0 (Mbappé, Yamal) ; Frenchieinportland CC BY 4.0 (Wembanyama) ; Daniel Torok, domaine public (Trump) ; Patrice Normand/Leextra CC BY-SA 4.0 (Lecornu) ; Wojciech Pędzich CC BY 4.0 (Yung Lean) ; Ricardo Stuckert CC BY-SA 4.0 (Léon XIV) ; MFonzatti CC BY-SA 4.0 (Cuillandre) ; Anne-Emmanuelle Kervella CC0 (Roudaut) ; Raph_PH CC BY 2.0 (Madonna) ; Nuță Lucian CC BY-SA 2.0 (Burna Boy) ; ActuaLitté CC BY-SA 2.0 (Sansal) ; Vox España CC0 (Le Pen) ; 首相官邸 CC BY 4.0 (Sarkozy).
+  3. **Habillage et chronique** : `RETRO_2026_THEME`, `buildRetroAnalysis` et `buildRetroPrompt`. Citation du Salon non attribuée (pas de fausse citation d'une personne réelle). Le prompt Gemini interdit accusations, maladies et décès.
+  4. **Anti-spoil** : sous-titres sans Metz, Espagne, Dai Dai, Ouessant, Gavras ni Björk. Playlist du Salon : *Golden*, *DtMF*. *Dai Dai* est réservée au podium, après la partie.
+  5. **Question Shakira** : vidéo FIFA `T3thHUtPdhc`, intégrable (oEmbed 200, `playableInEmbed: true`), 2 min 04. Extrait de 6 s à 36 s, avant Burna Boy (vers 56 s), sans texte à l'écran d'après les storyboards. Leurres : *Waka Waka*, *Dale Dale* (inventé), *La La La*. Insérée en 4ᵉ position, après le vainqueur de la Coupe du monde.
+  6. **Test** : `retro-lobby.spec.ts` vérifie le Salon et les 15 photos ; `npm test` vérifie les photos en HTTP.
+- **Alternatives écartées** : extrait de la cérémonie d'ouverture (l'auteur veut la finale) ; photos générées (D34).
+- **Limites** : le refrain chante le titre, c'est un indice volontairement laissé. Le titre de la vidéo FIFA ne contient pas celui de la chanson. Le test `retro-lobby` ne joue pas une partie Rétro complète, seul le Salon est couvert.

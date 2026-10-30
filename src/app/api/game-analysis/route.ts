@@ -487,6 +487,131 @@ function buildHarryPotterAnalysis(
   }
 }
 
+// ==============================================================================
+// Thème Rétro 2026 (D46) : revue de presse de la soirée, sans Love Actually
+// ==============================================================================
+
+const RETRO_VICTORY_QUIPS: Record<string, string> = {
+  r26_shakira: 'a fait bouger tout le classement, et les hanches n’ont toujours pas menti',
+  r26_mbappe: 'a pris la profondeur dès la première question et n’a plus jamais été rattrapé',
+  r26_wemby: 'a dominé tout le monde de très haut, sans même lever les bras',
+  r26_trump: 'annonce une victoire historique, la plus belle de tous les temps, de très loin',
+  r26_lecornu: 'a tenu jusqu’au bout, ce qui à Matignon relève déjà de l’exploit',
+  r26_yunglean: 'a gagné avec la mine de celui qui aurait préféré rester chez lui',
+  r26_leon: 'l’emporte, et on n’ose pas contester',
+  r26_cuillandre: 'prend sa revanche, rentré d’Ouessant pour l’occasion',
+  r26_roudaut: 'confirme la tendance : décidément, on ne l’arrête plus à Brest',
+  r26_madonna: 'rappelle à tout le monde qui reste la patronne',
+  r26_burnaboy: 'a gagné sans enlever son chapeau',
+  r26_sansal: 'a gagné avec une plume plus rapide que les buzzers',
+  r26_lepen: 'gagne en première instance, un appel reste possible',
+  r26_sarkozy: 'a tout gagné, et conteste déjà qu’on en parle',
+  r26_yamal: 'a mis tout le monde dans le vent, à un âge où on devrait réviser le bac',
+}
+
+function buildRetroAnalysis(
+  quizName: string,
+  players: PlayerComputedStats[],
+  hardestQ: { body: string; pct: number } | null,
+  totalQuestions: number
+): GameAnalysisPayload {
+  if (players.length === 0) {
+    return {
+      headline: '🗓️ Année blanche : personne n’a répondu',
+      chronicle: 'Aucune réponse enregistrée. On retentera en 2027, si tout le monde survit à l’année.',
+      awards: [],
+      hardestQuestionText: null,
+      hardestQuestionSuccessPct: null,
+      source: 'deterministic',
+      themeId: 'retro_2026',
+    }
+  }
+
+  const winner = players[0]
+  const second = players[1] ?? null
+  const third = players[2] ?? null
+  const labelOf = (p: PlayerComputedStats) =>
+    p.characterName ? `${p.displayName} (alias ${p.characterName})` : p.displayName
+
+  const headline =
+    second && winner.totalScore - second.totalScore <= 400
+      ? `🗓️ Coup de théâtre : ${winner.displayName} arrache « ${quizName} » sur le fil !`
+      : `📰 Fait marquant de l’année : ${winner.displayName} écrase « ${quizName} » !`
+
+  const quip =
+    (winner.avatarId && RETRO_VICTORY_QUIPS[winner.avatarId]) ||
+    'a survolé l’année avec une mémoire d’éléphant'
+  const parts: string[] = [
+    `Personnalité de l’année : ${labelOf(winner)}, qui ${quip}, avec ${winner.totalScore} points et ${winner.correctCount}/${totalQuestions} bonnes réponses.`,
+  ]
+
+  if (second) {
+    const gap = winner.totalScore - second.totalScore
+    parts.push(
+      gap === 0
+        ? `${labelOf(second)} finit à égalité parfaite : il faudra un recomptage.`
+        : `${labelOf(second)} termine à ${gap} points${third ? `, devant ${third.displayName} (${third.totalScore} points)` : ''}.`
+    )
+  }
+  if (hardestQ) {
+    parts.push(
+      `Le sujet qui a le plus divisé : « ${hardestQ.body} », avec ${hardestQ.pct}% de bonnes réponses.`
+    )
+  }
+
+  const awards: GameAward[] = []
+  const giveAward = (
+    id: string,
+    emoji: string,
+    title: string,
+    p: PlayerComputedStats,
+    description: string
+  ) =>
+    awards.push({
+      id,
+      emoji,
+      title,
+      winnerName: p.displayName,
+      winnerCharacter: p.characterName,
+      winnerAvatarUrl: p.avatarUrl,
+      description,
+    })
+
+  const scorers = players.filter((p) => p.correctCount > 0)
+  const fastest = [...scorers].sort(
+    (a, b) => b.bestSingleScore - a.bestSingleScore || b.avgSpeedScore - a.avgSpeedScore
+  )[0]
+  if (fastest) {
+    giveAward('speed', '⚡', 'Alerte Info', fastest, `Le plus rapide sur l’actu : une pointe à ${fastest.bestSingleScore} pts.`)
+  }
+  const sniper = [...scorers].sort(
+    (a, b) => b.maxStreak - a.maxStreak || b.accuracyPct - a.accuracyPct
+  )[0]
+  if (sniper && (sniper.maxStreak >= 2 || players.length === 1)) {
+    giveAward('sniper', '📰', 'Abonné au Journal de 20 h', sniper, `${sniper.maxStreak} bonnes réponses d’affilée (${sniper.accuracyPct}% de réussite).`)
+  }
+  const finisher = players
+    .filter((p) => p.lateGameScore > 0)
+    .sort((a, b) => b.lateGameScore - a.lateGameScore)[0]
+  if (finisher && finisher.lateGameScore >= 600) {
+    giveAward('finisher', '🔥', 'Sprint de fin d’année', finisher, `${finisher.lateGameScore} pts sur les 3 dernières manches.`)
+  }
+  if (players.length >= 3) {
+    const brave = players[players.length - 1]
+    giveAward('brave', '🏝️', 'Exil à Ouessant', brave, `${brave.answeredCount} manches jouées : une retraite bien méritée.`)
+  }
+
+  return {
+    headline,
+    chronicle: parts.join(' '),
+    awards: awards.slice(0, 4),
+    hardestQuestionText: hardestQ?.body ?? null,
+    hardestQuestionSuccessPct: hardestQ?.pct ?? null,
+    source: 'deterministic',
+    themeId: 'retro_2026',
+  }
+}
+
 interface ChronicleContext {
   quizName: string
   players: PlayerComputedStats[]
@@ -531,6 +656,37 @@ ${hardestQ ? `Question la plus meurtrière : "${hardestQ.body}" (${hardestQ.pct}
 Rédige en français un JSON strict avec 2 clés :
 - "headline": Une manchette du « journal qui bouge » (tu ne sais plus son nom), sensationnaliste et drôle, avec un emoji (max 100 caractères).
 - "chronicle": Le discours de Dumbledore en 5 à 6 phrases, à la première personne, qui (1) annonce la Coupe des Quatre Maisons de la dernière à la première place avec suspense, (2) accorde les « derniers points » au vainqueur en jouant sur le personnage qu'il incarne, (3) taquine 2 ou 3 autres joueurs via leur personnage, (4) évoque la question la plus meurtrière, (5) se termine par une formule de clôture hésitante, qui se perd un peu.
+N'invente aucun score : utilise uniquement les chiffres fournis.
+
+Réponds UNIQUEMENT avec l'objet JSON valide, sans balises markdown.`
+}
+
+function buildRetroPrompt({
+  quizName,
+  players,
+  awards,
+  hardestQ,
+  totalQuestions,
+}: ChronicleContext): string {
+  const summaryLines = players.map(
+    (p) =>
+      `- #${p.rank} ${p.displayName} (incarne ${p.characterName || 'personne'}) : ${p.totalScore} pts, ${p.correctCount}/${totalQuestions} bonnes réponses`
+  )
+  const awardsLines = awards.map((a) => `- ${a.emoji} ${a.title} : ${a.winnerName} (${a.description})`)
+
+  return `Tu es un chroniqueur de revue de presse, drôle et bienveillant, qui conclut une soirée Quiz « Rétro 2026 » entre amis (pack "${quizName}", ${totalQuestions} questions). Les joueurs incarnent des personnalités de l'année.
+On taquine les joueurs, pas les personnalités : aucune accusation ni affirmation sur des personnes réelles, et aucune mention de maladie ou de décès.
+
+Classement :
+${summaryLines.join('\n')}
+
+Trophées :
+${awardsLines.join('\n')}
+${hardestQ ? `Question la plus difficile : "${hardestQ.body}" (${hardestQ.pct}% de réussite).` : ''}
+
+Rédige en français un JSON strict avec 2 clés :
+- "headline": Un gros titre de presse drôle, avec un emoji (max 100 caractères).
+- "chronicle": Une chronique de 4 à 5 phrases qui annonce le vainqueur et taquine 2 autres joueurs.
 N'invente aucun score : utilise uniquement les chiffres fournis.
 
 Réponds UNIQUEMENT avec l'objet JSON valide, sans balises markdown.`
@@ -794,8 +950,13 @@ export async function POST(request: Request) {
       }
     }
 
+    const isRetro = themeId === 'retro_2026'
     const baseAnalysis = (
-      isHarryPotter ? buildHarryPotterAnalysis : buildDeterministicAnalysis
+      isHarryPotter
+        ? buildHarryPotterAnalysis
+        : isRetro
+        ? buildRetroAnalysis
+        : buildDeterministicAnalysis
     )(quizName, playerStats, hardestQ, totalQuestions)
 
     const promptContext: ChronicleContext = {
@@ -810,6 +971,8 @@ export async function POST(request: Request) {
     const geminiOut = await tryGenerateGeminiChronicle(
       isHarryPotter
         ? buildHarryPotterPrompt(promptContext)
+        : isRetro
+        ? buildRetroPrompt(promptContext)
         : buildLoveActuallyPrompt(promptContext),
       isHarryPotter ? 1500 : 450
     )

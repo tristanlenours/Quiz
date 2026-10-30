@@ -209,6 +209,47 @@ export const HARRY_POTTER_AVATARS: AvatarCharacter[] = [
   wizard('hp_dobby', 'Dobby', 'Toby Jones', 'Le petit truc avec les oreilles. Il y a une histoire de chaussette', 'aucune'),
 ]
 
+// Personnalités de l'année (D46) : photos Wikimedia Commons recadrées en carré sur le visage
+const RETRO_STORAGE_BASE =
+  'https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/avatars/retro-2026'
+
+function star(
+  id: string,
+  name: string,
+  actor: string,
+  tagline: string,
+  emoji: string
+): AvatarCharacter {
+  return {
+    id,
+    name,
+    actor,
+    tagline,
+    emoji,
+    accent: 'from-indigo-500 to-amber-600 border-indigo-400',
+    imageUrl: `${RETRO_STORAGE_BASE}/${id}.jpg`,
+  }
+}
+
+// Identifiants préfixés `r26_` : pas de collision avec les autres univers
+export const RETRO_2026_AVATARS: AvatarCharacter[] = [
+  star('r26_shakira', 'Shakira', 'Chanteuse', 'Les hanches ne mentent toujours pas', '💃'),
+  star('r26_mbappe', 'Kylian Mbappé', 'Capitaine des Bleus', 'Le brassard, la vitesse et le contrat qui va avec', '⚽'),
+  star('r26_wemby', 'Victor Wembanyama', 'Basketteur', 'La tête dans les nuages, littéralement', '🏀'),
+  star('r26_trump', 'Donald Trump', 'Président américain', 'Le meilleur avatar de tous les temps, il vous le dira lui-même', '🇺🇸'),
+  star('r26_lecornu', 'Sébastien Lecornu', 'Matignon', 'Personne n’avait parié sur lui, lui non plus', '🏛️'),
+  star('r26_yunglean', 'Yung Lean', 'Rappeur', 'Le Suédois triste qu’on n’attendait pas là', '🎤'),
+  star('r26_leon', 'Léon XIV', 'Pape', 'Premier pape américain, supporter des White Sox', '⛪'),
+  star('r26_cuillandre', 'François Cuillandre', 'Ancien maire de Brest', 'Une carrière entière sous la pluie', '⚓'),
+  star('r26_roudaut', 'Stéphane Roudaut', 'Maire de Brest', 'Le nouveau locataire de l’hôtel de ville', '🔑'),
+  star('r26_madonna', 'Madonna', 'Reine de la pop', 'Pas près d’abdiquer', '👑'),
+  star('r26_burnaboy', 'Burna Boy', 'Chanteur', 'Le chapeau, le Grammy et l’aisance', '🤠'),
+  star('r26_sansal', 'Boualem Sansal', 'Écrivain', 'Une plume qui a fait bouger les diplomates', '✒️'),
+  star('r26_lepen', 'Marine Le Pen', 'Femme politique', 'Un agenda 2026 très judiciaire', '⚖️'),
+  star('r26_sarkozy', 'Nicolas Sarkozy', 'Ancien président', 'Retraité très occupé', '📚'),
+  star('r26_yamal', 'Lamine Yamal', 'Footballeur', 'Même pas 20 ans et déjà pénible à défendre', '🌟'),
+]
+
 export const DEFAULT_AVATAR_THEME = 'love_actually'
 
 export const AVATAR_THEMES: Record<
@@ -225,6 +266,11 @@ export const AVATAR_THEMES: Record<
     label: '⚡ Harry Potter (15 sorciers)',
     avatars: HARRY_POTTER_AVATARS,
   },
+  retro_2026: {
+    id: 'retro_2026',
+    label: '🗓️ Rétro 2026 (15 personnalités)',
+    avatars: RETRO_2026_AVATARS,
+  },
 }
 
 /**
@@ -236,6 +282,7 @@ export function resolveAvatarTheme(
 ): string {
   if (set?.avatar_theme && AVATAR_THEMES[set.avatar_theme]) return set.avatar_theme
   if (/harry\s*potter|poudlard|hogwarts/i.test(set?.name ?? '')) return 'harry_potter'
+  if (/r[ée]tro\s*2026/i.test(set?.name ?? '')) return 'retro_2026'
   return DEFAULT_AVATAR_THEME
 }
 
