@@ -232,6 +232,99 @@
           "is_correct": false
         }
       ]
+    },
+    {
+      "order": 8,
+      "question_type": "quiz",
+      "body": "🎤 Céline Dion a annoncé son grand retour sur scène en 2026, après six ans d'absence. Dans quelle ville ?",
+      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/retro-2026/celine.jpg",
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/da/f2/d0/daf2d015-b867-b415-4e6f-e40194c60c26/mzaf_286533020212951886.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        {
+          "body": "Paris",
+          "is_correct": true
+        },
+        {
+          "body": "Las Vegas",
+          "is_correct": false
+        },
+        {
+          "body": "Montréal",
+          "is_correct": false
+        },
+        {
+          "body": "Londres",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 9,
+      "question_type": "quiz",
+      "body": "🎾 Gaël Monfils a pris sa retraite à 40 ans. Avec quelle championne de tennis est-il marié ?",
+      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/retro-2026/monfils.jpg",
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        {
+          "body": "Elina Svitolina",
+          "is_correct": true
+        },
+        {
+          "body": "Maria Sharapova",
+          "is_correct": false
+        },
+        {
+          "body": "Caroline Garcia",
+          "is_correct": false
+        },
+        {
+          "body": "Naomi Osaka",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 10,
+      "question_type": "quiz",
+      "body": "🎟️ Quel enfoiré a dû annuler sa tournée 2026 ?",
+      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/retro-2026/zenith.jpg",
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        {
+          "body": "Patrick Bruel",
+          "is_correct": true
+        },
+        {
+          "body": "Soprano",
+          "is_correct": false
+        },
+        {
+          "body": "Patrick Fiori",
+          "is_correct": false
+        },
+        {
+          "body": "Michaël Youn",
+          "is_correct": false
+        }
+      ]
     }
   ],
   "avatar_theme": "retro_2026"

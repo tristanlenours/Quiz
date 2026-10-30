@@ -501,10 +501,10 @@ const RETRO_VICTORY_QUIPS: Record<string, string> = {
   r26_leon: 'l’emporte, et on n’ose pas contester',
   r26_cuillandre: 'prend sa revanche, rentré d’Ouessant pour l’occasion',
   r26_roudaut: 'confirme la tendance : décidément, on ne l’arrête plus à Brest',
-  r26_madonna: 'rappelle à tout le monde qui reste la patronne',
+  r26_ophelie: 'gagne, et le podium devient une zone interdite',
   r26_burnaboy: 'a gagné sans enlever son chapeau',
   r26_sansal: 'a gagné avec une plume plus rapide que les buzzers',
-  r26_lepen: 'gagne en première instance, un appel reste possible',
+  r26_bruel: 'gagne avec un carré d’as, sans jamais montrer ses cartes',
   r26_sarkozy: 'a tout gagné, et conteste déjà qu’on en parle',
   r26_yamal: 'a mis tout le monde dans le vent, à un âge où on devrait réviser le bac',
 }

@@ -242,10 +242,10 @@ export const RETRO_2026_AVATARS: AvatarCharacter[] = [
   star('r26_leon', 'Léon XIV', 'Pape', 'Premier pape américain, supporter des White Sox', '⛪'),
   star('r26_cuillandre', 'François Cuillandre', 'Ancien maire de Brest', 'Une carrière entière sous la pluie', '⚓'),
   star('r26_roudaut', 'Stéphane Roudaut', 'Maire de Brest', 'Le nouveau locataire de l’hôtel de ville', '🔑'),
-  star('r26_madonna', 'Madonna', 'Reine de la pop', 'Pas près d’abdiquer', '👑'),
+  star('r26_ophelie', 'Ophélie Meunier', 'Animatrice télé', 'Askip elle est du fion', '📺'),
   star('r26_burnaboy', 'Burna Boy', 'Chanteur', 'Le chapeau, le Grammy et l’aisance', '🤠'),
   star('r26_sansal', 'Boualem Sansal', 'Écrivain', 'Une plume qui a fait bouger les diplomates', '✒️'),
-  star('r26_lepen', 'Marine Le Pen', 'Femme politique', 'Un agenda 2026 très judiciaire', '⚖️'),
+  star('r26_bruel', 'Patrick Bruel', 'Chanteur', 'Champion de poker à ses heures', '🃏'),
   star('r26_sarkozy', 'Nicolas Sarkozy', 'Ancien président', 'Retraité très occupé', '📚'),
   star('r26_yamal', 'Lamine Yamal', 'Footballeur', 'Même pas 20 ans et déjà pénible à défendre', '🌟'),
 ]

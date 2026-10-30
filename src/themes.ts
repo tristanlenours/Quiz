@@ -126,8 +126,8 @@ const RETRO_2026_THEME: UniverseTheme = {
       url: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/4a/9d/a1/4a9da1c4-096f-8f45-4a3b-c883c45ca451/mzaf_3059921854949935161.plus.aac.p.m4a',
     },
     {
-      title: 'DtMF — Bad Bunny',
-      url: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/28/ad/eb/28adeb53-5969-35a0-e136-28767f0d6144/mzaf_15250745364174301370.plus.aac.p.m4a',
+      title: 'The Fate of Ophelia — Taylor Swift',
+      url: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/73/ed/fa/73edfa1d-293f-3ef8-208a-3d6eb991e7c0/mzaf_6795004657277951755.plus.aac.p.m4a',
     },
   ],
   podiumTrack: {

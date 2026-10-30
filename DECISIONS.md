@@ -84,6 +84,8 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **D47** | 2026-10-30 | Rétro 2026 : images, chanson de marin & vidéo Shakira intégrable | La vidéo FIFA est bloquée hors de YouTube : remplacée par les coulisses officielles de Shakira (`dGR4XE5Fpho`, 50 s à 80 s). Images ajoutées aux 4 questions sans média, Belle-Île et *Santiano* pour Cuillandre. Nouveau test du blocage à l'intégration. | Adopté |
 | **D48** | 2026-10-30 | Titre YouTube masqué sur la TV, question des décès en Mozart & Death Note, pas d'E2E pour le contenu | L'Écran Hôte zoome les vidéos de 35 % pour sortir du cadre le titre incrusté par YouTube. La question des décès passe sur le *Lacrimosa* et un cahier Death Note. Un simple ajout de contenu ne demande plus `test:e2e`. | Adopté |
 | **D49** | 2026-10-30 | Extrait du Trailer 1 sur la question GTA 6 | La photo d'Ocean Drive laisse place au Trailer 1 (`QdBZY2fkU-0`), de 19 s à 49 s : Vice City et vidéos de réseaux sociaux, sans Jason ni Lucia à l'image. | Adopté |
+| **D50** | 2026-10-30 | Rétro 2026 : Ophélie Meunier, Céline Dion, Monfils, Taylor Swift | Ophélie Meunier remplace Madonna dans les avatars, avec le texte choisi par l'auteur. Questions Céline Dion (*Pour que tu m'aimes encore* en fond) et Gaël Monfils. Au Salon, *Golden* reste et *DtMF* de Bad Bunny cède la place à *The Fate of Ophelia*. | Adopté |
+| **D51** | 2026-10-30 | Rétro 2026 : Patrick Bruel | Patrick Bruel remplace Marine Le Pen dans les avatars. Question de l'auteur : « Quel enfoiré a dû annuler sa tournée 2026 ? », avec le Zénith de Paris à l'image, sa photo donnant la réponse. | Adopté |
 
 ---
 
@@ -428,3 +430,20 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 - **Décision** : Trailer 1 officiel de Rockstar (`QdBZY2fkU-0`), de 19 s à 49 s, en vidéo sur l'Écran Hôte, à la place de la photo d'Ocean Drive (D47), qui reste dans le bucket. Le passage a été choisi sur le storyboard de la vidéo : aucun des deux à l'image, et il commence juste après le carton « Rockstar Games presents ».
 - **Alternatives écartées** : Trailer 2 (`VQRLujxTm3c`), où Jason et Lucia apparaissent dès les premières secondes et reviennent trop souvent pour tenir 30 s.
 - **Limites** : le storyboard n'a qu'une image par seconde et pas de son : un plan très court ou une voix ne peuvent pas être exclus. Le passage garde les plans dénudés du trailer. À contrôler sur la vraie TV.
+
+### 2026-10-30 — D50 : Ophélie Meunier, Céline Dion, Monfils & Taylor Swift
+- **Contexte** : l'auteur veut Ophélie Meunier à la place de Madonna, des questions sur Céline Dion et sur « le retraité » Gaël Monfils. Il aime *Golden* au Salon, pas Bad Bunny.
+- **Décision** :
+  1. **Avatar** : `r26_ophelie` remplace `r26_madonna`, avec le texte voulu par l'auteur, « Askip elle est du fion », exception assumée à la règle des sous-titres neutres. Photo : Georges Biard, César 2016 (CC BY-SA 3.0).
+  2. **Céline Dion** : retour annoncé le 30 mars 2026 à Paris La Défense Arena (celinedion.com, Paris Match). La question porte sur la ville, car je n'ai pas trouvé de compte rendu des concerts. Fond : *Pour que tu m'aimes encore* (iTunes). Photo : Georges Biard, 2012 (CC BY-SA 3.0).
+  3. **Monfils** : retraite annoncée le 1er octobre 2025 pour la fin de saison 2026 ; dernier match officiel à l'US Open selon Sud Radio. La question porte sur son mariage avec Elina Svitolina, car les sources divergent sur le dernier match. Photo : si.robi, Roland-Garros 2019 (CC BY-SA 2.0).
+  4. **Salon** : *Golden* reste, *The Fate of Ophelia* de Taylor Swift remplace *DtMF*. Ce choix de titre est le mien.
+- **Limites** : Madonna reste un mauvais choix de la question Rosalía. La photo `r26_madonna` reste dans le bucket.
+
+### 2026-10-30 — D51 : Patrick Bruel
+- **Contexte** : l'auteur veut Patrick Bruel à la place de Marine Le Pen, et fixe la question : « Quel enfoiré a dû annuler sa tournée 2026 ? », jeu de mots avec Les Enfoirés.
+- **Décision** :
+  1. **Fait vérifié** : annulation des 35 dates de la tournée d'automne, annoncée le 1er septembre 2026 (Paris Match, Sud Radio/AFP). Mauvais choix : Soprano, Patrick Fiori, Michaël Youn.
+  2. **Image** : Zénith de Paris (Flickr, CC BY 2.0), car une photo de Bruel donnerait la réponse.
+  3. **Avatar** : `r26_bruel`, sous-titre neutre sur le poker, sans allusion à l'affaire, conformément à la règle des sous-titres. Photo : Georges Biard, Dîner des César 2018 (CC BY-SA 4.0).
+- **Limites** : l'annulation intervient alors que Patrick Bruel est mis en examen pour violences sexuelles, ce qu'il conteste. Le mot « enfoiré » est le choix de l'auteur, pour une soirée privée ; la présomption d'innocence s'applique et rien dans le jeu ne détaille l'affaire.
