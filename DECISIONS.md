@@ -91,6 +91,7 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **D54** | 2026-10-30 | Rétro 2026 : la carte de Trump | Question sur la carte des États-Unis agrandis publiée par Trump : la Russie est la bonne réponse, Groenland, Mexique et Canada les pièges. | Adopté |
 | **D55** | 2026-10-30 | Rétro 2026 : Orélien « Prompteur » | Le rôle affiché de Thélyson Orélien passe d'« Écrivain » à « Prompteur », choix de l'auteur. | Adopté |
 | **D56** | 2026-10-30 | Rétro 2026 : Céline Dion | Céline Dion remplace Boualem Sansal dans les avatars et la chronique. | Adopté |
+| **D57** | 2026-10-30 | Rétro 2026 : Taylor Swift & Alysa Liu | Taylor Swift remplace Donald Trump et Alysa Liu remplace Yung Lean. Questions sur les JO d'hiver et sur *The Fate of Ophelia* avec extrait du clip, retirée du Salon. | Adopté |
 
 ---
 
@@ -442,7 +443,7 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
   1. **Avatar** : `r26_ophelie` remplace `r26_madonna`, avec le texte voulu par l'auteur, « Askip elle est du fion », exception assumée à la règle des sous-titres neutres. Photo : Georges Biard, César 2016 (CC BY-SA 3.0).
   2. **Céline Dion** : retour annoncé le 30 mars 2026 à Paris La Défense Arena (celinedion.com, Paris Match). La question porte sur la ville, car je n'ai pas trouvé de compte rendu des concerts. Fond : *Pour que tu m'aimes encore* (iTunes). Photo : Georges Biard, 2012 (CC BY-SA 3.0).
   3. **Monfils** : retraite annoncée le 1er octobre 2025 pour la fin de saison 2026 ; dernier match officiel à l'US Open selon Sud Radio. La question porte sur son mariage avec Elina Svitolina, car les sources divergent sur le dernier match. Photo : si.robi, Roland-Garros 2019 (CC BY-SA 2.0).
-  4. **Salon** : *Golden* reste, *The Fate of Ophelia* de Taylor Swift remplace *DtMF*. Ce choix de titre est le mien.
+  4. **Salon** : *Golden* reste, *The Fate of Ophelia* de Taylor Swift remplace *DtMF*. Ce choix de titre est le mien. Remplacée par D57 pour *The Fate of Ophelia*.
 - **Limites** : Madonna reste un mauvais choix de la question Rosalía. La photo `r26_madonna` reste dans le bucket.
 
 ### 2026-10-30 — D51 : Patrick Bruel
@@ -487,3 +488,12 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 - **Contexte** : l'auteur veut Céline Dion en avatar à la place de Boualem Sansal.
 - **Décision** : `r26_celine` remplace `r26_sansal`, à la même place, avec sa phrase de chronique. Photo : celle de la question (D50, Georges Biard, 2012, CC BY-SA 3.0), recadrée en 400×400. Sous-titre sans la ville de son retour, réponse d'une question du pack.
 - **Limites** : la même photo apparaît à la fois sur l'avatar et sur la question. La photo `r26_sansal` reste dans le bucket.
+
+### 2026-10-30 — D57 : Taylor Swift, Alysa Liu, JO d'hiver & clip
+- **Contexte** : l'auteur veut Taylor Swift à la place de Trump et Alysa Liu à la place de Yung Lean, une question sur les JO d'hiver et une sur le titre de Taylor Swift avec un extrait du clip s'il n'est pas bloqué.
+- **Décision** :
+  1. **Avatars** : `r26_taylor` et `r26_alysa`, aux mêmes places, avec leurs phrases de chronique. Photos : iHeartRadioCA, MTV VMA 2023 (CC BY 3.0) ; YantsImages, Milan-Cortina 2026 (CC BY-SA 4.0). Le portrait `r26_trump` reste dans le bucket : c'est l'image de la question de la carte (D54).
+  2. **JO** : la question porte sur les 23 médailles françaises, record, 6ᵉ au classement des nations (ministère des Sports). Une question sur l'or d'Alysa Liu serait donnée par son avatar. Image : Cortina d'Ampezzo (kallerna, CC BY-SA 4.0). Leurres : 15, 19, 31.
+  3. **Clip** : vidéo officielle `ko70cExuzZM`, de 18 s à 48 s, choisie sur le storyboard : elle commence après le tableau d'Ophélie (10 à 16 s), qui donnerait le titre. Leurres : *The Life of a Showgirl*, *Opalite*, *Elizabeth Taylor*, titres du même album.
+  4. **Salon** : *The Fate of Ophelia* donnerait la réponse (D50 remplacée sur ce point) : *Man I Need* d'Olivia Dean (iTunes) prend sa place. Ce choix de titre est le mien.
+- **Limites** : le clip date d'octobre 2025. YouTube ne fournit pas de sous-titres pour ce clip et le storyboard n'a pas de son : je n'ai pas pu vérifier que le titre n'est pas chanté avant 48 s. À écouter sur la vraie TV. Le test d'intégration a tourné depuis localhost, pas depuis le domaine de production. La photo `r26_yunglean` reste dans le bucket.

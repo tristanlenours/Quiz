@@ -387,6 +387,68 @@
           "is_correct": false
         }
       ]
+    },
+    {
+      "order": 13,
+      "question_type": "quiz",
+      "body": "⛷️ JO d'hiver de Milan-Cortina : combien de médailles pour la France, nouveau record ?",
+      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/retro-2026/cortina.jpg",
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        {
+          "body": "23",
+          "is_correct": true
+        },
+        {
+          "body": "15",
+          "is_correct": false
+        },
+        {
+          "body": "19",
+          "is_correct": false
+        },
+        {
+          "body": "31",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 14,
+      "question_type": "quiz",
+      "body": "🎬 Regardez l'extrait ! Comment s'appelle ce titre de Taylor Swift ?",
+      "image_url": null,
+      "audio_url": null,
+      "audio_start_sec": 18,
+      "audio_duration_sec": 30,
+      "video_url": "https://www.youtube.com/watch?v=ko70cExuzZM",
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        {
+          "body": "The Fate of Ophelia",
+          "is_correct": true
+        },
+        {
+          "body": "The Life of a Showgirl",
+          "is_correct": false
+        },
+        {
+          "body": "Opalite",
+          "is_correct": false
+        },
+        {
+          "body": "Elizabeth Taylor",
+          "is_correct": false
+        }
+      ]
     }
   ],
   "avatar_theme": "retro_2026"

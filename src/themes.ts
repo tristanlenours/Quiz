@@ -126,8 +126,8 @@ const RETRO_2026_THEME: UniverseTheme = {
       url: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/4a/9d/a1/4a9da1c4-096f-8f45-4a3b-c883c45ca451/mzaf_3059921854949935161.plus.aac.p.m4a',
     },
     {
-      title: 'The Fate of Ophelia — Taylor Swift',
-      url: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/73/ed/fa/73edfa1d-293f-3ef8-208a-3d6eb991e7c0/mzaf_6795004657277951755.plus.aac.p.m4a',
+      title: 'Man I Need — Olivia Dean',
+      url: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/42/bb/5b/42bb5b21-2550-6205-bf3c-334b0e7d6199/mzaf_17462928687872215879.plus.aac.p.m4a',
     },
   ],
   podiumTrack: {
