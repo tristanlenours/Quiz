@@ -246,8 +246,8 @@ export const RETRO_2026_AVATARS: AvatarCharacter[] = [
   star('r26_burnaboy', 'Burna Boy', 'Chanteur', 'Le chapeau, le Grammy et l’aisance', '🤠'),
   star('r26_sansal', 'Boualem Sansal', 'Écrivain', 'Une plume qui a fait bouger les diplomates', '✒️'),
   star('r26_bruel', 'Patrick Bruel', 'Chanteur', 'Champion de poker à ses heures', '🃏'),
-  star('r26_sarkozy', 'Nicolas Sarkozy', 'Ancien président', 'Retraité très occupé', '📚'),
-  star('r26_yamal', 'Lamine Yamal', 'Footballeur', 'Même pas 20 ans et déjà pénible à défendre', '🌟'),
+  star('r26_lula', 'Lula', 'Président du Brésil', 'Trois mandats et toujours la barbe', '🇧🇷'),
+  star('r26_kane', 'Harry Kane', 'Footballeur', 'Il marque partout, tout le temps, sans sourire', '🎯'),
 ]
 
 export const DEFAULT_AVATAR_THEME = 'love_actually'

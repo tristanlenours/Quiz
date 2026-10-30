@@ -505,8 +505,8 @@ const RETRO_VICTORY_QUIPS: Record<string, string> = {
   r26_burnaboy: 'a gagné sans enlever son chapeau',
   r26_sansal: 'a gagné avec une plume plus rapide que les buzzers',
   r26_bruel: 'gagne avec un carré d’as, sans jamais montrer ses cartes',
-  r26_sarkozy: 'a tout gagné, et conteste déjà qu’on en parle',
-  r26_yamal: 'a mis tout le monde dans le vent, à un âge où on devrait réviser le bac',
+  r26_lula: 'revient au sommet, on commence à avoir l’habitude',
+  r26_kane: 'a enfin soulevé quelque chose, et c’est ce classement',
 }
 
 function buildRetroAnalysis(

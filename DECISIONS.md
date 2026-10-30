@@ -86,6 +86,7 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **D49** | 2026-10-30 | Extrait du Trailer 1 sur la question GTA 6 | La photo d'Ocean Drive laisse place au Trailer 1 (`QdBZY2fkU-0`), de 19 s à 49 s : Vice City et vidéos de réseaux sociaux, sans Jason ni Lucia à l'image. | Adopté |
 | **D50** | 2026-10-30 | Rétro 2026 : Ophélie Meunier, Céline Dion, Monfils, Taylor Swift | Ophélie Meunier remplace Madonna dans les avatars, avec le texte choisi par l'auteur. Questions Céline Dion (*Pour que tu m'aimes encore* en fond) et Gaël Monfils. Au Salon, *Golden* reste et *DtMF* de Bad Bunny cède la place à *The Fate of Ophelia*. | Adopté |
 | **D51** | 2026-10-30 | Rétro 2026 : Patrick Bruel | Patrick Bruel remplace Marine Le Pen dans les avatars. Question de l'auteur : « Quel enfoiré a dû annuler sa tournée 2026 ? », avec le Zénith de Paris à l'image, sa photo donnant la réponse. | Adopté |
+| **D52** | 2026-10-30 | Rétro 2026 : Harry Kane & Lula | Harry Kane remplace Lamine Yamal et Lula remplace Nicolas Sarkozy dans les avatars et la chronique. | Adopté |
 
 ---
 
@@ -447,3 +448,11 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
   2. **Image** : Zénith de Paris (Flickr, CC BY 2.0), car une photo de Bruel donnerait la réponse.
   3. **Avatar** : `r26_bruel`, sous-titre neutre sur le poker, sans allusion à l'affaire, conformément à la règle des sous-titres. Photo : Georges Biard, Dîner des César 2018 (CC BY-SA 4.0).
 - **Limites** : l'annulation intervient alors que Patrick Bruel est mis en examen pour violences sexuelles, ce qu'il conteste. Le mot « enfoiré » est le choix de l'auteur, pour une soirée privée ; la présomption d'innocence s'applique et rien dans le jeu ne détaille l'affaire.
+
+### 2026-10-30 — D52 : Harry Kane & Lula
+- **Contexte** : l'auteur veut Harry Kane à la place de Yamal et Lula à la place de Sarkozy.
+- **Décision** :
+  1. **Avatars** : `r26_kane` remplace `r26_yamal`, `r26_lula` remplace `r26_sarkozy`, aux mêmes places, avec leurs phrases de chronique.
+  2. **Photos** : infobox Wikipédia, recadrées en carré 400×400. Kane : Bryan Berlin, Angleterre-Ghana du 23 juin 2026 (CC BY-SA 4.0). Lula : Palácio do Planalto, photo officielle de 2023 (CC BY 2.0).
+  3. **Sous-titres** : rien sur la Coupe du monde ni sur l'élection présidentielle brésilienne d'octobre 2026, non vérifiée ici. « Président du Brésil » reste exact jusqu'à la fin du mandat, début 2027.
+- **Limites** : le Brésil reste un mauvais choix de la question sur la Coupe du monde, Lula ne donne donc pas la réponse. Les photos `r26_yamal` et `r26_sarkozy` restent dans le bucket. Les crédits de D46 restent valables pour l'historique.
