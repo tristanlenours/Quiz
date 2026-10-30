@@ -83,6 +83,7 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **D46** | 2026-10-30 | Thème Rétro 2026 : 15 personnalités, habillage, chronique & extrait Shakira | Nouveau thème `retro_2026` (photos Wikimedia Commons recadrées, préfixe `r26_`), Salon et chronique propres, sans Love Actually. Question ajoutée sur l'hymne *Dai Dai* avec le live officiel FIFA `T3thHUtPdhc`, de 6 s à 36 s. *(Vidéo remplacée par D47.)* | Adopté |
 | **D47** | 2026-10-30 | Rétro 2026 : images, chanson de marin & vidéo Shakira intégrable | La vidéo FIFA est bloquée hors de YouTube : remplacée par les coulisses officielles de Shakira (`dGR4XE5Fpho`, 50 s à 80 s). Images ajoutées aux 4 questions sans média, Belle-Île et *Santiano* pour Cuillandre. Nouveau test du blocage à l'intégration. | Adopté |
 | **D48** | 2026-10-30 | Titre YouTube masqué sur la TV, question des décès en Mozart & Death Note, pas d'E2E pour le contenu | L'Écran Hôte zoome les vidéos de 35 % pour sortir du cadre le titre incrusté par YouTube. La question des décès passe sur le *Lacrimosa* et un cahier Death Note. Un simple ajout de contenu ne demande plus `test:e2e`. | Adopté |
+| **D49** | 2026-10-30 | Extrait du Trailer 1 sur la question GTA 6 | La photo d'Ocean Drive laisse place au Trailer 1 (`QdBZY2fkU-0`), de 19 s à 49 s : Vice City et vidéos de réseaux sociaux, sans Jason ni Lucia à l'image. | Adopté |
 
 ---
 
@@ -421,3 +422,9 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
   2. **Question des décès** : *Lacrimosa* du Requiem de Mozart (London Philharmonic, iTunes) et cahier Death Note (Keepscases, domaine public, Wikimedia Commons), à la place du collage de portraits (D47), qui reste dans le bucket.
   3. **Règle de test** : ajout de contenu d'un pack = `npm test` seul. Toute modification de code d'écran ou de jeu garde le passage E2E.
 - **Limites** : le bord de l'image est perdu sur tous les extraits. Le zoom réduit la netteté sur un petit écran. Non vérifiable en capture automatique : à contrôler sur la vraie TV.
+
+### 2026-10-30 — D49 : Extrait du Trailer 1 sur la question GTA 6
+- **Contexte** : l'auteur veut un morceau de trailer de GTA 6 sur la question des protagonistes. Son message dit « dans Jason et Lucia » : compris comme « sans », puisqu'ils sont la réponse.
+- **Décision** : Trailer 1 officiel de Rockstar (`QdBZY2fkU-0`), de 19 s à 49 s, en vidéo sur l'Écran Hôte, à la place de la photo d'Ocean Drive (D47), qui reste dans le bucket. Le passage a été choisi sur le storyboard de la vidéo : aucun des deux à l'image, et il commence juste après le carton « Rockstar Games presents ».
+- **Alternatives écartées** : Trailer 2 (`VQRLujxTm3c`), où Jason et Lucia apparaissent dès les premières secondes et reviennent trop souvent pour tenir 30 s.
+- **Limites** : le storyboard n'a qu'une image par seconde et pas de son : un plan très court ou une voix ne peuvent pas être exclus. Le passage garde les plans dénudés du trailer. À contrôler sur la vraie TV.
