@@ -80,7 +80,9 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **D43** | 2026-10-30 | Extrait Rosalía aux BRIT Awards dans Rétro 2026 | Vidéo `7fyufPkXLbs` (RosaliaVEVO) de 65 s à 95 s, coupée avant l'arrivée de Björk (100 s). Question : quelle invitée surprise la rejoint ? | Adopté |
 | **D44** | 2026-10-30 | Question GTA 6 dans Rétro 2026 | « Comment s'appellent les deux protagonistes ? » : Lucia et Jason, contre des héros des anciens GTA (Franklin et Michael, Niko et Trevor, Tommy et CJ). | Adopté |
 | **D45** | 2026-10-30 | E2E light du Grand Quiz & numérotation des manches jouées | `npm run test:e2e:light` joue un tirage aléatoire de 5 manches sur un pack temporaire. Le test complet reste obligatoire avant livraison. Écran Hôte et Manette renumérotent `order` selon la position jouée, car les manches désactivées laissaient des trous qui faisaient finir la partie trop tôt. | Adopté |
-| **D46** | 2026-10-30 | Thème Rétro 2026 : 15 personnalités, habillage, chronique & extrait Shakira | Nouveau thème `retro_2026` (photos Wikimedia Commons recadrées, préfixe `r26_`), Salon et chronique propres, sans Love Actually. Question ajoutée sur l'hymne *Dai Dai* avec le live officiel FIFA `T3thHUtPdhc`, de 6 s à 36 s. | Adopté |
+| **D46** | 2026-10-30 | Thème Rétro 2026 : 15 personnalités, habillage, chronique & extrait Shakira | Nouveau thème `retro_2026` (photos Wikimedia Commons recadrées, préfixe `r26_`), Salon et chronique propres, sans Love Actually. Question ajoutée sur l'hymne *Dai Dai* avec le live officiel FIFA `T3thHUtPdhc`, de 6 s à 36 s. *(Vidéo remplacée par D47.)* | Adopté |
+| **D47** | 2026-10-30 | Rétro 2026 : images, chanson de marin & vidéo Shakira intégrable | La vidéo FIFA est bloquée hors de YouTube : remplacée par les coulisses officielles de Shakira (`dGR4XE5Fpho`, 50 s à 80 s). Images ajoutées aux 4 questions sans média, Belle-Île et *Santiano* pour Cuillandre. Nouveau test du blocage à l'intégration. | Adopté |
+| **D48** | 2026-10-30 | Titre YouTube masqué sur la TV, question des décès en Mozart & Death Note, pas d'E2E pour le contenu | L'Écran Hôte zoome les vidéos de 35 % pour sortir du cadre le titre incrusté par YouTube. La question des décès passe sur le *Lacrimosa* et un cahier Death Note. Un simple ajout de contenu ne demande plus `test:e2e`. | Adopté |
 
 ---
 
@@ -401,3 +403,21 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
   6. **Test** : `retro-lobby.spec.ts` vérifie le Salon et les 15 photos ; `npm test` vérifie les photos en HTTP.
 - **Alternatives écartées** : extrait de la cérémonie d'ouverture (l'auteur veut la finale) ; photos générées (D34).
 - **Limites** : le refrain chante le titre, c'est un indice volontairement laissé. Le titre de la vidéo FIFA ne contient pas celui de la chanson. Le test `retro-lobby` ne joue pas une partie Rétro complète, seul le Salon est couvert.
+
+### 2026-10-30 — D47 : Rétro 2026, images, chanson de marin & vidéo Shakira intégrable
+- **Contexte** : en répétition, l'auteur a vu « Vidéo non disponible » sur la question Shakira (contenu FIFA bloqué hors de YouTube) et des questions sans image. Il propose une photo de Belle-Île et une chanson de marin pour Cuillandre. `playableInEmbed: true` et oEmbed 200 ne détectaient pas le blocage.
+- **Décision** :
+  1. **Vidéo Shakira** : `dGR4XE5Fpho` (chaîne Shakira, coulisses du show), de 50 s à 80 s. Live de la finale d'environ 52 à 62 s, puis coulisses, d'après les storyboards. Le titre « DAI DAI » apparaît vers 24 s, avant l'extrait. Rejetées : `T3thHUtPdhc` et `Sc0EBlXORQM` (FIFA, erreur 150), `WcsYWvO5t5A` (image fixe affichant le titre).
+  2. **Contrôle réel** : les 10 vidéos des packs ont été lancées dans un lecteur intégré depuis le domaine de production. Seule la vidéo FIFA était bloquée ; Rosalía et les autres passent. `tests/e2e/videos-embed.spec.ts` guette les erreurs 100, 101 et 150 sur toutes les vidéos des packs.
+  3. **Images**, hébergées dans `quiz-media/packs/retro-2026/` : trophée (Djuradj Vujcic, CC BY 2.0) ; port de Sauzon à Belle-Île (Rundvald, Wikimedia Commons) ; portraits de Jospin (Parlement européen), Bardot (MGM, domaine public), Baye et Loana (Georges Biard, CC BY-SA 3.0) ; Ocean Drive à Miami pour GTA 6 (chensiyuan, CC BY-SA 4.0).
+  4. **Cuillandre** : Belle-Île, volontairement absente des 4 choix, et *Santiano* de Hugues Aufray en fond (iTunes).
+- **Alternatives écartées** : clip officiel `fcnDmrtj6Sk` (pas le live) ; Blind Test *Dai Dai* (l'auteur veut la finale en image).
+- **Limites** : seuls 10 s environ du live sont visibles. Le blocage peut évoluer selon le pays ou l'ayant droit : le test ne vaut que pour le moment où il tourne.
+
+### 2026-10-30 — D48 : Titre YouTube masqué, Mozart & Death Note, E2E réservé au code
+- **Contexte** : en répétition, le lecteur a affiché « ROSALÍA - Berghain (Live at The BRIT Awards 2026) ft. Björk » par-dessus l'extrait, ce qui donne la réponse. L'auteur veut aussi Mozart et Death Note sur la question des décès, et ne plus repasser les E2E pour les ajouts de contenu.
+- **Décision** :
+  1. **Vidéo zoomée de 35 %** dans un cadre `overflow-hidden` sur l'Écran Hôte : le titre (haut) et le logo YouTube (bas) sortent du cadre, pour tous les extraits. Aucune option YouTube ne retire ce titre (`showinfo` n'existe plus).
+  2. **Question des décès** : *Lacrimosa* du Requiem de Mozart (London Philharmonic, iTunes) et cahier Death Note (Keepscases, domaine public, Wikimedia Commons), à la place du collage de portraits (D47), qui reste dans le bucket.
+  3. **Règle de test** : ajout de contenu d'un pack = `npm test` seul. Toute modification de code d'écran ou de jeu garde le passage E2E.
+- **Limites** : le bord de l'image est perdu sur tous les extraits. Le zoom réduit la netteté sur un petit écran. Non vérifiable en capture automatique : à contrôler sur la vraie TV.

@@ -31,7 +31,7 @@ Avant toute modification de schéma, d'interface ou de logique de jeu, lire :
    À chaque nouvelle décision `Dxx`, se demander si elle crée, change ou rend caduque une règle de travail durable (commande, convention, invariant, piège connu). Si oui, mettre à jour `AGENTS.md` **dans le même tour de travail**, sans attendre une révision d'ensemble ; une règle caduque est corrigée ou retirée, pas laissée en place.
    Dans tous les cas, avancer le marqueur ci-dessous jusqu'à la dernière décision relue. `npm test` échoue tant qu'une décision de `DECISIONS.md` est plus récente que ce marqueur.
 
-   **Dernière revue d'AGENTS.md : D46**
+   **Dernière revue d'AGENTS.md : D48**
 
 ---
 
@@ -55,7 +55,8 @@ Avant toute modification de schéma, d'interface ou de logique de jeu, lire :
 
 - **Écran Hôte (TV) = seul diffuseur de médias** : image, extrait YouTube, son (D19, D26).
 - **Manette Joueur = texte seul** : la question et les 4 réponses, sans image de question, vidéo, son ni pochette, pour un rendu garanti sur tous les téléphones (D31). Seuls les avatars s'y affichent.
-- **Extraits YouTube** : vérifier qu'ils sont intégrables (oEmbed HTTP 200 et `playableInEmbed: true`) et caler `audio_start_sec` / `audio_duration_sec` pour que l'extrait **ne montre pas la réponse** (l'extrait s'arrête à début + temps de réponse).
+- **Extraits YouTube** : vérifier qu'ils sont intégrables (oEmbed HTTP 200 et `playableInEmbed: true` **ne suffisent pas** : un ayant droit comme FIFA peut bloquer l'intégration, `tests/e2e/videos-embed.spec.ts` le détecte, D47) et caler `audio_start_sec` / `audio_duration_sec` pour que l'extrait **ne montre pas la réponse** (l'extrait s'arrête à début + temps de réponse).
+- **Titre YouTube** : l'Écran Hôte zoome la vidéo pour sortir du cadre le titre incrusté par le lecteur, qui peut donner la réponse (D48). Ne pas retirer ce recadrage.
 - **Son** : extraits iTunes (`audio-ssl.itunes.apple.com`, 30 s) et pochettes `mzstatic.com` en `600x600bb`.
 - **Zéro spoil hors des questions** : sous-titres d'avatars (`src/avatars.ts`), citation et playlist du Salon (`src/themes.ts`), chronique déterministe et prompt Gemini (`src/app/api/game-analysis/route.ts`) ne doivent dévoiler **aucune réponse** d'un pack du même thème. Le Warm-Up ne recoupe pas le Grand Quiz (D30).
 - **Thèmes** : un pack porte son univers dans `quiz_sets.avatar_theme` (`love_actually`, `harry_potter`, `retro_2026`) ; habillage dans `src/themes.ts`, avatars dans `src/avatars.ts` (préfixes `hp_` et `r26_`, D29, D46). Un nouveau thème doit aussi avoir sa chronique et son prompt dans `src/app/api/game-analysis/route.ts`, sinon il hérite de ceux de Love Actually.
@@ -84,4 +85,4 @@ Avant toute modification de schéma, d'interface ou de logique de jeu, lire :
 - `npm run test:e2e:light` — Grand Quiz sur un tirage aléatoire de 5 manches (`-- 8` pour en changer le nombre), joué sur un pack temporaire « E2E light » supprimé à la fin. Pour itérer vite ; `E2E_SEED` rejoue un tirage. Ne remplace pas le test complet avant livraison (D45).
 - `npm run test:e2e` — Parties complètes en navigateur (Playwright) sur toutes les questions actives : 1 TV + 4 manettes sur la vraie base, pour le Warm-Up et le Grand Quiz (~15 min). Lance son propre `next dev` sur le port 3100 ; `E2E_BASE_URL` cible un serveur existant, `E2E_KEEP_GAME=1` conserve la partie de test. Le moteur commun est `tests/e2e/full-game.ts`, avec un fichier de scénario par pack.
 
-**Fiabilité avant tout** (I13) : avant de livrer une modification de jeu, d'écran ou de pack, `npm test` **et** `npm run test:e2e` doivent passer. Ne jamais lancer `npm run build` pendant un E2E : le build et `next dev` partagent `.next`. Le Chromium de Playwright ne lit ni l'AAC ni le H.264 : les tests vérifient la présence et le calage des médias, **pas leur lecture effective**, à contrôler en répétition sur la vraie TV.
+**Fiabilité avant tout** (I13) : avant de livrer une modification de jeu ou d'écran, `npm test` **et** `npm run test:e2e` doivent passer. Pour un simple ajout de contenu (question, média, texte d'un pack), pas de `test:e2e` : `npm test` suffit (D48). Ne jamais lancer `npm run build` pendant un E2E : le build et `next dev` partagent `.next`. Le Chromium de Playwright ne lit ni l'AAC ni le H.264 : les tests vérifient la présence et le calage des médias, **pas leur lecture effective**, à contrôler en répétition sur la vraie TV.

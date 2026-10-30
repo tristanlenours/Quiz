@@ -450,13 +450,16 @@ export default function Quiz({
                 </div>
               ) : videoEmbedUrl ? (
                 // Extrait vidéo YouTube lu sur l'Écran Hôte pendant le chrono (Décision D19)
-                <iframe
-                  key={question.id}
-                  src={videoEmbedUrl}
-                  title="Extrait vidéo"
-                  allow="autoplay; encrypted-media; picture-in-picture"
-                  className="h-full max-w-full aspect-video rounded-2xl shadow-lg border-0"
-                />
+                // Zoom recadré : le titre de la vidéo incrusté par YouTube peut donner la réponse (D48)
+                <div className="h-full max-w-full aspect-video rounded-2xl shadow-lg overflow-hidden">
+                  <iframe
+                    key={question.id}
+                    src={videoEmbedUrl}
+                    title="Extrait vidéo"
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    className="w-full h-full border-0 scale-[1.35]"
+                  />
+                </div>
               ) : (
                 question.image_url && (
                   <img
