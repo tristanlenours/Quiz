@@ -89,6 +89,7 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **D52** | 2026-10-30 | Rétro 2026 : Harry Kane & Lula | Harry Kane remplace Lamine Yamal et Lula remplace Nicolas Sarkozy dans les avatars et la chronique. | Adopté |
 | **D53** | 2026-10-30 | Rétro 2026 : Thélyson Orélien | Thélyson Orélien remplace Burna Boy dans les avatars. Question sur le titre de son roman, avec « C'était ça ou écrire » parmi les mauvais choix, à la demande de l'auteur. | Adopté |
 | **D54** | 2026-10-30 | Rétro 2026 : la carte de Trump | Question sur la carte des États-Unis agrandis publiée par Trump : la Russie est la bonne réponse, Groenland, Mexique et Canada les pièges. | Adopté |
+| **D55** | 2026-10-30 | Rétro 2026 : Orélien « Prompteur » | Le rôle affiché de Thélyson Orélien passe d'« Écrivain » à « Prompteur », choix de l'auteur. | Adopté |
 
 ---
 
@@ -475,3 +476,8 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
   2. **Choix** : La Russie (bonne réponse), Le Groenland, Le Mexique, Le Canada. « Territoires » plutôt que « pays », le Groenland n'étant pas un État.
   3. **Image** : portrait de Trump déjà hébergé (`r26_trump`), car la carte elle-même donnerait la réponse.
 - **Limites** : je n'ai pas vu la carte, l'article du Daily Signal étant inaccessible : l'absence de la Russie repose sur les listes des comptes rendus. 13ᵉ et dernière question du pack.
+
+### 2026-10-30 — D55 : Orélien « Prompteur »
+- **Contexte** : l'auteur veut « Prompteur » à la place d'« Écrivain » sur l'avatar de Thélyson Orélien (précise D53).
+- **Décision** : rôle affiché `Prompteur`. Exception assumée à la règle des sous-titres sans accusation, comme en D50, pour une soirée privée.
+- **Limites** : le mot sous-entend l'usage de l'IA pour la rédaction, que l'écrivain conteste. La question du pack reste formulée sur le retrait du Goncourt.
