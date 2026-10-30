@@ -244,7 +244,7 @@ export const RETRO_2026_AVATARS: AvatarCharacter[] = [
   star('r26_roudaut', 'Stéphane Roudaut', 'Maire de Brest', 'Le nouveau locataire de l’hôtel de ville', '🔑'),
   star('r26_ophelie', 'Ophélie Meunier', 'Animatrice télé', 'Askip elle est du fion', '📺'),
   star('r26_orelien', 'Thélyson Orélien', 'Prompteur', 'Toute la rentrée littéraire n’a parlé que de lui', '📖'),
-  star('r26_sansal', 'Boualem Sansal', 'Écrivain', 'Une plume qui a fait bouger les diplomates', '✒️'),
+  star('r26_celine', 'Céline Dion', 'Chanteuse', 'Six ans d’absence, et les mouchoirs sont déjà sortis', '🎶'),
   star('r26_bruel', 'Patrick Bruel', 'Chanteur', 'Champion de poker à ses heures', '🃏'),
   star('r26_lula', 'Lula', 'Président du Brésil', 'Trois mandats et toujours la barbe', '🇧🇷'),
   star('r26_kane', 'Harry Kane', 'Footballeur', 'Il marque partout, tout le temps, sans sourire', '🎯'),

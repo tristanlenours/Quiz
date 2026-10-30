@@ -503,7 +503,7 @@ const RETRO_VICTORY_QUIPS: Record<string, string> = {
   r26_roudaut: 'confirme la tendance : décidément, on ne l’arrête plus à Brest',
   r26_ophelie: 'gagne, et le podium devient une zone interdite',
   r26_orelien: 'a écrit la fin de la partie avant tout le monde',
-  r26_sansal: 'a gagné avec une plume plus rapide que les buzzers',
+  r26_celine: 'a gagné sur une note que personne d’autre n’atteint',
   r26_bruel: 'gagne avec un carré d’as, sans jamais montrer ses cartes',
   r26_lula: 'revient au sommet, on commence à avoir l’habitude',
   r26_kane: 'a enfin soulevé quelque chose, et c’est ce classement',

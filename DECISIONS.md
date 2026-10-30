@@ -90,6 +90,7 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **D53** | 2026-10-30 | Rétro 2026 : Thélyson Orélien | Thélyson Orélien remplace Burna Boy dans les avatars. Question sur le titre de son roman, avec « C'était ça ou écrire » parmi les mauvais choix, à la demande de l'auteur. | Adopté |
 | **D54** | 2026-10-30 | Rétro 2026 : la carte de Trump | Question sur la carte des États-Unis agrandis publiée par Trump : la Russie est la bonne réponse, Groenland, Mexique et Canada les pièges. | Adopté |
 | **D55** | 2026-10-30 | Rétro 2026 : Orélien « Prompteur » | Le rôle affiché de Thélyson Orélien passe d'« Écrivain » à « Prompteur », choix de l'auteur. | Adopté |
+| **D56** | 2026-10-30 | Rétro 2026 : Céline Dion | Céline Dion remplace Boualem Sansal dans les avatars et la chronique. | Adopté |
 
 ---
 
@@ -481,3 +482,8 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 - **Contexte** : l'auteur veut « Prompteur » à la place d'« Écrivain » sur l'avatar de Thélyson Orélien (précise D53).
 - **Décision** : rôle affiché `Prompteur`. Exception assumée à la règle des sous-titres sans accusation, comme en D50, pour une soirée privée.
 - **Limites** : le mot sous-entend l'usage de l'IA pour la rédaction, que l'écrivain conteste. La question du pack reste formulée sur le retrait du Goncourt.
+
+### 2026-10-30 — D56 : Céline Dion
+- **Contexte** : l'auteur veut Céline Dion en avatar à la place de Boualem Sansal.
+- **Décision** : `r26_celine` remplace `r26_sansal`, à la même place, avec sa phrase de chronique. Photo : celle de la question (D50, Georges Biard, 2012, CC BY-SA 3.0), recadrée en 400×400. Sous-titre sans la ville de son retour, réponse d'une question du pack.
+- **Limites** : la même photo apparaît à la fois sur l'avatar et sur la question. La photo `r26_sansal` reste dans le bucket.
