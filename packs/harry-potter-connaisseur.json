@@ -1,0 +1,287 @@
+{
+  "name": "⚡ Harry Potter — Le Quiz du Vrai Connaisseur (9 manches)",
+  "description": "9 manches écrites par un immense spécialiste de l'univers (il a vu au moins un bout d'un film). Cape du maraudeur, nain géant, rouquin malin : ici, on maîtrise son sujet.",
+  "mode": "mixed",
+  "avatar_theme": "harry_potter",
+  "questions": [
+    {
+      "order": 0,
+      "question_type": "quiz",
+      "body": "🧥 On commence facile, entre connaisseurs : quel accessoire légendaire permet à Harry de se balader invisible dans Poudlard ?",
+      "image_url": null,
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/06/d0/e2/06d0e212-3cfc-d56a-a556-83383da598aa/mzaf_1095038464649433962.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        {
+          "body": "La cape du maraudeur, évidemment",
+          "is_correct": true
+        },
+        {
+          "body": "Le K-Way de Dumbledore",
+          "is_correct": false
+        },
+        {
+          "body": "Un drap avec deux trous",
+          "is_correct": false
+        },
+        {
+          "body": "Le Nimbus 2000 en mode furtif",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 1,
+      "question_type": "quiz",
+      "body": "🧔 Le fameux nain géant possède un chien à trois têtes. Quel petit nom lui a-t-il donné ?",
+      "image_url": null,
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/d8/57/61/d857619c-2369-8251-9872-723887abfc9f/mzaf_16652206452432754333.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        {
+          "body": "Touffu",
+          "is_correct": true
+        },
+        {
+          "body": "Médor, Médor et Médor",
+          "is_correct": false
+        },
+        {
+          "body": "Kiki",
+          "is_correct": false
+        },
+        {
+          "body": "Cerbère 2000",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 2,
+      "question_type": "quiz",
+      "body": "🎬 Regardez l'extrait ! Question de spécialiste : ce papy barbu très énervé, qui est-ce ?",
+      "image_url": null,
+      "audio_url": null,
+      "audio_start_sec": 212,
+      "audio_duration_sec": 30,
+      "video_url": "https://www.youtube.com/watch?v=pLv1HXl_J10",
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        {
+          "body": "Dumbledore",
+          "is_correct": true
+        },
+        {
+          "body": "Gandalf",
+          "is_correct": false
+        },
+        {
+          "body": "Gandalf, mais un jour sans",
+          "is_correct": false
+        },
+        {
+          "body": "Le Père Noël en burn-out",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 3,
+      "question_type": "quiz",
+      "body": "🦊 Le rouquin malin se trimballe partout avec un rat. Comment s'appelle cette bestiole ?",
+      "image_url": null,
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/71/49/6d/71496d6c-67b0-c684-02d9-fcc543e22078/mzaf_6055771900274130683.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        {
+          "body": "Croûtard",
+          "is_correct": true
+        },
+        {
+          "body": "Ratatouille",
+          "is_correct": false
+        },
+        {
+          "body": "Maître Splinter",
+          "is_correct": false
+        },
+        {
+          "body": "Michel",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 4,
+      "question_type": "quiz",
+      "body": "🌊 Reconversion après Poudlard : dans Swiss Army Man, l'acteur de Harry joue un cadavre qui devient…",
+      "image_url": null,
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/e7/3f/f6/e73ff637-6770-63d1-54b1-f58ba11167fb/mzaf_1920378698193191158.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        {
+          "body": "Un jet-ski péteur",
+          "is_correct": true
+        },
+        {
+          "body": "Un deltaplane à hoquet",
+          "is_correct": false
+        },
+        {
+          "body": "Un pédalo de compétition",
+          "is_correct": false
+        },
+        {
+          "body": "Le sosie officiel de Gandalf",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 5,
+      "question_type": "quiz",
+      "body": "🐍 Attention, question piège : quel animal figure sur le blason des Serpanthères ?",
+      "image_url": null,
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b0/e1/5a/b0e15a9d-ac5f-cbf4-f06c-5e5dc59ddd8d/mzaf_8389942527619992041.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        {
+          "body": "Un serpent",
+          "is_correct": true
+        },
+        {
+          "body": "Une panthère",
+          "is_correct": false
+        },
+        {
+          "body": "Une panthère qui a mangé un serpent",
+          "is_correct": false
+        },
+        {
+          "body": "Un rouquin malin",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 6,
+      "question_type": "quiz",
+      "body": "💛 Les Poufsouf, vraiment la pire école de Poudlard : quelles sont leurs couleurs ?",
+      "image_url": null,
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/d8/57/61/d857619c-2369-8251-9872-723887abfc9f/mzaf_16652206452432754333.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        {
+          "body": "Jaune et noir",
+          "is_correct": true
+        },
+        {
+          "body": "Beige et beige",
+          "is_correct": false
+        },
+        {
+          "body": "Rouge et or (ça, c'est les bons)",
+          "is_correct": false
+        },
+        {
+          "body": "Vert et argent (ça, c'est les méchants)",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 7,
+      "question_type": "quiz",
+      "body": "🍺 Question de culture générale : est-ce que le club de quidisch dispose d'une tireuse à bièreaubeurre ?",
+      "image_url": null,
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/06/d0/e2/06d0e212-3cfc-d56a-a556-83383da598aa/mzaf_1095038464649433962.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        {
+          "body": "Oui",
+          "is_correct": true
+        },
+        {
+          "body": "Non",
+          "is_correct": false
+        },
+        {
+          "body": "Non, ça c'est le club de bad",
+          "is_correct": false
+        },
+        {
+          "body": "C'est quoi le quidisch ?",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 8,
+      "question_type": "blind_test",
+      "body": "🎵 Blind Test final : ce thème bouleversant du dernier film, c'est de qui ?",
+      "image_url": null,
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/4f/6a/87/4f6a87c4-9adc-0187-dc67-fa85f5cdedd0/mzaf_2553637134403143289.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": "Lily's Theme",
+      "reveal_artist": "Alexandre Desplat",
+      "reveal_cover_url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/c6/04/89/c60489ad-2490-8345-2716-367b28f0a19b/794043152429.jpg/600x600bb.jpg",
+      "choices": [
+        {
+          "body": "Alexandre Desplat",
+          "is_correct": true
+        },
+        {
+          "body": "John Williams",
+          "is_correct": false
+        },
+        {
+          "body": "Howard Shore (ça, c'est Gandalf)",
+          "is_correct": false
+        },
+        {
+          "body": "Le nain géant, à la flûte",
+          "is_correct": false
+        }
+      ]
+    }
+  ]
+}

@@ -183,6 +183,7 @@ export type Database = {
           created_at: string
           id: string
           image_url: string | null
+          is_disabled?: boolean
           order: number
           question_type: "quiz" | "blind_test"
           quiz_set_id: string
@@ -199,6 +200,7 @@ export type Database = {
           created_at?: string
           id?: string
           image_url?: string | null
+          is_disabled?: boolean
           order: number
           question_type?: "quiz" | "blind_test"
           quiz_set_id: string
@@ -215,6 +217,7 @@ export type Database = {
           created_at?: string
           id?: string
           image_url?: string | null
+          is_disabled?: boolean
           order?: number
           question_type?: "quiz" | "blind_test"
           quiz_set_id?: string

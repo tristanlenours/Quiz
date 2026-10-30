@@ -3,6 +3,7 @@
 //   npm run pack:sync -- packs/love-actually.json             → simulation (rien n'est écrit)
 //   npm run pack:sync -- packs/love-actually.json --apply     → écriture en base
 //   ... --set-id <uuid>                                       → cible explicite (pack renommé)
+//   ... --create                                              → crée le pack s'il n'existe pas (D36)
 //
 // Les lignes quiz_questions / quiz_choices existantes sont mises à jour par position
 // (ordre des questions, puis ordre de création des choix) afin de conserver leurs
@@ -25,9 +26,10 @@ for (const file of ['.env.local', '.env']) {
 const args = process.argv.slice(2)
 const packPath = args.find((a) => a.endsWith('.json'))
 const apply = args.includes('--apply')
+const create = args.includes('--create')
 const setIdArg = args.includes('--set-id') ? args[args.indexOf('--set-id') + 1] : null
 if (!packPath) {
-  console.error('Usage : npm run pack:sync -- packs/<pack>.json [--set-id <uuid>] [--apply]')
+  console.error('Usage : npm run pack:sync -- packs/<pack>.json [--set-id <uuid>] [--create] [--apply]')
   process.exit(1)
 }
 
@@ -56,6 +58,22 @@ const sets = check(
     ? await db.from('quiz_sets').select('id, name').eq('id', setIdArg)
     : await db.from('quiz_sets').select('id, name').eq('name', pack.name)
 )
+if (sets.length === 0 && create && !setIdArg) {
+  if (!apply) {
+    console.log(`Nouveau pack « ${pack.name} » : ${pack.questions.length} questions à créer`)
+    console.log('Simulation uniquement : relancer avec --apply pour écrire en base.')
+    process.exit(0)
+  }
+  sets.push(
+    check(
+      await db
+        .from('quiz_sets')
+        .insert({ name: pack.name, description: pack.description, mode: pack.mode, avatar_theme: pack.avatar_theme })
+        .select('id, name')
+        .single()
+    )
+  )
+}
 if (sets.length !== 1) {
   throw new Error(
     `${sets.length} pack(s) trouvé(s) pour ${setIdArg ? `l'id ${setIdArg}` : `le nom « ${pack.name} »`}. ` +
@@ -98,6 +116,7 @@ check(
     .update({ name: pack.name, description: pack.description, mode: pack.mode, avatar_theme: pack.avatar_theme })
     .eq('id', setId)
 )
+const usesDisabled = pack.questions.some((q) => 'is_disabled' in q)
 for (const [i, q] of pack.questions.entries()) {
   const row = {
     quiz_set_id: setId,
@@ -112,6 +131,8 @@ for (const [i, q] of pack.questions.entries()) {
     reveal_title: q.reveal_title ?? null,
     reveal_artist: q.reveal_artist ?? null,
     reveal_cover_url: q.reveal_cover_url ?? null,
+    // Écrit seulement pour un pack qui s'en sert : les autres passent sans la migration D38
+    ...(usesDisabled ? { is_disabled: Boolean(q.is_disabled) } : {}),
   }
   let questionId
   let oldChoices = []

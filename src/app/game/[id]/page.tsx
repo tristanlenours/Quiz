@@ -74,7 +74,12 @@ export default function PlayerGamePage({
       console.error(error.message)
       return
     }
-    setQuestions(data as unknown as Question[])
+    setQuestions(
+      (data as unknown as Question[])
+        .filter((q) => !q.is_disabled)
+        // `order` devient la position jouée : les manches désactivées laissent des trous (D38)
+        .map((q, index) => ({ ...q, order: index }))
+    )
   }, [])
 
   const syncGameState = useCallback(async () => {

@@ -1,5 +1,5 @@
 {
-  "name": "🎄 Love Actually — Le Grand Quiz (18 manches)",
+  "name": "🎄 Love Actually — Le Grand Quiz (15 manches)",
   "description": "Le quiz des vrais fans, en trois actes : on s'échauffe sur les chansons et les scènes cultes, on monte en puissance avec des extraits vidéo et des blind tests, puis on finit sur les détails que seuls les obsessionnels ont remarqués. Adapté du Kahoot « Do you really love Love actually ? ».",
   "mode": "mixed",
   "avatar_theme": "love_actually",
@@ -254,6 +254,7 @@
     {
       "order": 13,
       "question_type": "quiz",
+      "is_disabled": true,
       "body": "Quelle scène suit juste après la danse de Hugh Grant ?",
       "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q03.gif",
       "audio_url": null,
@@ -311,6 +312,7 @@
     {
       "order": 16,
       "question_type": "quiz",
+      "is_disabled": true,
       "body": "Dans quelle rue habite Mia, la secrétaire de Harry ?",
       "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q11.png",
       "audio_url": null,
@@ -330,6 +332,7 @@
     {
       "order": 17,
       "question_type": "quiz",
+      "is_disabled": true,
       "body": "Où est situé le tatouage d'Aurelia, la Portugaise ?",
       "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q01.png",
       "audio_url": null,

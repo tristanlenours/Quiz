@@ -60,7 +60,11 @@ export default function HostGamePage({
         return
       }
       const rawQuestions = ((data as any)?.questions || []) as any[]
-      const sortedQuestions = [...rawQuestions].sort((a, b) => a.order - b.order)
+      const sortedQuestions = rawQuestions
+        .filter((q) => !q.is_disabled)
+        .sort((a, b) => a.order - b.order)
+        // `order` devient la position jouée : les manches désactivées laissent des trous (D38)
+        .map((q, index) => ({ ...q, order: index }))
       const sortedSet = { ...data, questions: sortedQuestions } as unknown as QuizSet
       setQuizSet(sortedSet)
       preloadQuestionImages(sortedQuestions)

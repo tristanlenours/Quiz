@@ -37,6 +37,7 @@ interface DraftQuestion {
   reveal_artist: string
   reveal_cover_url: string
   video_url?: string
+  is_disabled?: boolean
   choices: DraftChoice[]
 }
 
@@ -354,6 +355,7 @@ export default function HostDashboardPage() {
           reveal_artist: q.reveal_artist || null,
           reveal_cover_url: q.reveal_cover_url || null,
           video_url: q.video_url || null,
+          ...(q.is_disabled ? { is_disabled: true } : {}),
         })
         .select()
         .single()
@@ -371,6 +373,16 @@ export default function HostDashboardPage() {
         .insert(choicesPayload)
       if (cErr) throw new Error(cErr.message)
     }
+  }
+
+  // Écriture directe sur la ligne : l'éditeur recrée les questions et perdrait l'historique (D38)
+  const toggleQuestionDisabled = async (questionId: string, isDisabled: boolean) => {
+    const { error } = await supabase
+      .from('quiz_questions')
+      .update({ is_disabled: isDisabled })
+      .eq('id', questionId)
+    if (error) return alert(error.message)
+    await fetchQuizSets()
   }
 
   const openCreateEditor = () => {
@@ -401,6 +413,7 @@ export default function HostDashboardPage() {
       reveal_artist: q.reveal_artist || '',
       reveal_cover_url: q.reveal_cover_url || '',
       video_url: q.video_url || '',
+      is_disabled: q.is_disabled,
       choices:
         q.choices && q.choices.length > 0
           ? q.choices.map((c) => ({ body: c.body, is_correct: c.is_correct }))
@@ -510,6 +523,7 @@ export default function HostDashboardPage() {
         reveal_artist: q.reveal_artist,
         reveal_cover_url: q.reveal_cover_url,
         video_url: q.video_url,
+        ...(q.is_disabled ? { is_disabled: true } : {}),
         choices: (q.choices || []).map((c) => ({
           body: c.body,
           is_correct: c.is_correct,
@@ -692,10 +706,13 @@ export default function HostDashboardPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {quizSets.map((set) => {
-              const blindTestCount = (set.questions || []).filter(
+              const activeQuestions = (set.questions || []).filter(
+                (q) => !q.is_disabled
+              )
+              const blindTestCount = activeQuestions.filter(
                 (q) => q.question_type === 'blind_test'
               ).length
-              const quizCount = (set.questions || []).length - blindTestCount
+              const quizCount = activeQuestions.length - blindTestCount
 
               return (
                 <div
@@ -708,7 +725,7 @@ export default function HostDashboardPage() {
                         {set.name}
                       </h2>
                       <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 shrink-0">
-                        {set.questions?.length || 0} manches
+                        {activeQuestions.length} manches
                       </span>
                     </div>
                     {set.description && (
@@ -716,7 +733,7 @@ export default function HostDashboardPage() {
                         {set.description}
                       </p>
                     )}
-                    <div className="flex gap-2 text-xs text-slate-300 mb-6">
+                    <div className="flex gap-2 text-xs text-slate-300 mb-3">
                       {quizCount > 0 && (
                         <span className="px-2.5 py-1 rounded-lg bg-slate-800">
                           ❓ {quizCount} Quiz
@@ -728,6 +745,33 @@ export default function HostDashboardPage() {
                         </span>
                       )}
                     </div>
+                    <details className="mb-6 text-xs text-slate-300">
+                      <summary className="cursor-pointer font-semibold text-slate-400 hover:text-white">
+                        🎚️ Activer ou désactiver des manches
+                      </summary>
+                      <div className="mt-2 space-y-1.5">
+                        {(set.questions || []).map((q, idx) => (
+                          <label
+                            key={q.id}
+                            className={`flex items-start gap-2 cursor-pointer ${
+                              q.is_disabled ? 'opacity-50 line-through' : ''
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={!q.is_disabled}
+                              onChange={(e) =>
+                                toggleQuestionDisabled(q.id, !e.target.checked)
+                              }
+                              className="mt-0.5 shrink-0"
+                            />
+                            <span>
+                              {idx + 1}. {q.body}
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+                    </details>
                   </div>
 
                   <div className="flex flex-wrap justify-between items-center gap-2 pt-4 border-t border-white/10">

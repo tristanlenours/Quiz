@@ -161,7 +161,7 @@ export default function Lobby({
                   {allParticipants.length > 1 ? 's' : ''}
                 </span>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-56 overflow-y-auto pr-1">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                 {allParticipants.map((p) => {
                   const pId = getParticipantIdentity(p)
                   const isMe = p.id === participant.id
@@ -383,7 +383,7 @@ function Register({
       )}
 
       {/* Grille des avatars de l'univers du pack */}
-      <div className="grid grid-cols-3 sm:grid-cols-5 gap-2.5 max-h-[340px] overflow-y-auto p-1">
+      <div className="grid grid-cols-3 sm:grid-cols-5 gap-2.5 p-1">
         {theme.avatars.map((avatar) => {
           const takenBy = takenAvatars.get(avatar.id)
           const isSelected = selectedAvatarId === avatar.id

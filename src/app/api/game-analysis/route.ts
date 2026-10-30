@@ -258,41 +258,35 @@ function buildDeterministicAnalysis(
 
 const WIZARD_VICTORY_QUIPS: Record<string, string> = {
   hp_harry:
-    'a encore survécu à tout, y compris aux questions les plus vicieuses, avec la chance insolente de celui qui attrape le Vif d’or à la dernière seconde',
+    'a gagné, comme d’habitude dans les films, il me semble, sans que personne ne comprenne vraiment comment',
   hp_hermione:
-    'levait la main avant même la fin de chaque question, et je soupçonne fortement un Retourneur de Temps dissimulé sous sa robe',
+    'levait la main tout le temps, et il paraît que c’est un personnage qui fait ça, donc c’est cohérent',
   hp_ron:
-    'a joué cette partie comme une partie d’échecs version sorcier : sacrifices audacieux, coups de génie, et pas une seule araignée en vue',
+    'était là du début à la fin, comme dans les films, et cette fois il a même servi à quelque chose',
   hp_neville:
-    'nous rappelle qu’il faut du courage pour tenir tête à ses amis, et visiblement encore plus pour les écraser au classement',
+    'était nul au début et bien à la fin, ou l’inverse, on ne regardait pas à ce moment-là',
   hp_twins:
-    'a remporté la victoire avec un sens du spectacle digne d’un feu d’artifice Weasley, et je préfère ne pas savoir ce qui a été caché dans mon bureau',
+    'a gagné à deux, ou tout seul, personne n’a su dire lequel c’était',
   hp_hagrid:
-    'a tout raflé avec la délicatesse d’un Norvégien à crête… je n’aurais pas dû dire ça, je n’aurais VRAIMENT pas dû dire ça',
+    'a tout raflé, ce qui est bien pour quelqu’un de cette taille, peu importe laquelle',
   hp_dumbledore:
-    'l’emporte, ce qui est fort embarrassant pour l’homme qui prononce ce discours : je vous jure que je n’ai pas consulté la Pensine',
+    'l’emporte, ce qui est gênant vu que c’est moi qui parle, enfin je crois que c’est moi',
   hp_mcgonagall:
-    'a dominé la soirée avec une rigueur de Métamorphose, et la rumeur dit qu’un sourire a presque été aperçu',
+    'a dominé la soirée avec le chapeau, et il paraît qu’elle est sympa, on attend toujours',
   hp_draco:
-    'triomphe, et nous serons tous informés dans les plus brefs délais que son père en a entendu parler',
+    'triomphe, et son père est au courant, il y a un truc avec son père',
   hp_snape:
-    'a remporté la partie sans jamais hausser le ton, en dosant ses réponses au gramme près comme un Maître des Potions',
+    'a gagné en faisant la tête, et à la fin on apprendra un truc, je n’ai pas suivi',
   hp_bellatrix:
-    'a semé un chaos ricanant dans le classement, et je prie les préfets de surveiller l’argenterie',
+    'a beaucoup crié, et on lui souhaite de se reposer un peu maintenant',
   hp_voldemort:
-    'a conquis la première place, ce que je me contenterai d’appeler « Vous-Savez-Quoi »',
+    'a conquis la première place sans nez, ce qui force le respect, je crois que c’est expliqué dans le 2',
   hp_luna:
-    'a trouvé les bonnes réponses grâce à une paire de Lorgnospectres et à un sérieux coup de pouce des Joncheruines',
-  hp_lockhart:
-    'repart avec la couronne : un sixième Prix du Sourire le plus charmeur est déjà en gravure, il me l’a demandé trois fois',
-  hp_myrtle:
-    'a hanté le sommet du classement, et pour une fois personne ne pleure dans les toilettes du deuxième étage',
+    'a trouvé les bonnes réponses par hasard, ou pas, avec elle on n’a jamais su',
   hp_cedric:
-    'a prouvé qu’il était le seul, le vrai champion de la soirée, sans aucun nom glissé en douce dans la Coupe',
-  hp_tonks:
-    'a changé de couleur de cheveux à chaque bonne réponse, si bien que nous avons fini par compter un arc-en-ciel complet',
+    'a gagné avec sa belle tête, et je maintiens que c’est lui dans Twilight',
   hp_dobby:
-    'gagne en elfe libre, et n’a eu besoin d’aucune maison pour briller',
+    'gagne, et je n’ai toujours pas compris ce que c’était comme animal',
 }
 
 function computeHouseCup(players: PlayerComputedStats[]): HouseCupEntry[] {
@@ -323,9 +317,9 @@ function buildHarryPotterAnalysis(
 ): GameAnalysisPayload {
   if (players.length === 0) {
     return {
-      headline: '🦉 Hibou perdu : aucune réponse n’est arrivée à la Grande Salle',
+      headline: '🦉 Pigeon perdu : personne n’a répondu, à la cantine non plus',
       chronicle:
-        'Les bougies flottent encore, les assiettes attendent le dessert, mais aucun sorcier n’a répondu cette fois-ci. Le Choixpeau reste disponible pour la prochaine rentrée !',
+        'Aucun sorcier n’a répondu. C’est dommage, ou c’est normal, je ne sais pas trop comment ça marche. On retentera à la rentrée, si elle a lieu.',
       awards: [],
       hardestQuestionText: null,
       hardestQuestionSuccessPct: null,
@@ -344,11 +338,11 @@ function buildHarryPotterAnalysis(
 
   const headline =
     second && winner.totalScore - second.totalScore <= 400
-      ? `🦉 La Gazette du Sorcier : ${winner.displayName} arrache « ${quizName} » d’un battement d’ailes de Vif d’or !`
-      : `🦉 La Gazette du Sorcier : ${winner.displayName} écrase « ${quizName} » sous les vivats de la Grande Salle !`
+      ? `🦉 Le journal qui bouge : ${winner.displayName} gagne « ${quizName} » de peu, avec la petite balle dorée, je crois !`
+      : `🦉 Le journal qui bouge : ${winner.displayName} écrase « ${quizName} », la cantine applaudit !`
 
   const parts: string[] = [
-    'Une nouvelle partie s’achève ! Avant que les elfes de maison ne servent le pudding, permettez à un vieil homme de retenir encore un instant vos estomacs affamés.',
+    'Bon. C’est fini, je crois. Avant le dessert, je dois lire un truc, on m’a dit que c’était la tradition, à moins que ce soit dans un autre film.',
   ]
 
   if (houseCup.length >= 2) {
@@ -362,39 +356,39 @@ function buildHarryPotterAnalysis(
       )
       .join(', ')
     parts.push(
-      `La Coupe des Quatre Maisons, donc : ${standings}… et en tête, avec ${leader.points} points, ${leader.label} ${leader.crest} ! Je crois qu’un petit changement de décoration s’impose.`
+      `La Coupe des Maisons, là : ${standings}… et devant, avec ${leader.points} points, ${leader.label} ${leader.crest} ! J’ai bien aimé, enfin, j’ai essayé.`
     )
   } else if (houseCup.length === 1) {
     parts.push(
-      `${houseCup[0].label} ${houseCup[0].crest} remporte la Coupe des Quatre Maisons sans le moindre rival : une victoire écrasante… et un peu solitaire.`
+      `${houseCup[0].label} ${houseCup[0].crest} gagne la Coupe des Maisons tout seul. Je ne sais pas si c’est autorisé.`
     )
   }
 
   const quip =
     (winner.avatarId && WIZARD_VICTORY_QUIPS[winner.avatarId]) ||
-    'a dominé la soirée avec un talent que même le Choixpeau n’avait pas vu venir'
+    'a gagné, et je ne saurais pas expliquer pourquoi, mais bravo'
   parts.push(
-    `Mais les derniers points de la soirée reviennent à ${labelOf(winner)}, qui ${quip} : ${winner.totalScore} points et ${winner.correctCount}/${totalQuestions} bonnes réponses.`
+    `Le gagnant, c’est ${labelOf(winner)}, qui ${quip} : ${winner.totalScore} points et ${winner.correctCount}/${totalQuestions} bonnes réponses.`
   )
 
   if (second) {
     const gap = winner.totalScore - second.totalScore
     parts.push(
       gap === 0
-        ? `${labelOf(second)} termine à égalité parfaite : je propose un duel amical, sans Sortilège Impardonnable, cela va de soi.`
+        ? `${labelOf(second)} termine à égalité : qu’ils se battent avec les bâtons, là, mais gentiment.`
         : gap <= 450
-        ? `${labelOf(second)} échoue à ${gap} petits points, l’épaisseur d’une plume de phénix${third ? `, devant ${third.displayName} qui complète le podium avec ${third.totalScore} points` : ''}.`
-        : `${labelOf(second)} décroche une belle deuxième place (${second.totalScore} points)${third ? `, et ${third.displayName} se hisse sur la troisième marche avec ${third.totalScore} points` : ''}.`
+        ? `${labelOf(second)} rate le coche de ${gap} points, ce qui est peu, ou beaucoup, je ne connais pas le barème${third ? `, devant ${third.displayName} qui complète le podium avec ${third.totalScore} points` : ''}.`
+        : `${labelOf(second)} est deuxième (${second.totalScore} points)${third ? `, et ${third.displayName} est troisième avec ${third.totalScore} points, comme quoi` : ''}.`
     )
   }
 
   if (hardestQ) {
     parts.push(
-      `Quant à la question « ${hardestQ.body} », seuls ${hardestQ.pct}% d’entre vous y ont survécu : même le Choixpeau en a perdu une couture.`
+      `Quant à la question « ${hardestQ.body} », seuls ${hardestQ.pct}% d’entre vous ont trouvé. Moi non plus, je ne savais pas.`
     )
   }
   parts.push(
-    'Bonne nuit à tous, et prenez garde aux escaliers : ils adorent changer d’avis.'
+    'Voilà. Bonne nuit, et faites attention aux escaliers, il y a un truc avec les escaliers.'
   )
 
   const awards: GameAward[] = []
@@ -423,9 +417,9 @@ function buildHarryPotterAnalysis(
     giveAward(
       'speed',
       '🧹',
-      'Éclair de Feu du Buzzer',
+      'Le Balai Rapide, là',
       fastest,
-      `Plus rapide qu’un balai de course : une pointe à ${fastest.bestSingleScore} pts sur une seule question !`
+      `Très rapide, comme le balai, celui qui est bien : une pointe à ${fastest.bestSingleScore} pts sur une seule question !`
     )
   }
 
@@ -436,9 +430,9 @@ function buildHarryPotterAnalysis(
     giveAward(
       'sniper',
       '⏳',
-      'Retourneur de Temps d’Hermione',
+      'Le Collier du Temps d’Hermione',
       sniper,
-      `${sniper.maxStreak} bonnes réponses d’affilée (${sniper.accuracyPct}% de réussite) : on soupçonne un voyage dans le temps.`
+      `${sniper.maxStreak} bonnes réponses d’affilée (${sniper.accuracyPct}% de réussite) : il y a un film où ça s’explique, je crois.`
     )
   }
 
@@ -450,9 +444,9 @@ function buildHarryPotterAnalysis(
       giveAward(
         'careful',
         '👻',
-        'Prix du Professeur Binns',
+        'Prix du Prof Fantôme',
         careful,
-        `Réfléchit comme un fantôme qui a l’éternité devant lui (${careful.avgSpeedScore} pts de moyenne par bonne réponse).`
+        `Prend son temps, comme un fantôme, à supposer qu’ils en aient un (${careful.avgSpeedScore} pts de moyenne par bonne réponse).`
       )
     }
   }
@@ -464,9 +458,9 @@ function buildHarryPotterAnalysis(
     giveAward(
       'finisher',
       '🦁',
-      'Dix points pour Neville',
+      'Dix points pour Neville, je crois',
       finisher,
-      `La remontada de dernière minute : ${finisher.lateGameScore} pts sur les 3 dernières manches.`
+      `Nul au début, bien à la fin : ${finisher.lateGameScore} pts sur les 3 dernières manches.`
     )
   }
 
@@ -477,7 +471,7 @@ function buildHarryPotterAnalysis(
       '🧦',
       'Chaussette de Dobby',
       brave,
-      `${brave.answeredCount} manches jouées sans jamais lâcher sa baguette : un Gallion d’or pour le courage !`
+      `${brave.answeredCount} manches jouées sans lâcher son bâton : personne ne sait pourquoi, mais il a une chaussette.`
     )
   }
 
@@ -522,7 +516,7 @@ function buildHarryPotterPrompt({
   )
 
   return `Tu incarnes Albus Dumbledore prononçant le discours du banquet de fin d'année dans la Grande Salle de Poudlard, après une soirée Quiz & Blind Test Harry Potter entre amis (pack "${quizName}", ${totalQuestions} questions).
-Ton ton : malicieux, chaleureux, un brin excentrique, avec des digressions loufoques (bonbons, chaussettes en laine, escaliers capricieux). Tu restes bienveillant : on taquine, on n'humilie jamais.
+Ton ton : celui de quelqu'un qui n'a vu les films que de loin, qui aimerait aimer ça mais à qui ça ne prend pas. Très sûr de toi et très approximatif : « je crois », « il y a un truc avec… », « ou l'inverse », « c'est expliqué dans le 2 ». Tu gardes les vrais noms des personnages, mais tu décris tout de travers. Tu restes bienveillant : on taquine, on n'humilie jamais.
 
 Classement individuel :
 ${summaryLines.join('\n')}
@@ -535,8 +529,8 @@ ${awardsLines.join('\n')}
 ${hardestQ ? `Question la plus meurtrière : "${hardestQ.body}" (${hardestQ.pct}% de réussite).` : ''}
 
 Rédige en français un JSON strict avec 2 clés :
-- "headline": Une manchette de La Gazette du Sorcier façon Rita Skeeter, sensationnaliste et drôle, avec un emoji (max 100 caractères).
-- "chronicle": Le discours de Dumbledore en 5 à 6 phrases, à la première personne, qui (1) annonce la Coupe des Quatre Maisons de la dernière à la première place avec suspense, (2) accorde les « derniers points » au vainqueur en jouant sur le personnage qu'il incarne, (3) taquine 2 ou 3 autres joueurs via leur personnage, (4) évoque la question la plus meurtrière, (5) se termine par une formule de clôture typiquement dumbledorienne.
+- "headline": Une manchette du « journal qui bouge » (tu ne sais plus son nom), sensationnaliste et drôle, avec un emoji (max 100 caractères).
+- "chronicle": Le discours de Dumbledore en 5 à 6 phrases, à la première personne, qui (1) annonce la Coupe des Quatre Maisons de la dernière à la première place avec suspense, (2) accorde les « derniers points » au vainqueur en jouant sur le personnage qu'il incarne, (3) taquine 2 ou 3 autres joueurs via leur personnage, (4) évoque la question la plus meurtrière, (5) se termine par une formule de clôture hésitante, qui se perd un peu.
 N'invente aucun score : utilise uniquement les chiffres fournis.
 
 Réponds UNIQUEMENT avec l'objet JSON valide, sans balises markdown.`
@@ -695,10 +689,10 @@ export async function POST(request: Request) {
     if (quizSetId) {
       const { data: qData } = await supabase
         .from('quiz_questions')
-        .select('id, body, order')
+        .select('*')
         .eq('quiz_set_id', quizSetId)
         .order('order', { ascending: true })
-      questions = qData ?? []
+      questions = (qData ?? []).filter((q: any) => !q.is_disabled)
     }
 
     const participants = participantsRes.data ?? []

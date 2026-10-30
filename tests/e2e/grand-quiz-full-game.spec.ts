@@ -2,7 +2,7 @@ import { test } from '@playwright/test'
 import { runFullGame, type PlayerAction, type PlayerKey, type RoundScenario } from './full-game'
 
 /**
- * E2E « vraie soirée » sur le Grand Quiz Love Actually (18 manches, Décision D31).
+ * E2E « vraie soirée » sur le Grand Quiz Love Actually (15 manches actives, Décisions D31, D38).
  *
  * Même moteur que le Warm-Up (1 TV + 4 manettes sur la vraie base), sur toutes
  * les manches du pack : images, 3 Blind Tests, 3 extraits YouTube. À chaque
@@ -107,46 +107,30 @@ const SCENARIO: RoundScenario[] = [
     sam: { at: 3300, pick: 'wrong' },
     max: { at: 2700, pick: 'correct' },
   }),
-  quick('Manche 14 — GIF animé', {
-    titou: { at: 3000, pick: 'correct' },
-    chloe: { at: 3600, pick: 'wrong' },
-    sam: { at: 1900, pick: 'correct' },
-    max: { at: 2400, pick: 'wrong' },
-  }),
-  quick('Manche 15 — image Rufus', {
+  quick('Manche 14 — image Rufus', {
     titou: { at: 1200, pick: 'correct' },
     chloe: { at: 2200, pick: 'correct' },
     sam: { at: 800, pick: 'wrong' },
     max: { at: 3400, pick: 'correct' },
   }),
   {
-    label: "Manche 16 — extrait de l'emballage joué en entier, un absent",
+    label: "Manche 15 — dernière question, extrait de l'emballage en entier, un absent, réponse à 26 s",
     reveal: 'timer',
     actions: {
       titou: null,
       chloe: { at: 15_000, pick: 'correct' },
       sam: { at: 22_000, pick: 'wrong' },
-      max: { at: 9000, pick: 'correct' },
+      max: { at: 26_000, pick: 'correct', lastSecond: true },
     },
   },
-  quick('Manche 17 — image', {
-    titou: { at: 1600, pick: 'correct' },
-    chloe: { at: 2600, pick: 'wrong' },
-    sam: { at: 1100, pick: 'correct' },
-    max: { at: 3800, pick: 'correct' },
-  }),
-  quick('Manche 18 — dernière question, le dernier répond à 26 s', {
-    titou: { at: 700, pick: 'correct' },
-    chloe: { at: 5000, pick: 'correct' },
-    sam: { at: 9000, pick: 'wrong' },
-    max: { at: 26_000, pick: 'correct', lastSecond: true },
-  }),
 ]
 
-test('Grand Quiz Love Actually : 18 manches à 4 joueurs jusqu’au podium et à l’analyse', async ({
+test('Grand Quiz Love Actually : 15 manches à 4 joueurs jusqu’au podium et à l’analyse', async ({
   browser,
   baseURL,
 }) => {
   test.setTimeout(25 * 60 * 1000)
-  await runFullGame(browser, baseURL, 'Love Actually — Le Grand Quiz', SCENARIO)
+  await runFullGame(browser, baseURL, 'Love Actually — Le Grand Quiz', SCENARIO, {
+    lightCount: Number(process.env.E2E_LIGHT) || 0,
+  })
 })

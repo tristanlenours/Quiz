@@ -195,28 +195,122 @@ async function expectControllerTextOnly(page: Page, label: string) {
   ).toHaveCount(0)
 }
 
+const LIGHT_PACK_PREFIX = 'E2E light'
+
+/** Tirage reproductible : au moins une manche de chaque type de révélation, le reste au hasard (D45) */
+function pickLightRounds(scenario: RoundScenario[], count: number, seed: number) {
+  let state = seed >>> 0
+  const random = () => {
+    state = (state + 0x6d2b79f5) >>> 0
+    let t = Math.imul(state ^ (state >>> 15), 1 | state)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+  const shuffled = scenario.map((_, i) => i)
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1))
+    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+  const picked = new Set<number>()
+  for (const reveal of ['auto', 'timer', 'host'] as const) {
+    const index = shuffled.find((i) => scenario[i].reveal === reveal)
+    if (index !== undefined) picked.add(index)
+  }
+  for (const index of shuffled) {
+    if (picked.size >= count) break
+    picked.add(index)
+  }
+  return Array.from(picked).sort((a, b) => a - b)
+}
+
+/** Copie les manches tirées dans un pack temporaire : le vrai pack et ses activations ne bougent pas */
+async function createLightPack(
+  source: Record<string, unknown>,
+  questions: Question[],
+  seed: number
+) {
+  // Reste d'un test interrompu : jamais le pack d'un joueur, le préfixe est réservé
+  await db.from('quiz_sets').delete().like('name', `${LIGHT_PACK_PREFIX}%`)
+
+  const { data: set, error } = await db
+    .from('quiz_sets')
+    .insert({
+      name: `${LIGHT_PACK_PREFIX} ${seed}`,
+      description: `Tirage ${seed}, supprimé à la fin du test`,
+      mode: source.mode,
+      avatar_theme: source.avatar_theme,
+    })
+    .select('id, name')
+    .single()
+  if (error) throw new Error(error.message)
+
+  const copies: Question[] = []
+  for (let order = 0; order < questions.length; order++) {
+    const { id: _id, created_at: _createdAt, choices, ...row } = questions[order] as Question & { created_at?: string }
+    const { data: copy, error: qErr } = await db
+      .from('quiz_questions')
+      .insert({ ...row, order, quiz_set_id: set.id })
+      .select()
+      .single()
+    if (qErr) throw new Error(qErr.message)
+    const { data: copiedChoices, error: cErr } = await db
+      .from('quiz_choices')
+      .insert(choices.map(({ body, is_correct }) => ({ body, is_correct, question_id: copy.id })))
+      .select('id, body, is_correct')
+    if (cErr) throw new Error(cErr.message)
+    copies.push({ ...copy, choices: copiedChoices ?? [] })
+  }
+  return { id: set.id as string, name: set.name as string, questions: copies }
+}
+
 /**
  * Joue une partie complète du pack (1 TV + 4 manettes) en suivant `scenario`
  * (une entrée par manche) et confronte chaque écran à la base.
+ * Avec `lightCount`, ne joue qu'un tirage de ce nombre de manches (D45).
  */
 export async function runFullGame(
   browser: Browser,
   baseURL: string | undefined,
   setNameFragment: string,
-  scenario: RoundScenario[]
+  fullScenario: RoundScenario[],
+  { lightCount = 0 }: { lightCount?: number } = {}
 ) {
   expect(SUPABASE_URL, 'SUPABASE_URL manquant (.env.local)').toBeTruthy()
   expect(SUPABASE_KEY, 'Clé Supabase manquante (.env.local)').toBeTruthy()
 
   const { data: sets, error: setErr } = await db
     .from('quiz_sets')
-    .select('id, name, questions:quiz_questions(id, order, body, question_type, image_url, audio_url, video_url, audio_start_sec, audio_duration_sec, reveal_title, choices:quiz_choices(id, body, is_correct))')
+    .select('*, questions:quiz_questions(*, choices:quiz_choices(id, body, is_correct))')
     .ilike('name', `%${setNameFragment}%`)
   expect(setErr).toBeNull()
   expect(sets?.length, `Le pack « ${setNameFragment} » doit exister en base`).toBeGreaterThan(0)
-  const quizSet = sets![0] as unknown as { id: string; name: string; questions: Question[] }
-  const questions = [...quizSet.questions].sort((a, b) => a.order - b.order)
-  expect(questions).toHaveLength(scenario.length)
+  const packSet = sets![0] as unknown as { id: string; name: string; questions: Question[] }
+  const activeQuestions = packSet.questions
+    .filter((q) => !(q as { is_disabled?: boolean }).is_disabled)
+    .sort((a, b) => a.order - b.order)
+  expect(
+    activeQuestions,
+    'Le scénario du test compte une entrée par manche active : à ajuster si des manches ont été activées ou désactivées'
+  ).toHaveLength(fullScenario.length)
+
+  let quizSet = packSet
+  let questions = activeQuestions
+  let scenario = fullScenario
+  let lightPackId: string | undefined
+  if (lightCount > 0) {
+    const seed = Number(process.env.E2E_SEED) || Date.now()
+    const rounds = pickLightRounds(fullScenario, lightCount, seed)
+    log(`mode light : E2E_SEED=${seed}, manches ${rounds.map((i) => i + 1).join(', ')}`)
+    const light = await createLightPack(
+      packSet as unknown as Record<string, unknown>,
+      rounds.map((i) => activeQuestions[i]),
+      seed
+    )
+    lightPackId = light.id
+    quizSet = light
+    questions = light.questions
+    scenario = rounds.map((i) => fullScenario[i])
+  }
 
   const errors: string[] = []
   const timeline: Array<Record<string, unknown>> = []
@@ -709,6 +803,7 @@ ${JSON.stringify(timeline, null, 2)}`)
     for (const ctx of contexts) await ctx.close().catch(() => {})
     if (gameId && !process.env.E2E_KEEP_GAME) {
       await db.from('quiz_games').delete().eq('id', gameId)
+      if (lightPackId) await db.from('quiz_sets').delete().eq('id', lightPackId)
     }
   }
 }

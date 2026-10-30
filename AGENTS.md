@@ -31,7 +31,7 @@ Avant toute modification de schéma, d'interface ou de logique de jeu, lire :
    À chaque nouvelle décision `Dxx`, se demander si elle crée, change ou rend caduque une règle de travail durable (commande, convention, invariant, piège connu). Si oui, mettre à jour `AGENTS.md` **dans le même tour de travail**, sans attendre une révision d'ensemble ; une règle caduque est corrigée ou retirée, pas laissée en place.
    Dans tous les cas, avancer le marqueur ci-dessous jusqu'à la dernière décision relue. `npm test` échoue tant qu'une décision de `DECISIONS.md` est plus récente que ce marqueur.
 
-   **Dernière revue d'AGENTS.md : D34**
+   **Dernière revue d'AGENTS.md : D45**
 
 ---
 
@@ -59,7 +59,9 @@ Avant toute modification de schéma, d'interface ou de logique de jeu, lire :
 - **Son** : extraits iTunes (`audio-ssl.itunes.apple.com`, 30 s) et pochettes `mzstatic.com` en `600x600bb`.
 - **Zéro spoil hors des questions** : sous-titres d'avatars (`src/avatars.ts`), citation et playlist du Salon (`src/themes.ts`), chronique déterministe et prompt Gemini (`src/app/api/game-analysis/route.ts`) ne doivent dévoiler **aucune réponse** d'un pack du même thème. Le Warm-Up ne recoupe pas le Grand Quiz (D30).
 - **Thèmes** : un pack porte son univers dans `quiz_sets.avatar_theme` (`love_actually`, `harry_potter`) ; habillage dans `src/themes.ts`, avatars dans `src/avatars.ts` (préfixe `hp_` pour Harry Potter, D29).
+- **Thème Harry Potter = ton « à peu près »** : vrais noms, descriptions très approximatives de quelqu'un qui a vu les films de loin (avatars, Salon, chronique, prompt Gemini). Ne pas le corriger (D41).
 - **Avatars = photos des personnages des films**, hébergées dans `quiz-media/avatars/<univers>/` (pas de lien direct vers un site tiers ni de portrait généré, D34).
+- **15 personnages maximum par univers**, pour que le choix d'avatar tienne sans ascenseur imbriqué : sur la manette, seule la page défile (D35).
 - **Jamais l'univers d'un autre pack à l'écran** : tant que le thème du pack n'est pas résolu, ne pas se rabattre sur le thème par défaut ; afficher un écran neutre (D34).
 
 ---
@@ -67,8 +69,8 @@ Avant toute modification de schéma, d'interface ou de logique de jeu, lire :
 ## 5. Packs de questions
 
 - `packs/*.json` est la **source de vérité** du contenu (format Import/Export du Studio, D09). Toute modification d'un pack se fait dans le JSON **puis** en base, dans le même tour de travail.
-- Règles de contenu : **4 choix et 1 seule bonne réponse** par question ; faits vérifiés sur une source (script, transcript) avant d'être posés ; un fait invérifiable est signalé dans `DECISIONS.md`.
-- Mise en base d'un pack existant : `npm run pack:sync -- packs/<pack>.json` (simulation), puis `--apply`. La mise à jour se fait **sur place** pour conserver les identifiants et l'historique `quiz_answers` ; ajouter `--set-id <uuid>` si le pack a été renommé. Un nouveau pack s'importe depuis le Studio (`/host/dashboard`).
+- Règles de contenu : **4 choix et 1 seule bonne réponse** par question ; faits vérifiés sur une source (script, transcript) avant d'être posés ; un fait invérifiable est signalé dans `DECISIONS.md`. Dans le pack « Vrai Connaisseur », le vocabulaire est volontairement faux (cape du maraudeur, nain géant, rouquin malin, Serpanthères, Poufsouf) : ne pas le « corriger » (D36).
+- Mise en base d'un pack existant : `npm run pack:sync -- packs/<pack>.json` (simulation), puis `--apply`. La mise à jour se fait **sur place** pour conserver les identifiants et l'historique `quiz_answers` ; ajouter `--set-id <uuid>` si le pack a été renommé. Un nouveau pack s'importe depuis le Studio (`/host/dashboard`) ou avec `--create`. Le script refuse de supprimer des questions : pour raccourcir un pack déjà joué, **désactiver** les manches (`"is_disabled": true` dans le JSON, ou l'interrupteur du Studio), sans les effacer (D38). Toute lecture de questions pour jouer doit exclure `is_disabled` et renuméroter `order` selon la position jouée.
 - Après un changement de pack, mettre à jour les attentes des tests (nombre de questions, nom du pack).
 
 ---
@@ -79,6 +81,7 @@ Avant toute modification de schéma, d'interface ou de logique de jeu, lire :
 - `npm run build` — Compilation de production Next.js + vérification TypeScript.
 - `npm run lint` — Vérification ESLint.
 - `npm test` — Intégrité des packs en base (choix, bonne réponse unique, médias accessibles en HTTP), avatars, partie simulée, moteur d'analyse. Rapide, contre la vraie base Supabase.
-- `npm run test:e2e` — Parties complètes en navigateur (Playwright) : 1 TV + 4 manettes sur la vraie base, pour le Warm-Up et le Grand Quiz (~15 min). Lance son propre `next dev` sur le port 3100 ; `E2E_BASE_URL` cible un serveur existant, `E2E_KEEP_GAME=1` conserve la partie de test. Le moteur commun est `tests/e2e/full-game.ts`, avec un fichier de scénario par pack.
+- `npm run test:e2e:light` — Grand Quiz sur un tirage aléatoire de 5 manches (`-- 8` pour en changer le nombre), joué sur un pack temporaire « E2E light » supprimé à la fin. Pour itérer vite ; `E2E_SEED` rejoue un tirage. Ne remplace pas le test complet avant livraison (D45).
+- `npm run test:e2e` — Parties complètes en navigateur (Playwright) sur toutes les questions actives : 1 TV + 4 manettes sur la vraie base, pour le Warm-Up et le Grand Quiz (~15 min). Lance son propre `next dev` sur le port 3100 ; `E2E_BASE_URL` cible un serveur existant, `E2E_KEEP_GAME=1` conserve la partie de test. Le moteur commun est `tests/e2e/full-game.ts`, avec un fichier de scénario par pack.
 
-**Fiabilité avant tout** (I13) : avant de livrer une modification de jeu, d'écran ou de pack, `npm test` **et** `npm run test:e2e` doivent passer. Le Chromium de Playwright ne lit ni l'AAC ni le H.264 : les tests vérifient la présence et le calage des médias, **pas leur lecture effective**, à contrôler en répétition sur la vraie TV.
+**Fiabilité avant tout** (I13) : avant de livrer une modification de jeu, d'écran ou de pack, `npm test` **et** `npm run test:e2e` doivent passer. Ne jamais lancer `npm run build` pendant un E2E : le build et `next dev` partagent `.next`. Le Chromium de Playwright ne lit ni l'AAC ni le H.264 : les tests vérifient la présence et le calage des médias, **pas leur lecture effective**, à contrôler en répétition sur la vraie TV.

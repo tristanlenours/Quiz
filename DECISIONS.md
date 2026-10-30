@@ -24,6 +24,10 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **I13** | 2026-10-29 | **La fiabilité est la clé** (l'auteur est QA, sa réputation est en jeu) : sur les manettes, **uniquement la question et les réponses**, sans image ni vidéo, pour un affichage correct sur tous les téléphones ; un **test E2E navigateur du Grand Quiz** au même niveau d'exigence que celui du Warm-Up ; une vidéo sur la question Billy Mack. | Demande explicite auteur | Actif |
 | **I14** | 2026-10-29 | **Favoriser la mise à jour régulière d'`AGENTS.md`** au gré des évolutions du projet, plutôt que par révisions ponctuelles. | Demande explicite auteur | Actif |
 | **I15** | 2026-10-29 | Pour le quiz Harry Potter, **des photos des personnages des films** plutôt que des avatars dessinés ; et **jamais les avatars d'un autre quiz** à l'écran, même un instant : mieux vaut ne rien afficher. | Demande explicite auteur | Actif |
+| **I16** | 2026-10-30 | **15 personnages maximum par quiz** (retirer les moins populaires, mais garder Dobby) et **plus de double ascenseur** sur le choix du personnage. | Demande explicite auteur | Actif |
+| **I17** | 2026-10-30 | Un quiz Harry Potter **en 8 questions, plein de private jokes** : il doit se voir que c'est l'auteur qui l'a écrit. Ton de pseudo-connaisseur très approximatif (cape du maraudeur, nain géant, rouquin malin, Dumbledore confondu avec Gandalf, jet-ski péteur de *Swiss Army Man*, Serpanthères, Poufsouf). | Demande explicite auteur | Actif |
+| **I18** | 2026-10-30 | **Grand Quiz Love Actually à 15 questions** : au-delà, les joueurs se lassent. Les questions retirées sont **désactivées, pas supprimées**, pour pouvoir les remettre ou changer celles qui sont désactivées. | Demande explicite auteur | Actif |
+| **I19** | 2026-10-30 | Tout le thème Harry Potter en mode **« Jean-Michel à peu près »** : vrais noms, mais descriptions très approximatives de quelqu'un qui a regardé les films de loin et aimerait aimer, sans que ça prenne. | Demande explicite auteur | Actif |
 
 ---
 
@@ -65,6 +69,17 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **D32** | 2026-10-29 | AGENTS.md à jour & synchro des packs outillée | `AGENTS.md` complété (sécurité des clés, écrans/médias/anti-spoil, packs, `npm test` + `npm run test:e2e` obligatoires avant livraison). Nouveau script versionné `npm run pack:sync -- packs/<pack>.json [--set-id] [--apply]` : mise à jour sur place, simulation par défaut, refus de supprimer, vérification après écriture. | Adopté |
 | **D33** | 2026-10-29 | Revue d'`AGENTS.md` à chaque décision, gardée par `npm test` | Règle n° 5 d'`AGENTS.md` : toute nouvelle `Dxx` déclenche, dans le même tour, la question « change-t-elle une règle de travail ? » et l'avancée du marqueur « Dernière revue d'AGENTS.md : Dxx ». Le test 7 de `npm test` échoue si `DECISIONS.md` contient une décision plus récente que ce marqueur. | Adopté |
 | **D34** | 2026-10-29 | Photos des films pour les avatars Harry Potter & Salon masqué tant que l'univers du pack n'est pas connu | Les 18 portraits SVG générés (D29) sont remplacés par des photos promotionnelles des films, recadrées en carré sur le visage (400×400 JPEG) et hébergées dans `quiz-media/avatars/harry-potter/<id>.jpg`. Le Salon Hôte et Manette n'est plus rendu avec le thème par défaut pendant le chargement : écran neutre jusqu'à ce que le pack soit lu. `npm test` vérifie les 18 photos. | Adopté |
+| **D35** | 2026-10-30 | 15 personnages maximum par univers & plus d'ascenseur imbriqué sur la manette | Harry Potter passe de 18 à 15 sorciers (retrait de Mimi Geignarde, Gilderoy Lockhart et Nymphadora Tonks ; Dobby conservé). La grille du choix de personnage et le Casting du Salon Manette n'ont plus de hauteur limitée : seule la page défile. Love Actually comptait déjà 15 personnages. | Adopté |
+| **D36** | 2026-10-30 | Pack Harry Potter « Vrai Connaisseur » (8 manches), créé à côté de l'ancien | Nouveau pack `packs/harry-potter-connaisseur.json` au vocabulaire volontairement faux, avec des réponses vraies une fois traduites. L'ancien pack (10 manches) reste en base et dans `packs/harry-potter.json`. `npm run pack:sync` gagne l'option `--create`. | Adopté |
+| **D37** | 2026-10-30 | Grand Quiz Love Actually en 15 manches, créé à côté de l'ancien | Nouveau pack `packs/love-actually-15.json` sans le tatouage d'Aurelia, la scène après la danse et la rue de Mia. Le quiz finit sur l'extrait de l'emballage. L'ancien pack (18 manches) reste en base. Les tests ciblent le pack « (15 manches) ». | Remplacée par D38 |
+| **D38** | 2026-10-30 | Questions désactivables, Grand Quiz Love Actually à 15 manches actives | Nouvelle colonne `quiz_questions.is_disabled`. Une manche désactivée reste en base, avec ses réponses historiques, mais n'est plus jouée. Pilotage par `"is_disabled": true` dans le JSON ou par l'interrupteur du Studio. Le Grand Quiz garde ses 18 lignes, dont 3 désactivées. | Adopté |
+| **D39** | 2026-10-30 | Question blague Cuillandre dans Rétro 2026 | « Où est parti François Cuillandre ? » : bonne réponse Ouessant, choisie par l'auteur. C'est une blague, pas un fait vérifié. | Adopté |
+| **D40** | 2026-10-30 | Question oui/non « tireuse à bièreaubeurre » dans le pack Harry Potter, en 4 boutons | Private joke sur le club de bad de l'auteur, ajoutée en 8ᵉ position (pack à 9 manches, Blind Test toujours en final). Bonne réponse supposée : Oui. Le format reste à 4 choix : Oui, Non et 2 variantes drôles. | Adopté |
+| **D41** | 2026-10-30 | Textes du thème Harry Potter en ton « à peu près » | Sous-titres d'avatars, Salon, chronique, trophées et prompt Gemini réécrits avec les vrais noms et des descriptions approximatives. Mécanique (Coupe des Maisons, scores) inchangée. Love Actually non concerné. | Adopté |
+| **D42** | 2026-10-30 | Question « qui n'est pas décédé en 2026 ? » dans Rétro 2026 | Jospin, Loana et Nathalie Baye (2026) contre Brigitte Bardot (28 décembre 2025), bonne réponse. | Adopté |
+| **D43** | 2026-10-30 | Extrait Rosalía aux BRIT Awards dans Rétro 2026 | Vidéo `7fyufPkXLbs` (RosaliaVEVO) de 65 s à 95 s, coupée avant l'arrivée de Björk (100 s). Question : quelle invitée surprise la rejoint ? | Adopté |
+| **D44** | 2026-10-30 | Question GTA 6 dans Rétro 2026 | « Comment s'appellent les deux protagonistes ? » : Lucia et Jason, contre des héros des anciens GTA (Franklin et Michael, Niko et Trevor, Tommy et CJ). | Adopté |
+| **D45** | 2026-10-30 | E2E light du Grand Quiz & numérotation des manches jouées | `npm run test:e2e:light` joue un tirage aléatoire de 5 manches sur un pack temporaire. Le test complet reste obligatoire avant livraison. Écran Hôte et Manette renumérotent `order` selon la position jouée, car les manches désactivées laissaient des trous qui faisaient finir la partie trop tôt. | Adopté |
 
 ---
 
@@ -248,7 +263,7 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 - **Contexte** : Intention I11 — un quiz Harry Potter difficile et fun, avec vidéos et musique, des avatars à incarner comme pour Love Actually (D21) et une analyse post-game très role play. Le thème Love Actually était codé en dur partout (grille d'avatars, textes du Salon, musiques, podium, chronique).
 - **Décision** :
   1. **Habillage par univers (`src/themes.ts`)** : `getUniverseTheme(themeId)` fournit fond d'écran, textes du Salon Hôte / Manette, playlist d'ambiance, musique du Podium, libellé du mode Quiz et du débrief. Love Actually reste le thème par défaut, à l'identique.
-  2. **18 sorciers exclusifs (`HARRY_POTTER_AVATARS`)** : identifiants préfixés `hp_` (évite la collision avec `harry` de Love Actually), chacun rattaché à une maison (Gryffondor ×8, Serpentard ×4, Serdaigle ×3, Poufsouffle ×2, Dobby « elfe libre »). Portraits **SVG générés** (dégradé aux couleurs de la maison + emblème) : aucune image à héberger ni à récupérer ; remplaçables plus tard par des PNG dans `quiz-media/avatars/harry-potter/`. *(Portraits remplacés par D34 : photos des films.)* Les taglines évitent de souffler les réponses du pack.
+  2. **18 sorciers exclusifs (`HARRY_POTTER_AVATARS`)** : identifiants préfixés `hp_` (évite la collision avec `harry` de Love Actually), chacun rattaché à une maison (Gryffondor ×8, Serpentard ×4, Serdaigle ×3, Poufsouffle ×2, Dobby « elfe libre »). Portraits **SVG générés** (dégradé aux couleurs de la maison + emblème) : aucune image à héberger ni à récupérer ; remplaçables plus tard par des PNG dans `quiz-media/avatars/harry-potter/`. *(Portraits remplacés par D34 : photos des films. Casting réduit à 15 par D35.)* Les taglines évitent de souffler les réponses du pack.
   3. **Analyse post-game role play** : pour le thème `harry_potter`, la chronique devient le **discours de Dumbledore au banquet de fin d'année** (Gemini : prompt de rôle + manchette de *La Gazette du Sorcier* façon Rita Skeeter ; `maxOutputTokens` porté à 1500 pour un discours plus long ; fallback déterministe écrit dans la même voix avec une réplique par personnage). **Coupe des Quatre Maisons** calculée à la **moyenne** des scores des membres présents (une maison nombreuse n'est pas avantagée ; Dobby ne compte pour aucune), affichée sur le podium. Trophées thématisés : *Éclair de Feu du Buzzer*, *Retourneur de Temps d'Hermione*, *Prix du Professeur Binns*, *Dix points pour Neville*, *Chaussette de Dobby*.
   4. **Résolution du thème (`resolveAvatarTheme`)** : la colonne `quiz_sets.avatar_theme` (D21) **n'existe pas encore en base** (migration non jouée). Le thème est lu dans la colonne si elle existe, sinon déduit du nom du pack (« Harry Potter », « Poudlard », « Hogwarts »), sur le même principe de repli que le préfixe `[#avatarId]` du pseudo. Le Studio transmet `avatar_theme` à l'import JSON et réessaie sans la colonne si elle est absente ; l'export JSON l'inclut.
   5. **Pack « ⚡ Harry Potter — Le Banquet des Sorciers (10 manches) »** (`packs/harry-potter.json`, inséré en base) : 3 Blind Tests iTunes (*Double Trouble* → quel film, *Lily's Theme* → quel compositeur, *O Children* → la danse sous la tente), 3 extraits YouTube officiels vérifiés intégrables (Dumbledore et la Coupe de Feu → « calmement » dans le livre, la sortie des jumeaux → 93 Chemin de Traverse, Molly contre Bellatrix → Hermione, Ginny et Luna), 4 questions pièges des livres sur fond de BO (Goutte du Mort vivant, coffre 713, Patronus de Luna, 142 escaliers). Les extraits vidéo posent une question **que l'extrait ne révèle pas** (souvent un détail du livre qui contredit ou complète le film).
@@ -299,3 +314,77 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
   3. **Test** : `npm test` (test 1 bis) vérifie que les 18 sorciers ont une photo accessible en HTTP.
 - **Alternatives écartées** : lien direct vers le CDN du wiki (fiabilité) ; photos des acteurs hors rôle (Wikimedia Commons) : l'auteur veut les personnages ; garder le thème par défaut avec un indicateur de chargement (montre quand même un autre univers).
 - **Limites** : images sous droits des studios, utilisées pour une soirée privée. Photos d'époques différentes selon les personnages (Harry, Ron, Drago en *Reliques de la Mort* ; Lockhart en *Chambre des Secrets*…).
+
+### 2026-10-30 — D35 : 15 personnages maximum par univers & plus d'ascenseur imbriqué sur la manette
+- **Contexte** : Intention I16. Avec 18 sorciers, la grille du choix de personnage défilait dans sa propre boîte (`max-h-[340px]`) à l'intérieur d'une page qui défile déjà : deux ascenseurs côte à côte.
+- **Décision** :
+  1. **Casting Harry Potter réduit à 15** : retrait de Mimi Geignarde, Gilderoy Lockhart et Nymphadora Tonks, personnages secondaires les moins populaires. Dobby est conservé à la demande de l'auteur. Les 4 maisons restent représentées pour la Coupe (Gryffondor ×8, Serpentard ×4, Serdaigle ×1, Poufsouffle ×1). Leurs répliques de chronique sont retirées. `npm test` vérifie 15 sorciers, dont Dobby.
+  2. **Une seule zone de défilement sur la manette** : hauteur maximale et `overflow-y-auto` retirés de la grille du choix de personnage et du Casting du Salon (même défaut, jusqu'à 15 joueurs). Seule la page défile.
+- **Alternatives écartées** : retirer un Serpentard ou Neville (plus connus que Tonks) ; garder le quota de maisons équilibré (aurait obligé à garder des personnages moins populaires) ; agrandir la boîte interne (l'ascenseur revient selon l'écran).
+- **Limites** : les photos des 3 personnages retirés restent dans le bucket, sans effet. Une ancienne partie où un joueur les incarnait affiche son pseudo sans avatar. Le Salon Hôte (TV) garde sa zone à hauteur limitée : un ascenseur peut y apparaître à partir de 13 joueurs.
+
+### 2026-10-30 — D36 : Pack Harry Potter « Vrai Connaisseur » (8 manches)
+- **Contexte** : Intention I17. Le Banquet des Sorciers (D29) visait de vrais fans ; l'auteur n'y connaît rien et veut que ça se voie, pour faire rire ses invités.
+- **Décision** :
+  1. **8 manches au ton de faux expert** : cape du maraudeur, Touffu (chien du nain géant), Dumbledore ou Gandalf (extrait vidéo de la Coupe de Feu déjà calé), Croûtard (rat du rouquin malin), jet-ski péteur de *Swiss Army Man*, blason des Serpanthères, couleurs des Poufsouf, *Lily's Theme* en Blind Test final. Les médias reprennent des extraits déjà validés (D29).
+  2. **Règle de contenu adaptée** : les mots sont volontairement faux, mais chaque bonne réponse reste vraie une fois traduite (cape d'invisibilité, Hagrid demi-géant, Serpentard, Poufsouffle). La peur des araignées de Ron est écartée : la sous-titre de son avatar la dévoile.
+  3. **Nouveau pack, ancien conservé** : passer de 10 à 8 questions sur place supprimerait 2 questions et leurs réponses historiques, ce que `pack:sync` refuse. Le pack est donc créé via la nouvelle option `--create`, et le choix du pack se fait dans le Studio.
+- **Alternatives écartées** : réécrire les 8 premières questions et laisser 2 anciennes (ton incohérent) ; forcer la suppression (perte d'historique) ; extrait vidéo de *Swiss Army Man* (timing non vérifié, et l'extrait donnerait la réponse).
+- **Limites** : faits issus de la connaissance générale de la saga, sans transcript dédié. Le Salon et la chronique gardent le ton sérieux du thème, avec les vrais noms.
+
+### 2026-10-30 — D37 : Grand Quiz Love Actually en 15 manches (Remplacée par D38 avant mise en base)
+- **Contexte** : Intention I18. 18 manches, c'est trop long pour tenir l'attention d'une soirée.
+- **Décision** :
+  1. **3 questions retirées** : le tatouage d'Aurelia et la scène après la danse, seules réponses non vérifiées (D30), et la rue de Mia, détail le plus pointu. Le quiz se termine sur l'extrait vidéo de l'emballage de Rufus. Les 3 Blind Tests et les 3 extraits vidéo sont conservés.
+  2. **Nouveau pack, ancien conservé** (même raison que D36) : `packs/love-actually-15.json`, créé avec `--create`. Les réponses historiques restent sur le pack 18 manches.
+  3. **Tests** : `npm test` et l'E2E ciblent « Le Grand Quiz (15 manches) ». La réponse tardive à 26 s passe sur la dernière manche.
+- **Alternatives écartées** : retirer une question Milwaukee (leur image est déjà intégrée au rythme du 2ᵉ acte) ; supprimer les questions en base (perte d'historique).
+
+### 2026-10-30 — D38 : Questions désactivables
+- **Contexte** : Intention I18. L'auteur veut pouvoir remettre les 3 questions retirées, ou en désactiver d'autres : un pack à part (D37) figerait le choix.
+- **Décision** :
+  1. **Colonne `quiz_questions.is_disabled`** (migration `20261030120000_quiz_questions_is_disabled.sql`, défaut `false`). Écran Hôte, Manette et analyse filtrent les questions côté application : tant que la migration n'est pas jouée, rien ne casse et tout reste actif.
+  2. **Grand Quiz** : `packs/love-actually.json` renommé « (15 manches) », `"is_disabled": true` sur le tatouage d'Aurelia, la scène après la danse et la rue de Mia. Le fichier `packs/love-actually-15.json` de D37, jamais mis en base, est retiré.
+  3. **Studio** : liste des manches avec interrupteur sur chaque pack, enregistré immédiatement. Le compteur affiche les manches actives. L'export et l'import JSON gardent le champ.
+  4. **Pas d'interrupteur dans l'éditeur** : son enregistrement supprime puis recrée toutes les questions, ce qui efface les réponses historiques (`handleSaveEditor`, comportement antérieur à D38, non modifié).
+- **Alternatives écartées** : déplacer les questions dans un pack d'archive (pollue le Studio, logique de synchro compliquée) ; `order` négatif (astuce illisible) ; pilotage par JSON seul (l'auteur devrait repasser par un agent).
+- **Limites** : changer l'activation pendant une partie décale les manches ; à faire entre deux parties. Pour le pack Harry Potter, D36 reste un pack à part.
+
+### 2026-10-30 — D39 : Question blague Cuillandre dans Rétro 2026
+- **Contexte** : l'auteur veut une question sur les municipales de Brest, avec 4 îles au choix.
+- **Décision** : ajout en fin de pack, bonne réponse **Ouessant**, tranchée par l'auteur. **Fait non vérifié, assumé comme blague** : aucune source ne dit où François Cuillandre est parti (seule sa défaite face à Stéphane Roudaut est sourcée).
+- **Alternatives écartées** : Kerguelen, proposée par l'agent.
+
+### 2026-10-30 — D40 : Question oui/non « tireuse à bièreaubeurre »
+- **Contexte** : l'auteur veut une question fermée sur la tireuse du club de quidisch, clin d'œil à son club de badminton qui en possède une.
+- **Décision** : question en 8ᵉ position, bonne réponse **Oui** (déduite de la blague, à confirmer par l'auteur), orthographe « quidisch » conservée. Le format 4 choix (règle d'`AGENTS.md`, contrôlé par `pack:sync`) est gardé : « Oui », « Non », « Non, ça c'est le club de bad », « C'est quoi le quidisch ? ».
+- **Alternatives écartées** : 2 boutons seulement (hors règle des 4 choix, affichage et tests non prévus pour).
+
+### 2026-10-30 — D41 : Textes du thème Harry Potter en ton « à peu près »
+- **Contexte** : Intention I19. Le pack était devenu approximatif, mais les avatars, le Salon et le discours de fin restaient ceux d'un connaisseur (D29).
+- **Décision** : réécriture de `src/avatars.ts` (sous-titres), `src/themes.ts` et des textes Harry Potter de `src/app/api/game-analysis/route.ts`, prompt Gemini compris. Vrais noms conservés, tournures récurrentes : « je crois », « il y a un truc avec… », « ou l'inverse », « c'est expliqué dans le 2 ». Anti-spoil respecté : aucun texte ne donne Touffu, Croûtard, la confusion Dumbledore/Gandalf, le jet-ski ou la tireuse.
+- **Alternatives écartées** : étendre le ton à Love Actually (non demandé).
+
+### 2026-10-30 — D42 : Question sur les disparus de 2026
+- **Contexte** : à la demande de l'auteur, qui revient sur l'exclusion proposée par l'agent : une question sur les morts de l'année, avec un intrus de 2025.
+- **Décision** : ajout à `packs/retro-2026.json`. Décès en 2026 : Lionel Jospin (22 mars), Loana (25 mars), Nathalie Baye (17 avril). Intrus : Brigitte Bardot (28 décembre 2025), choisie car sa mort à quelques jours de 2026 rend le piège crédible.
+- **Limites** : Jospin et Loana reposent sur Wikipédia (« 2026 en France ») ; Baye et Bardot sur plusieurs articles de presse.
+
+### 2026-10-30 — D43 : Extrait Rosalía aux BRIT Awards
+- **Contexte** : l'auteur veut le live de *Berghain* avec une question sur le featuring. La réponse ne doit pas apparaître à l'écran.
+- **Décision** : vidéo `7fyufPkXLbs` (RosaliaVEVO, intégrable : oEmbed 200, `playableInEmbed: true`, 4 min 06). Extrait de 65 s à 95 s, soit 30 s. D'après les storyboards YouTube (une image toutes les 2 s), Björk apparaît en gros plan vers 100 s, et le plateau change vers 96 s. Leurres : Madonna, FKA twigs, Charli XCX.
+- **Limites** : voix de Björk non contrôlée (storyboards muets) : à écouter en répétition. Le titre de la vidéo contient « ft. Björk » : vérifier sur la vraie TV qu'il ne s'affiche pas dans le lecteur.
+
+### 2026-10-30 — D44 : Question GTA 6
+- **Contexte** : l'auteur veut une question sur les protagonistes, avec les vrais noms et ceux des anciens GTA.
+- **Décision** : bonne réponse Lucia et Jason (Lucia Caminos, Jason Duval). Leurres par paires, héros jouables d'anciens épisodes : Franklin et Michael (GTA V), Niko (IV) et Trevor (V), Tommy (Vice City) et CJ (San Andreas).
+- **Limites** : la sortie annoncée est le 19 novembre 2026 : la question reste valable quelle que soit la date, mais ne pas formuler « sorti cette année » sans le confirmer.
+
+### 2026-10-30 — D45 : E2E light du Grand Quiz & numérotation des manches jouées
+- **Contexte** : le test complet du Grand Quiz est long, l'auteur veut une version courte, jamais sur les mêmes questions. Par ailleurs, l'E2E a révélé un bug de D38 : l'Écran Hôte calculait la manche suivante et la fin de partie avec `question.order`, or les manches désactivées laissent des trous (la manche 15 aurait été sautée).
+- **Décision** :
+  1. **Correctif** : `HostGamePage` et `PlayerGamePage` remplacent `order` par la position jouée après filtrage.
+  2. **`npm run test:e2e:light`** (`scripts/e2e-light.mjs`, variable `E2E_LIGHT`) : 5 manches par défaut, tirage reproductible via `E2E_SEED` (affiché dans le journal), avec au moins une manche de chaque type de révélation (auto, chrono, hôte). Les manches sont copiées dans un pack temporaire « E2E light <seed> », supprimé à la fin ; un reste de test interrompu est nettoyé au lancement suivant.
+  3. **Test complet inchangé** : `npm run test:e2e` joue toutes les manches actives et reste obligatoire avant livraison. Le light ne voit pas les trous de numérotation, car son pack est numéroté de 0 à n-1.
+- **Alternatives écartées** : désactiver des manches au hasard dans le vrai pack (risque si une partie tourne, état à restaurer) ; paramètre de partie « questions limitées » dans l'application (code de test en production).
+- **Limites** : le scénario du Grand Quiz a une entrée par manche active. Activer ou désactiver une manche demande d'ajuster `SCENARIO` dans `grand-quiz-full-game.spec.ts`, sinon le test s'arrête avec un message explicite. Un run interrompu peut laisser un pack « E2E light » visible dans le Studio jusqu'au lancement suivant.

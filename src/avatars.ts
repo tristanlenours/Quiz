@@ -192,24 +192,21 @@ function wizard(
 
 // Identifiants préfixés `hp_` : pas de collision avec Love Actually (ex. `harry`)
 export const HARRY_POTTER_AVATARS: AvatarCharacter[] = [
-  wizard('hp_harry', 'Harry Potter', 'Daniel Radcliffe', 'Le Survivant, cicatrice en éclair incluse', 'gryffondor'),
-  wizard('hp_hermione', 'Hermione Granger', 'Emma Watson', '« C’est Levi-o-sa, pas Levio-sa ! »', 'gryffondor'),
-  wizard('hp_ron', 'Ron Weasley', 'Rupert Grint', 'Roi des échecs sorciers, terrifié par les araignées', 'gryffondor'),
-  wizard('hp_neville', 'Neville Londubat', 'Matthew Lewis', 'Botaniste timide devenu tueur de serpent', 'gryffondor'),
-  wizard('hp_twins', 'Fred & George', 'James & Oliver Phelps', 'Jumeaux farceurs, Carte du Maraudeur en poche', 'gryffondor'),
-  wizard('hp_hagrid', 'Rubeus Hagrid', 'Robbie Coltrane', '« Tu es un sorcier, Harry ! »', 'gryffondor'),
-  wizard('hp_dumbledore', 'Albus Dumbledore', 'Michael Gambon', 'Directeur qui rêve de grosses chaussettes en laine', 'gryffondor'),
-  wizard('hp_mcgonagall', 'Minerva McGonagall', 'Maggie Smith', 'Animagus chat à la discipline de fer', 'gryffondor'),
-  wizard('hp_draco', 'Drago Malefoy', 'Tom Felton', '« Mon père en entendra parler ! »', 'serpentard'),
-  wizard('hp_snape', 'Severus Rogue', 'Alan Rickman', '« Toujours. »', 'serpentard'),
-  wizard('hp_bellatrix', 'Bellatrix Lestrange', 'Helena Bonham Carter', 'Rire hystérique et poignard d’argent', 'serpentard'),
-  wizard('hp_voldemort', 'Lord Voldemort', 'Ralph Fiennes', 'Celui-Dont-On-Ne-Doit-Pas-Prononcer-Le-Nom', 'serpentard'),
-  wizard('hp_luna', 'Luna Lovegood', 'Evanna Lynch', 'Lectrice du Chicaneur, traqueuse de Joncheruines', 'serdaigle'),
-  wizard('hp_lockhart', 'Gilderoy Lockhart', 'Kenneth Branagh', 'Cinq fois lauréat du Prix du Sourire le plus charmeur', 'serdaigle'),
-  wizard('hp_myrtle', 'Mimi Geignarde', 'Shirley Henderson', 'Fantôme des toilettes du deuxième étage', 'serdaigle'),
-  wizard('hp_cedric', 'Cedric Diggory', 'Robert Pattinson', 'Le VRAI champion de Poudlard', 'poufsouffle'),
-  wizard('hp_tonks', 'Nymphadora Tonks', 'Natalia Tena', 'Métamorphomage — ne l’appelez surtout pas Nymphadora', 'poufsouffle'),
-  wizard('hp_dobby', 'Dobby', 'Toby Jones', '« Dobby est un elfe libre ! »', 'aucune'),
+  wizard('hp_harry', 'Harry Potter', 'Daniel Radcliffe', 'Le petit à lunettes. Il a un truc au front, un éclair ou une griffure', 'gryffondor'),
+  wizard('hp_hermione', 'Hermione Granger', 'Emma Watson', 'Celle qui sait tout. Elle lève la main, ça c’est sûr', 'gryffondor'),
+  wizard('hp_ron', 'Ron Weasley', 'Rupert Grint', 'Le copain. Il est dans tous les films, je crois, il mange', 'gryffondor'),
+  wizard('hp_neville', 'Neville Londubat', 'Matthew Lewis', 'Au début il est nul, à la fin il est bien. Ou l’inverse', 'gryffondor'),
+  wizard('hp_twins', 'Fred & George', 'James & Oliver Phelps', 'Deux frères, ou le même en deux fois. Ils font des blagues', 'gryffondor'),
+  wizard('hp_hagrid', 'Rubeus Hagrid', 'Robbie Coltrane', 'Le grand barbu. Il est gentil, mais il a l’air sale', 'gryffondor'),
+  wizard('hp_dumbledore', 'Albus Dumbledore', 'Michael Gambon', 'Le directeur. Il est vieux, à un moment il part, je crois', 'gryffondor'),
+  wizard('hp_mcgonagall', 'Minerva McGonagall', 'Maggie Smith', 'La prof sévère avec le chapeau. Il paraît qu’elle est sympa', 'gryffondor'),
+  wizard('hp_draco', 'Drago Malefoy', 'Tom Felton', 'Le blond pas sympa. Son père a un souci avec quelqu’un', 'serpentard'),
+  wizard('hp_snape', 'Severus Rogue', 'Alan Rickman', 'Le prof qui fait la tête. À la fin on apprend un truc, j’ai pas suivi', 'serpentard'),
+  wizard('hp_bellatrix', 'Bellatrix Lestrange', 'Helena Bonham Carter', 'La dame aux cheveux. Elle crie beaucoup, elle a l’air fatiguée', 'serpentard'),
+  wizard('hp_voldemort', 'Lord Voldemort', 'Ralph Fiennes', 'Le méchant sans nez. C’est très bien expliqué dans le 2, ou le 4', 'serpentard'),
+  wizard('hp_luna', 'Luna Lovegood', 'Evanna Lynch', 'La blonde un peu à côté. On l’aime bien, sans trop savoir pourquoi', 'serdaigle'),
+  wizard('hp_cedric', 'Cedric Diggory', 'Robert Pattinson', 'Le beau gosse. C’est pas lui dans Twilight ?', 'poufsouffle'),
+  wizard('hp_dobby', 'Dobby', 'Toby Jones', 'Le petit truc avec les oreilles. Il y a une histoire de chaussette', 'aucune'),
 ]
 
 export const DEFAULT_AVATAR_THEME = 'love_actually'
@@ -225,7 +222,7 @@ export const AVATAR_THEMES: Record<
   },
   harry_potter: {
     id: 'harry_potter',
-    label: '⚡ Harry Potter (18 sorciers)',
+    label: '⚡ Harry Potter (15 sorciers)',
     avatars: HARRY_POTTER_AVATARS,
   },
 }

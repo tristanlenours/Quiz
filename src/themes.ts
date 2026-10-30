@@ -75,15 +75,15 @@ const HARRY_POTTER_THEME: UniverseTheme = {
   universe: 'Harry Potter',
   avatars: getThemeAvatars('harry_potter'),
   pageBg: 'from-red-950 via-slate-950 to-emerald-950',
-  hostLobbyBadge: '📺 ÉCRAN HÔTE (TV) • CÉRÉMONIE DE LA RÉPARTITION',
-  hostLobbyIntro: 'enfilez le Choixpeau en choisissant votre sorcier',
+  hostLobbyBadge: '📺 ÉCRAN HÔTE (TV) • LE TRUC AVEC LE CHAPEAU',
+  hostLobbyIntro: 'choisissez un sorcier, on verra bien lequel c’est',
   hostLobbyEmpty:
-    '🦉 Les hiboux sont partis... Scannez le QR code avec votre téléphone pour choisir votre sorcier de Poudlard !',
+    '🦉 Les pigeons, ou les chouettes, sont partis... Scannez le QR code pour choisir un sorcier. Si vous ne les connaissez pas, c’est pareil pour tout le monde !',
   hostLobbyQuote:
-    '« Il est important de faire preuve de courage face à ses ennemis, mais il en faut encore davantage face à ses amis. » — Albus Dumbledore ⚡',
+    '« Le courage, c’est bien, mais les amis aussi, enfin quelque chose comme ça. » — Albus Dumbledore, de mémoire ⚡',
   playerRegisterBadge: '⚡ Thème Harry Potter',
-  playerRegisterMissing: 'Le Choixpeau attend : choisis ton sorcier !',
-  playerLobbyBadge: '🎩 Réparti(e) à Poudlard',
+  playerRegisterMissing: 'Choisis quelqu’un, ils se ressemblent tous de toute façon !',
+  playerLobbyBadge: '🎩 Tu es à l’école, là, je crois',
   lobbyPlaylist: [
     {
       title: 'Hedwig’s Theme — John Williams',
@@ -102,9 +102,9 @@ const HARRY_POTTER_THEME: UniverseTheme = {
     title: 'Harry’s Wondrous World',
     url: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/d8/73/68/d87368ab-4655-f990-58a8-f9b08c2d8e55/mzaf_10937637444601262414.plus.aac.p.m4a',
   },
-  quizModeLabel: '⚡ Mode Quiz Harry Potter',
-  debriefBadge: '🏰 Banquet de fin d’année & Coupe des Quatre Maisons',
-  deterministicChronicleLabel: '🦉 Discours rédigé à la plume par Dumbledore',
+  quizModeLabel: '⚡ Mode Quiz Harry Potter (à peu près)',
+  debriefBadge: '🏰 Le repas de la fin & la Coupe des Maisons, là',
+  deterministicChronicleLabel: '🦉 Discours de Dumbledore, de mémoire',
 }
 
 const THEMES: Record<string, UniverseTheme> = {

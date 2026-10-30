@@ -68,13 +68,14 @@ test('1. Catalogue des 15 Avatars Love Actually : fichier source et images Supab
   }
 })
 
-test('1 bis. Catalogue des 18 sorciers Harry Potter : photos des films sur Supabase Storage (D34)', async () => {
+test('1 bis. Catalogue des 15 sorciers Harry Potter : photos des films sur Supabase Storage (D34, D35)', async () => {
   const avatarsSrc = fs.readFileSync(
     path.resolve(process.cwd(), 'src/avatars.ts'),
     'utf8'
   )
   const ids = [...avatarsSrc.matchAll(/wizard\('(hp_[a-z]+)'/g)].map((m) => m[1])
-  assert.equal(ids.length, 18, 'Le thème Harry Potter doit compter 18 sorciers')
+  assert.equal(ids.length, 15, 'Le thème Harry Potter doit compter 15 sorciers (D35)')
+  assert.ok(ids.includes('hp_dobby'), 'Dobby doit rester au casting (D35)')
 
   for (const id of ids) {
     const imgUrl = `${supabaseUrl}/storage/v1/object/public/quiz-media/avatars/harry-potter/${id}.jpg`
@@ -151,7 +152,7 @@ test('2. Pack « 🎄 Love Actually — Le Warm-Up (5 manches) » : présence en
   }
 })
 
-test('3. Grand Quiz « 🎄 Love Actually — Le Grand Quiz (18 manches) » : intégrité des questions, choix et médias en base', async () => {
+test('3. Grand Quiz « 🎄 Love Actually — Le Grand Quiz (15 manches) » : intégrité des questions, choix et médias en base', async () => {
   const { data: sets, error } = await supabase
     .from('quiz_sets')
     .select('*, questions:quiz_questions(*, choices:quiz_choices(*))')
@@ -161,8 +162,11 @@ test('3. Grand Quiz « 🎄 Love Actually — Le Grand Quiz (18 manches) » : in
   assert.ok(sets && sets.length >= 1, 'Le pack Love actually principal doit exister')
 
   const mainPack = sets[0]
-  const questions = [...mainPack.questions].sort((a, b) => a.order - b.order)
-  assert.equal(questions.length, 18, 'Le grand quiz Love actually doit avoir 18 questions')
+  const questions = mainPack.questions
+    .filter((q) => !q.is_disabled)
+    .sort((a, b) => a.order - b.order)
+  assert.equal(questions.length, 15, 'Le grand quiz Love actually doit avoir 15 questions actives (D38)')
+  assert.equal(mainPack.questions.length, 18, 'Les questions désactivées restent en base (D38)')
 
   // D30 : des blind tests et des extraits vidéo ponctuent le quiz
   assert.ok(
