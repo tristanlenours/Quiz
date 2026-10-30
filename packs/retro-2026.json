@@ -325,6 +325,68 @@
           "is_correct": false
         }
       ]
+    },
+    {
+      "order": 11,
+      "question_type": "quiz",
+      "body": "📚 Retiré de la sélection du Goncourt, quel est le titre du roman de Thélyson Orélien ?",
+      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/avatars/retro-2026/r26_orelien.jpg",
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        {
+          "body": "C'était ça ou mourir",
+          "is_correct": true
+        },
+        {
+          "body": "C'était ça ou écrire",
+          "is_correct": false
+        },
+        {
+          "body": "C'était ça ou partir",
+          "is_correct": false
+        },
+        {
+          "body": "C'était ça ou rien",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 12,
+      "question_type": "quiz",
+      "body": "🗺️ En septembre 2026, Trump publie une carte des États-Unis agrandis. Lequel de ces territoires n'y figure PAS ?",
+      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/avatars/retro-2026/r26_trump.jpg",
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        {
+          "body": "La Russie",
+          "is_correct": true
+        },
+        {
+          "body": "Le Groenland",
+          "is_correct": false
+        },
+        {
+          "body": "Le Mexique",
+          "is_correct": false
+        },
+        {
+          "body": "Le Canada",
+          "is_correct": false
+        }
+      ]
     }
   ],
   "avatar_theme": "retro_2026"

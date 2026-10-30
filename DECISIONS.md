@@ -87,6 +87,8 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **D50** | 2026-10-30 | Rétro 2026 : Ophélie Meunier, Céline Dion, Monfils, Taylor Swift | Ophélie Meunier remplace Madonna dans les avatars, avec le texte choisi par l'auteur. Questions Céline Dion (*Pour que tu m'aimes encore* en fond) et Gaël Monfils. Au Salon, *Golden* reste et *DtMF* de Bad Bunny cède la place à *The Fate of Ophelia*. | Adopté |
 | **D51** | 2026-10-30 | Rétro 2026 : Patrick Bruel | Patrick Bruel remplace Marine Le Pen dans les avatars. Question de l'auteur : « Quel enfoiré a dû annuler sa tournée 2026 ? », avec le Zénith de Paris à l'image, sa photo donnant la réponse. | Adopté |
 | **D52** | 2026-10-30 | Rétro 2026 : Harry Kane & Lula | Harry Kane remplace Lamine Yamal et Lula remplace Nicolas Sarkozy dans les avatars et la chronique. | Adopté |
+| **D53** | 2026-10-30 | Rétro 2026 : Thélyson Orélien | Thélyson Orélien remplace Burna Boy dans les avatars. Question sur le titre de son roman, avec « C'était ça ou écrire » parmi les mauvais choix, à la demande de l'auteur. | Adopté |
+| **D54** | 2026-10-30 | Rétro 2026 : la carte de Trump | Question sur la carte des États-Unis agrandis publiée par Trump : la Russie est la bonne réponse, Groenland, Mexique et Canada les pièges. | Adopté |
 
 ---
 
@@ -456,3 +458,20 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
   2. **Photos** : infobox Wikipédia, recadrées en carré 400×400. Kane : Bryan Berlin, Angleterre-Ghana du 23 juin 2026 (CC BY-SA 4.0). Lula : Palácio do Planalto, photo officielle de 2023 (CC BY 2.0).
   3. **Sous-titres** : rien sur la Coupe du monde ni sur l'élection présidentielle brésilienne d'octobre 2026, non vérifiée ici. « Président du Brésil » reste exact jusqu'à la fin du mandat, début 2027.
 - **Limites** : le Brésil reste un mauvais choix de la question sur la Coupe du monde, Lula ne donne donc pas la réponse. Les photos `r26_yamal` et `r26_sarkozy` restent dans le bucket. Les crédits de D46 restent valables pour l'historique.
+
+### 2026-10-30 — D53 : Thélyson Orélien
+- **Contexte** : l'auteur veut Thélyson Orélien à la place de Burna Boy et une question sur le titre de son roman, avec « C'était ça ou écrire » dans les suggestions.
+- **Décision** :
+  1. **Fait vérifié** : le vrai titre est *C'était ça ou mourir* (Boréal, mars 2026 ; Grasset, août 2026), retiré de la 1ʳᵉ sélection du Goncourt fin septembre (Wikipédia, Livres Hebdo, ActuaLitté). « C'était ça ou écrire » n'existe pas : c'est donc un mauvais choix. Autres leurres inventés : « C'était ça ou partir », « C'était ça ou rien ».
+  2. **Question** : 12ᵉ et dernière du pack, formulée sur le retrait du Goncourt, un fait établi, sans affirmer l'usage de l'IA, que l'écrivain conteste pour la rédaction.
+  3. **Avatar** : `r26_orelien`, sous-titre neutre sans le titre du roman (zéro spoil). Photo : Jean Laposte, Wikimedia Commons (CC BY-SA 3.0), aussi utilisée comme image de la question.
+- **Alternatives écartées** : couverture du livre, qui donnerait la réponse ; `Haitian author and poet Thélyson Orélien.jpg`, plus grande, mais trop serrée et avec une autre personne dans le cadre.
+- **Limites** : la photo source fait 160×240, elle est floue en 400×400, surtout en grand sur la TV. La photo `r26_burnaboy` reste dans le bucket. L'affaire évolue encore : à revérifier avant la soirée.
+
+### 2026-10-30 — D54 : La carte de Trump
+- **Contexte** : l'auteur veut une question « quel pays n'a pas été menacé par Trump », avec la Russie en bonne réponse et Groenland, Mexique, Canada en pièges.
+- **Décision** :
+  1. **Formulation changée** : Trump a bien menacé la Russie (sanctions et droits de douane, ultimatums de 2025), « menacé » rendrait la réponse fausse. La question porte sur la carte publiée début septembre 2026, qui montre le Canada, le Mexique et le Groenland comme américains (Daily Signal, APA).
+  2. **Choix** : La Russie (bonne réponse), Le Groenland, Le Mexique, Le Canada. « Territoires » plutôt que « pays », le Groenland n'étant pas un État.
+  3. **Image** : portrait de Trump déjà hébergé (`r26_trump`), car la carte elle-même donnerait la réponse.
+- **Limites** : je n'ai pas vu la carte, l'article du Daily Signal étant inaccessible : l'absence de la Russie repose sur les listes des comptes rendus. 13ᵉ et dernière question du pack.
