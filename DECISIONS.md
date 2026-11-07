@@ -92,6 +92,7 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **D55** | 2026-10-30 | Rétro 2026 : Orélien « Prompteur » | Le rôle affiché de Thélyson Orélien passe d'« Écrivain » à « Prompteur », choix de l'auteur. | Adopté |
 | **D56** | 2026-10-30 | Rétro 2026 : Céline Dion | Céline Dion remplace Boualem Sansal dans les avatars et la chronique. | Adopté |
 | **D57** | 2026-10-30 | Rétro 2026 : Taylor Swift & Alysa Liu | Taylor Swift remplace Donald Trump et Alysa Liu remplace Yung Lean. Questions sur les JO d'hiver et sur *The Fate of Ophelia* avec extrait du clip, retirée du Salon. | Adopté |
+| **D58** | 2026-11-07 | Rétro 2026 : Jean-Luc Lahaye bientôt papa | Question « À 73 ans, quel chanteur serait bientôt papa ? », formulée au conditionnel : aucune naissance en 2026, seulement une grossesse rapportée par la presse. | Adopté |
 
 ---
 
@@ -497,3 +498,12 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
   3. **Clip** : vidéo officielle `ko70cExuzZM`, de 18 s à 48 s, choisie sur le storyboard : elle commence après le tableau d'Ophélie (10 à 16 s), qui donnerait le titre. Leurres : *The Life of a Showgirl*, *Opalite*, *Elizabeth Taylor*, titres du même album.
   4. **Salon** : *The Fate of Ophelia* donnerait la réponse (D50 remplacée sur ce point) : *Man I Need* d'Olivia Dean (iTunes) prend sa place. Ce choix de titre est le mien.
 - **Limites** : le clip date d'octobre 2025. YouTube ne fournit pas de sous-titres pour ce clip et le storyboard n'a pas de son : je n'ai pas pu vérifier que le titre n'est pas chanté avant 48 s. À écouter sur la vraie TV. Le test d'intégration a tourné depuis localhost, pas depuis le domaine de production. La photo `r26_yunglean` reste dans le bucket.
+
+### 2026-11-07 — D58 : Jean-Luc Lahaye bientôt papa
+- **Contexte** : l'auteur veut la question « Qui a eu un enfant en 2026 ? », avec Jean-Luc Lahaie en bonne réponse.
+- **Décision** :
+  1. **Fait vérifié** : aucune naissance en 2026. *France Dimanche* (6 novembre 2026, repris par MRadio et Le Tribunal du Net) rapporte que Paola, épouse du chanteur depuis juillet, serait enceinte de quatre mois, sans annonce officielle du couple. La naissance annoncée en septembre 2025 était celle de son petit-enfant (fille Gloria). Orthographe : Lahaye.
+  2. **Question** : 16ᵉ du pack, reformulée avec l'accord de l'auteur : « 👶 À 73 ans, quel chanteur serait bientôt papa ? ». Le conditionnel suit celui de la presse.
+  3. **Leurres** : Michel Sardou, Hervé Vilard, Jean-Jacques Goldman, chanteurs vivants sans bébé annoncé. Herbert Léonard, envisagé, est mort en 2025.
+  4. **Image** : aucune, une photo du chanteur donnerait la réponse.
+- **Limites** : la grossesse n'est pas confirmée par le couple, à revérifier avant la soirée. Le chanteur est mis en examen pour viols et agressions sexuelles sur mineures, ce que la question n'évoque pas.

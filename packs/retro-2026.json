@@ -449,6 +449,37 @@
           "is_correct": false
         }
       ]
+    },
+    {
+      "order": 15,
+      "question_type": "quiz",
+      "body": "👶 À 73 ans, quel chanteur serait bientôt papa ?",
+      "image_url": null,
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        {
+          "body": "Jean-Luc Lahaye",
+          "is_correct": true
+        },
+        {
+          "body": "Michel Sardou",
+          "is_correct": false
+        },
+        {
+          "body": "Hervé Vilard",
+          "is_correct": false
+        },
+        {
+          "body": "Jean-Jacques Goldman",
+          "is_correct": false
+        }
+      ]
     }
   ],
   "avatar_theme": "retro_2026"
