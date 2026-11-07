@@ -43,6 +43,8 @@ Avant toute modification de schéma, d'interface ou de logique de jeu, lire :
   - Toujours préfixer les tables et vues de ce projet par `quiz_` (`quiz_sets`, `quiz_questions`, `quiz_choices`, `quiz_games`, `quiz_participants`, `quiz_answers`, `quiz_game_results`).
 - **Déploiement Railway** :
   - L'application Next.js doit pouvoir démarrer sur Railway via `npm run build` et `npm run start` (en respectant la variable `PORT` injectée par Railway).
+  - « Shipper » = pousser sur `main` : Railway redéploie automatiquement l'environnement `quiz / production` (`quiz-production-6432.up.railway.app`). Les packs synchronisés en base sont jouables sans déploiement ; le code (avatars, chronique, écrans) attend le redéploiement.
+  - Suivre un déploiement sans accès Railway : `gh api repos/tristanlenours/Quiz/commits/<sha>/status --jq '.statuses[] | {state, description}'` (`pending` → `success` / `failure`). Les logs de build et d'exécution demandent la CLI Railway (`railway login` + `railway link` faits par l'auteur), non installée à ce jour.
   - Les URLs de QR code et de partage ne doivent jamais être codées en dur sur un domaine tiers : utiliser `window.location.origin` ou `NEXT_PUBLIC_APP_URL`.
 - **Sécurité** :
   - Ne jamais commiter `.env` ou `.env.local`.
