@@ -93,6 +93,7 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **D56** | 2026-10-30 | Rétro 2026 : Céline Dion | Céline Dion remplace Boualem Sansal dans les avatars et la chronique. | Adopté |
 | **D57** | 2026-10-30 | Rétro 2026 : Taylor Swift & Alysa Liu | Taylor Swift remplace Donald Trump et Alysa Liu remplace Yung Lean. Questions sur les JO d'hiver et sur *The Fate of Ophelia* avec extrait du clip, retirée du Salon. | Adopté |
 | **D58** | 2026-11-07 | Rétro 2026 : Jean-Luc Lahaye bientôt papa | Question « À 73 ans, quel chanteur serait bientôt papa ? », formulée au conditionnel : aucune naissance en 2026, seulement une grossesse rapportée par la presse. | Adopté |
+| **D59** | 2026-11-07 | Rétro 2026 : Jean-Luc Lahaye en avatar | Jean-Luc Lahaye remplace Sébastien Lecornu dans les avatars et la chronique. | Adopté |
 
 ---
 
@@ -507,3 +508,11 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
   3. **Leurres** : Michel Sardou, Hervé Vilard, Jean-Jacques Goldman, chanteurs vivants sans bébé annoncé. Herbert Léonard, envisagé, est mort en 2025.
   4. **Image** : aucune, une photo du chanteur donnerait la réponse.
 - **Limites** : la grossesse n'est pas confirmée par le couple, à revérifier avant la soirée. Le chanteur est mis en examen pour viols et agressions sexuelles sur mineures, ce que la question n'évoque pas.
+
+### 2026-11-07 — D59 : Jean-Luc Lahaye en avatar
+- **Contexte** : l'auteur veut Jean-Luc Lahaye à la place de Sébastien Lecornu dans les avatars.
+- **Décision** :
+  1. **Avatar** : `r26_lahaye` remplace `r26_lecornu`, à la même place, avec sa phrase de chronique. Sous-titre neutre sur les années 80, sans allusion à la paternité (réponse de la question D58) ni à l'affaire judiciaire, conformément à la règle des sous-titres.
+  2. **Photo** : Georges Biard, concert « La Folie des années 80 » à Enghien-les-Bains, 8 juin 2013 (CC BY-SA 3.0), recadrée en carré 400×400.
+- **Alternatives écartées** : `JL-Lahaye.jpg` (photo de l'infobox, 2010), plus ancienne ; `Jean-Luc Lahaye 2023.jpg`, en pied et très étroite.
+- **Limites** : comme pour Bruel, Céline Dion ou Orélien, voir le chanteur parmi les avatars peut orienter la question D58. La photo `r26_lecornu` reste dans le bucket. Les crédits de D46 restent valables pour l'historique.

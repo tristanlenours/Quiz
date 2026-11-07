@@ -496,7 +496,7 @@ const RETRO_VICTORY_QUIPS: Record<string, string> = {
   r26_mbappe: 'a pris la profondeur dès la première question et n’a plus jamais été rattrapé',
   r26_wemby: 'a dominé tout le monde de très haut, sans même lever les bras',
   r26_taylor: 'a gagné, et un album sur cette soirée est déjà prévu',
-  r26_lecornu: 'a tenu jusqu’au bout, ce qui à Matignon relève déjà de l’exploit',
+  r26_lahaye: 'a gagné comme un tube des années 80 : on ne l’attendait plus, il est revenu',
   r26_alysa: 'a survolé la soirée sans une seule chute',
   r26_leon: 'l’emporte, et on n’ose pas contester',
   r26_cuillandre: 'prend sa revanche, rentré d’Ouessant pour l’occasion',

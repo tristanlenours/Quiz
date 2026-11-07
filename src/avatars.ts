@@ -237,7 +237,7 @@ export const RETRO_2026_AVATARS: AvatarCharacter[] = [
   star('r26_mbappe', 'Kylian Mbappé', 'Capitaine des Bleus', 'Le brassard, la vitesse et le contrat qui va avec', '⚽'),
   star('r26_wemby', 'Victor Wembanyama', 'Basketteur', 'La tête dans les nuages, littéralement', '🏀'),
   star('r26_taylor', 'Taylor Swift', 'Chanteuse', 'Une ère de plus, et les stades n’ont toujours pas désempli', '✨'),
-  star('r26_lecornu', 'Sébastien Lecornu', 'Matignon', 'Personne n’avait parié sur lui, lui non plus', '🏛️'),
+  star('r26_lahaye', 'Jean-Luc Lahaye', 'Chanteur', 'Les années 80 ne l’ont jamais vraiment quitté', '🎤'),
   star('r26_alysa', 'Alysa Liu', 'Patineuse', 'L’or autour du cou et les rayures dans les cheveux', '⛸️'),
   star('r26_leon', 'Léon XIV', 'Pape', 'Premier pape américain, supporter des White Sox', '⛪'),
   star('r26_cuillandre', 'François Cuillandre', 'Ancien maire de Brest', 'Une carrière entière sous la pluie', '⚓'),
