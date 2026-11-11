@@ -247,7 +247,7 @@ export const RETRO_2026_AVATARS: AvatarCharacter[] = [
   star('r26_celine', 'Céline Dion', 'Chanteuse', 'Six ans d’absence, et les mouchoirs sont déjà sortis', '🎶'),
   star('r26_bruel', 'Patrick Bruel', 'Chanteur', 'Champion de poker à ses heures', '🃏'),
   star('r26_lula', 'Lula', 'Président du Brésil', 'Trois mandats et toujours la barbe', '🇧🇷'),
-  star('r26_kane', 'Harry Kane', 'Footballeur', 'Il marque partout, tout le temps, sans sourire', '🎯'),
+  star('r26_altman', 'Sam Altman', 'OpenAI', 'Promet l’IA générale pour l’an prochain, chaque année', '🤖'),
 ]
 
 export const DEFAULT_AVATAR_THEME = 'love_actually'

@@ -86,7 +86,7 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **D49** | 2026-10-30 | Extrait du Trailer 1 sur la question GTA 6 | La photo d'Ocean Drive laisse place au Trailer 1 (`QdBZY2fkU-0`), de 19 s à 49 s : Vice City et vidéos de réseaux sociaux, sans Jason ni Lucia à l'image. | Adopté |
 | **D50** | 2026-10-30 | Rétro 2026 : Ophélie Meunier, Céline Dion, Monfils, Taylor Swift | Ophélie Meunier remplace Madonna dans les avatars, avec le texte choisi par l'auteur. Questions Céline Dion (*Pour que tu m'aimes encore* en fond) et Gaël Monfils. Au Salon, *Golden* reste et *DtMF* de Bad Bunny cède la place à *The Fate of Ophelia*. | Adopté |
 | **D51** | 2026-10-30 | Rétro 2026 : Patrick Bruel | Patrick Bruel remplace Marine Le Pen dans les avatars. Question de l'auteur : « Quel enfoiré a dû annuler sa tournée 2026 ? », avec le Zénith de Paris à l'image, sa photo donnant la réponse. | Adopté |
-| **D52** | 2026-10-30 | Rétro 2026 : Harry Kane & Lula | Harry Kane remplace Lamine Yamal et Lula remplace Nicolas Sarkozy dans les avatars et la chronique. | Adopté |
+| **D52** | 2026-10-30 | Rétro 2026 : Harry Kane & Lula | Harry Kane remplace Lamine Yamal et Lula remplace Nicolas Sarkozy dans les avatars et la chronique. *(Kane remplacé par D61.)* | Adopté |
 | **D53** | 2026-10-30 | Rétro 2026 : Thélyson Orélien | Thélyson Orélien remplace Burna Boy dans les avatars. Question sur le titre de son roman, avec « C'était ça ou écrire » parmi les mauvais choix, à la demande de l'auteur. | Adopté |
 | **D54** | 2026-10-30 | Rétro 2026 : la carte de Trump | Question sur la carte des États-Unis agrandis publiée par Trump : la Russie est la bonne réponse, Groenland, Mexique et Canada les pièges. | Adopté |
 | **D55** | 2026-10-30 | Rétro 2026 : Orélien « Prompteur » | Le rôle affiché de Thélyson Orélien passe d'« Écrivain » à « Prompteur », choix de l'auteur. | Adopté |
@@ -94,6 +94,8 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **D57** | 2026-10-30 | Rétro 2026 : Taylor Swift & Alysa Liu | Taylor Swift remplace Donald Trump et Alysa Liu remplace Yung Lean. Questions sur les JO d'hiver et sur *The Fate of Ophelia* avec extrait du clip, retirée du Salon. | Adopté |
 | **D58** | 2026-11-07 | Rétro 2026 : Jean-Luc Lahaye bientôt papa | Question « À 73 ans, quel chanteur serait bientôt papa ? », formulée au conditionnel : aucune naissance en 2026, seulement une grossesse rapportée par la presse. | Adopté |
 | **D59** | 2026-11-07 | Rétro 2026 : Jean-Luc Lahaye en avatar | Jean-Luc Lahaye remplace Sébastien Lecornu dans les avatars et la chronique. | Adopté |
+| **D60** | 2026-11-11 | Rétro 2026 : Jensen Huang et le kiss cam | Question photo « qui est sur ce kiss cam détourné ? » (Jensen Huang), sur sa liaison avouée avec une espionne chinoise présumée. | Adopté |
+| **D61** | 2026-11-11 | Rétro 2026 : Sam Altman | Sam Altman remplace Harry Kane dans les avatars et la chronique. | Adopté |
 
 ---
 
@@ -516,3 +518,17 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
   2. **Photo** : Georges Biard, concert « La Folie des années 80 » à Enghien-les-Bains, 8 juin 2013 (CC BY-SA 3.0), recadrée en carré 400×400.
 - **Alternatives écartées** : `JL-Lahaye.jpg` (photo de l'infobox, 2010), plus ancienne ; `Jean-Luc Lahaye 2023.jpg`, en pied et très étroite.
 - **Limites** : comme pour Bruel, Céline Dion ou Orélien, voir le chanteur parmi les avatars peut orienter la question D58. La photo `r26_lecornu` reste dans le bucket. Les crédits de D46 restent valables pour l'historique.
+
+### 2026-11-11 — D60 : Jensen Huang et le kiss cam
+- **Contexte** : l'auteur veut une question sur la liaison de Jensen Huang avec une espionne chinoise, avec une photo « marrante » fournie dans `raw/jensen.png`, en demandant qui est sur la photo.
+- **Décision** :
+  1. **Fait vérifié** : Jensen Huang a avoué le 8 novembre 2026, dans un message aux salariés de Nvidia, une liaison avec Alice Huang, femme d'affaires chinoise (Megaspeed). Qu'elle soit une espionne du ministère chinois de la Sécurité d'État reste une **accusation** (New York Times, NBC, CNN, sources anonymes), démentie par Pékin. D'où « espionne chinoise présumée ».
+  2. **Photo** : c'est un **montage**, un mème qui détourne le kiss cam du concert de Coldplay (juillet 2025). La femme n'est pas Alice Huang. La question dit donc « kiss cam détourné » et ne nomme personne d'autre. Convertie en JPEG, hébergée dans `quiz-media/packs/retro-2026/jensen.jpg`. Le fichier source reste dans `raw/`, non commité.
+  3. **Question** : 17ᵉ du pack, « 💋 Liaison avouée avec une espionne chinoise présumée : qui est sur ce kiss cam détourné ? ». Leurres : Tim Cook, Satya Nadella, Sundar Pichai, patrons de la tech.
+- **Alternatives écartées** : Andy Byron, l'ex-PDG du vrai kiss cam de Coldplay : le montage reprend sans doute son corps, ce qui ferait deux réponses défendables.
+- **Limites** : l'origine et l'auteur du montage sont inconnus, usage limité à une soirée privée. L'enquête de Nvidia est en cours : à revérifier avant la soirée.
+
+### 2026-11-11 — D61 : Sam Altman
+- **Contexte** : l'auteur veut Sam Altman à la place de Harry Kane dans les avatars (précise D52).
+- **Décision** : `r26_altman` remplace `r26_kane`, à la même place, avec sa phrase de chronique. Sous-titre sur les promesses d'IA générale, sans accusation. Photo : Bureau du Premier ministre du Japon, 3 février 2025 (CC BY 4.0), photo de l'infobox Wikipédia recadrée en carré 400×400.
+- **Limites** : la photo `r26_kane` reste dans le bucket. Sam Altman n'est ni la réponse ni un leurre d'aucune question.

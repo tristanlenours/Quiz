@@ -506,7 +506,7 @@ const RETRO_VICTORY_QUIPS: Record<string, string> = {
   r26_celine: 'a gagné sur une note que personne d’autre n’atteint',
   r26_bruel: 'gagne avec un carré d’as, sans jamais montrer ses cartes',
   r26_lula: 'revient au sommet, on commence à avoir l’habitude',
-  r26_kane: 'a enfin soulevé quelque chose, et c’est ce classement',
+  r26_altman: 'a gagné, et ChatGPT l’avait évidemment prédit',
 }
 
 function buildRetroAnalysis(

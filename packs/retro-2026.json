@@ -480,6 +480,37 @@
           "is_correct": false
         }
       ]
+    },
+    {
+      "order": 16,
+      "question_type": "quiz",
+      "body": "💋 Liaison avouée avec une espionne chinoise présumée : qui est sur ce kiss cam détourné ?",
+      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/retro-2026/jensen.jpg",
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        {
+          "body": "Jensen Huang",
+          "is_correct": true
+        },
+        {
+          "body": "Tim Cook",
+          "is_correct": false
+        },
+        {
+          "body": "Satya Nadella",
+          "is_correct": false
+        },
+        {
+          "body": "Sundar Pichai",
+          "is_correct": false
+        }
+      ]
     }
   ],
   "avatar_theme": "retro_2026"
