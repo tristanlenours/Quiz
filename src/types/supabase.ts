@@ -109,6 +109,9 @@ export type Database = {
           phase: string
           pin_code: string
           quiz_set_id: string
+          // Colonnes D63 : optionnelles tant que la migration n'est pas jouée
+          play_mode?: 'live' | 'solo'
+          is_training?: boolean
         }
         Insert: {
           created_at?: string
@@ -118,6 +121,8 @@ export type Database = {
           phase?: string
           pin_code?: string
           quiz_set_id: string
+          play_mode?: 'live' | 'solo'
+          is_training?: boolean
         }
         Update: {
           created_at?: string
@@ -127,6 +132,8 @@ export type Database = {
           phase?: string
           pin_code?: string
           quiz_set_id?: string
+          play_mode?: 'live' | 'solo'
+          is_training?: boolean
         }
         Relationships: [
           {

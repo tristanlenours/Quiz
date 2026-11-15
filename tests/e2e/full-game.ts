@@ -45,7 +45,7 @@ const CHOICE_REVEAL_MS = 5000
 const PLAYER_COUNT = 4
 
 type Choice = { id: string; body: string; is_correct: boolean }
-type Question = {
+export type Question = {
   id: string
   order: number
   body: string
@@ -151,8 +151,11 @@ async function fetchStandings(gameId: string) {
 
 const YOUTUBE_ID = /(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/))([\w-]{11})/
 
-/** La TV porte le bon média de la manche : extrait YouTube calé, bande-son, image chargée (Décision D31) */
-async function expectHostMedia(host: Page, q: Question) {
+/**
+ * La TV porte le bon média de la manche : extrait YouTube calé, bande-son, image chargée (Décision D31).
+ * Réutilisé par l'Écran Solo, qui diffuse les mêmes médias (D62).
+ */
+export async function expectHostMedia(host: Page, q: Question) {
   const isBlindTest = q.question_type === 'blind_test'
   const videoId = !isBlindTest && q.video_url ? q.video_url.match(YOUTUBE_ID)?.[1] : undefined
   if (q.video_url && !isBlindTest) {
@@ -344,12 +347,23 @@ export async function runFullGame(
         .filter({ has: dashboard.getByRole('button', { name: '▶ Lancer la partie' }) })
         .last()
       const popup = hostContext.waitForEvent('page')
-      await card.getByRole('button', { name: '▶ Lancer la partie' }).click()
+      // Les tests jouent en training : aucun score ne rejoint le tableau des scores (D64)
+      await card.getByRole('button', { name: '🧪 Training' }).click()
       const hostPage = await popup
       trackErrors(hostPage, errors, 'hôte')
       await hostPage.waitForURL(/\/host\/game\/[0-9a-f-]+/)
       gameId = hostPage.url().match(/\/host\/game\/([0-9a-f-]+)/)![1]
       log(`partie créée ${gameId}`)
+      const { data: gameRow } = await db
+        .from('quiz_games')
+        .select('is_training, play_mode')
+        .eq('id', gameId)
+        .single()
+      expect(gameRow, 'Partie de test créée en training, en live').toEqual({
+        is_training: true,
+        play_mode: 'live',
+      })
+      await expect(hostPage.getByText('🧪 Training — scores non enregistrés')).toBeVisible({ timeout: 30_000 })
       await expect(hostPage.getByRole('heading', { name: quizSet.name })).toBeVisible({ timeout: 30_000 })
       await expect(hostPage.getByText('0 / 15 joueurs')).toBeVisible()
       const joinUrl = `${baseURL}/game/${gameId}`

@@ -219,12 +219,13 @@ test('4. Simulation E2E d’une partie multijoueur : avatars exclusifs, réponse
   // 1. Créer une session de jeu temporaire
   const { data: game, error: gErr } = await supabase
     .from('quiz_games')
-    .insert({ quiz_set_id: warmup.id })
+    .insert({ quiz_set_id: warmup.id, is_training: true })
     .select()
     .single()
 
   assert.ifError(gErr)
   assert.ok(game?.id, 'Session quiz_games créée')
+  assert.equal(game.play_mode, 'live', 'Une partie sans précision est live (D63)')
 
   try {
     // 2. Inscrire 3 joueurs avec des avatars Love Actually distincts
@@ -352,6 +353,87 @@ test('6. Non-régression D24 : isolation des réponses par partie en cours et ve
       hostQuizSrc.includes('isTransitioningRef.current'),
     'Les verrous synchrones hasRevealedRef et isTransitioningRef doivent protéger onTimeUp et getNextQuestion'
   )
+})
+
+test('8. Parties solo et training : colonnes play_mode / is_training en base (migration D63)', async () => {
+  const { data: warmup } = await supabase
+    .from('quiz_sets')
+    .select('id')
+    .ilike('name', '%Love Actually — Le Warm-Up%')
+    .single()
+  const { data: game, error } = await supabase
+    .from('quiz_games')
+    .insert({ quiz_set_id: warmup.id, play_mode: 'solo', is_training: true, phase: 'quiz' })
+    .select('id, play_mode, is_training')
+    .single()
+  assert.ifError(error)
+  try {
+    assert.equal(game.play_mode, 'solo')
+    assert.equal(game.is_training, true)
+    const { error: badMode } = await supabase
+      .from('quiz_games')
+      .insert({ quiz_set_id: warmup.id, play_mode: 'duel', is_training: true })
+    assert.ok(badMode, 'play_mode n’accepte que live ou solo')
+  } finally {
+    await supabase.from('quiz_games').delete().eq('id', game.id)
+  }
+})
+
+test('9. Commentaire solo (D66) : statistiques individuelles, repli déterministe et zéro spoil', async () => {
+  const { computeSoloStats, buildDeterministicSoloComment, buildSoloPrompt } = await import(
+    '../src/soloAnalysis.ts'
+  )
+
+  const stats = computeSoloStats({ displayName: 'Testeur', characterName: null }, [1000, 750, 0, null, 500, 900])
+  assert.equal(stats.correct, 4)
+  assert.equal(stats.wrong, 1)
+  assert.equal(stats.timeouts, 1)
+  assert.equal(stats.totalScore, 3150)
+  assert.equal(stats.maxStreak, 2)
+  assert.equal(stats.avgTimeUsedPct, Math.round(((0 + 0.5 + 1 + 0.2) / 4) * 100))
+  assert.deepEqual(stats.bestRound, { round: 1, score: 1000 })
+
+  // Aucun texte ne doit contenir une bonne réponse d'un pack du même univers (AGENTS.md §4)
+  const fold = (t) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+  const { data: sets, error } = await supabase
+    .from('quiz_sets')
+    .select('name, avatar_theme, questions:quiz_questions(body, reveal_title, reveal_artist, choices:quiz_choices(body, is_correct))')
+  assert.ifError(error)
+  const profiles = [
+    [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000],
+    [900, 950, 980, 0, 990, 970, 960, 940],
+    [600, 550, 520, 0, null, 0, 510, 505],
+    [null, null, 0, 0, 800, 900, 950, 990],
+    [990, 980, 970, 960, 0, null, null, 0],
+    [0, null, 0, null, 0, null, 0, null],
+  ]
+  for (const themeId of ['love_actually', 'harry_potter', 'retro_2026', 'inconnu']) {
+    const secrets = (sets ?? [])
+      .filter((s) => s.avatar_theme === themeId && !/^E2E/.test(s.name))
+      .flatMap((s) =>
+        s.questions.flatMap((q) => [
+          q.reveal_title,
+          q.reveal_artist,
+          ...q.choices.filter((c) => c.is_correct).map((c) => c.body),
+        ])
+      )
+      .filter((t) => t && t.trim().length >= 5)
+      .map(fold)
+    for (const scores of profiles) {
+      const s = computeSoloStats({ displayName: 'Testeur', characterName: null }, scores)
+      const { headline, chronicle } = buildDeterministicSoloComment(themeId, s)
+      assert.ok(headline.length > 5 && chronicle.length > 40, `Commentaire ${themeId} non vide`)
+      const text = fold(`${headline} ${chronicle}`)
+      for (const secret of secrets) {
+        assert.ok(!text.includes(secret), `Le commentaire ${themeId} dévoile « ${secret} »`)
+      }
+      // Le prompt Gemini ne contient que des chiffres : aucune question ni réponse
+      const prompt = fold(buildSoloPrompt(themeId, 'Quiz', s))
+      for (const secret of secrets) {
+        assert.ok(!prompt.includes(secret), `Le prompt ${themeId} dévoile « ${secret} »`)
+      }
+    }
+  }
 })
 
 test('7. AGENTS.md relu jusqu’à la dernière décision de DECISIONS.md (D33)', () => {

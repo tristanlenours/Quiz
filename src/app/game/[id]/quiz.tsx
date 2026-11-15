@@ -1,5 +1,6 @@
 import { getParticipantIdentity } from '@/avatars'
 import { QUESTION_ANSWER_TIME, TIME_TIL_CHOICE_REVEAL } from '@/constants'
+import { computeAnswerScore } from '@/scoring'
 import {
   Choice,
   GameResult,
@@ -117,13 +118,11 @@ export default function Quiz({
     setChosenChoice(choice)
 
     const now = Date.now()
-    const score = !choice.is_correct
-      ? 0
-      : 1000 -
-        Math.round(
-          Math.max(0, Math.min((now - questionStartTime) / answerDurationMs, 1)) *
-            500
-        )
+    const score = computeAnswerScore(
+      choice.is_correct,
+      now - questionStartTime,
+      answerDurationMs
+    )
 
     setEarnedScore(score)
 

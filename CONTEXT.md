@@ -30,8 +30,17 @@ Le flux sonore (URL MP3/OGG dans Supabase Storage, aperçu musical externe, etc.
 L'état d'une manche une fois le chronomètre écoulé ou lorsque tous les joueurs ont répondu. En mode Blind Test, c'est uniquement à cet instant que le titre, l'artiste et la pochette de l'œuvre sont affichés à l'écran.
 
 **Session de jeu (`quiz_games`)** :
-Une instance live lancée par l'Hôte à partir d'un Pack de jeu, identifiée par un identifiant et un code PIN court permettant de rejoindre le Salon d'attente (`lobby`).
-_Éviter_ : Partie seule quand on parle de la structure persistée, room.
+Une instance d'un Pack de jeu. En **live** (`play_mode = 'live'`), lancée par l'Hôte et identifiée par un code PIN court permettant de rejoindre le Salon d'attente (`lobby`). En **solo** (`play_mode = 'solo'`), créée par un joueur seul depuis un lien.
+_Éviter_ : room.
+
+**Partie solo & Écran Solo (`/solo/[setId]`)** :
+Partie jouée seule, à distance, depuis un lien protégé par mot de passe. L'Écran Solo est à la fois TV et manette : il diffuse les médias et reçoit les réponses. Seule la première partie solo d'une personne est classée.
+
+**Mode training (`quiz_games.is_training`)** :
+Partie live ou solo jouée pour s'entraîner ou tester : jamais classée, puis supprimée. Les tests automatisés jouent toujours en training.
+
+**Tableau des scores (`/scores/[setId]`)** :
+Classement d'un pack, parties live et solo confondues, chaque ligne indiquant le mode (🏠 Solo / 🎉 Live) et la date.
 
 **Écran Hôte (`/host`)** :
 L'interface grand écran (TV / ordinateur branché au son) qui orchestre la Session de jeu, joue les Extraits Audio et projette le classement.

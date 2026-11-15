@@ -28,6 +28,7 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **I17** | 2026-10-30 | Un quiz Harry Potter **en 8 questions, plein de private jokes** : il doit se voir que c'est l'auteur qui l'a écrit. Ton de pseudo-connaisseur très approximatif (cape du maraudeur, nain géant, rouquin malin, Dumbledore confondu avec Gandalf, jet-ski péteur de *Swiss Army Man*, Serpanthères, Poufsouf). | Demande explicite auteur | Actif |
 | **I18** | 2026-10-30 | **Grand Quiz Love Actually à 15 questions** : au-delà, les joueurs se lassent. Les questions retirées sont **désactivées, pas supprimées**, pour pouvoir les remettre ou changer celles qui sont désactivées. | Demande explicite auteur | Actif |
 | **I19** | 2026-10-30 | Tout le thème Harry Potter en mode **« Jean-Michel à peu près »** : vrais noms, mais descriptions très approximatives de quelqu'un qui a regardé les films de loin et aimerait aimer, sans que ça prenne. | Demande explicite auteur | Actif |
+| **I20** | 2026-11-15 | Pouvoir jouer un quiz **en solo à distance** : on donne un lien (protégé par mot de passe), la personne enchaîne les questions et obtient un score **enregistré**, avec un commentaire humoristique sur **sa** performance. Les scores live sont enregistrés aussi, avec la mention **solo ou live**. Seule la **première partie solo** compte : rejouer pour améliorer son score ne doit pas être comptabilisé, une partie abandonnée non plus. Un mode **training** n'enregistre rien, et les tests E2E tournent dans ce mode. **Aucune régression** sur le quiz multi existant. | Demande explicite auteur | Actif |
 
 ---
 
@@ -96,6 +97,11 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **D59** | 2026-11-07 | Rétro 2026 : Jean-Luc Lahaye en avatar | Jean-Luc Lahaye remplace Sébastien Lecornu dans les avatars et la chronique. | Adopté |
 | **D60** | 2026-11-11 | Rétro 2026 : Jensen Huang et le kiss cam | Question photo « qui est sur ce kiss cam détourné ? » (Jensen Huang), sur sa liaison avouée avec une espionne chinoise présumée. | Adopté |
 | **D61** | 2026-11-11 | Rétro 2026 : Sam Altman | Sam Altman remplace Harry Kane dans les avatars et la chronique. | Adopté |
+| **D62** | 2026-11-15 | Écran Solo `/solo/[setId]` | Écran unique et autonome sur téléphone, sans Realtime : 5 s de lecture, chrono, barème 1000 → 500 identiques au live (`src/scoring.ts`, partagé avec la Manette). L'Écran Solo diffuse lui-même image, extrait YouTube (recadré, D48) et son : exception à D26/D31 propre au solo, la Manette live reste en texte seul. | Adopté |
+| **D63** | 2026-11-15 | `quiz_games.play_mode` / `is_training`, tableau des scores | Deux colonnes (`live`/`solo`, défaut `live` ; `is_training`, défaut `false`), vue `quiz_game_results` inchangée. Tableau par pack `/scores/[setId]` lu directement sur `quiz_games` + participants + réponses, badge 🏠 Solo / 🎉 Live. Lien solo, solo training et scores dans le Studio. | Adopté |
+| **D64** | 2026-11-15 | Mode training | Bouton « 🧪 Training » au Studio (live) et `?training=1` (solo, Studio déverrouillé seulement). La partie écrit en base pendant le jeu, n'est jamais classée, et est supprimée : à la fin en solo, par la purge des trainings de plus de 24 h à l'ouverture du Studio en live. Toute partie créée par un test est en training. | Adopté |
+| **D65** | 2026-11-15 | Mot de passe solo & première partie seule comptée | `/api/solo-auth` : `SOLO_PASSWORD`, sinon le mot de passe du Studio. Une partie solo n'est classée que si c'est la toute première tentative de la personne (même appareil ou même prénom saisi) **et** qu'elle est terminée. Rejouer reste possible, sans être classé. | Adopté |
+| **D66** | 2026-11-15 | Commentaire humoristique de fin de solo | `/api/solo-analysis` : Gemini, sinon texte déterministe par univers (`src/soloAnalysis.ts`), fondé uniquement sur les statistiques du joueur. Aucune question ni réponse n'est lue ; `npm test` vérifie qu'aucun texte ne contient une bonne réponse d'un pack du même univers. | Adopté |
 
 ---
 
@@ -532,3 +538,51 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 - **Contexte** : l'auteur veut Sam Altman à la place de Harry Kane dans les avatars (précise D52).
 - **Décision** : `r26_altman` remplace `r26_kane`, à la même place, avec sa phrase de chronique. Sous-titre sur les promesses d'IA générale, sans accusation. Photo : Bureau du Premier ministre du Japon, 3 février 2025 (CC BY 4.0), photo de l'infobox Wikipédia recadrée en carré 400×400.
 - **Limites** : la photo `r26_kane` reste dans le bucket. Sam Altman n'est ni la réponse ni un leurre d'aucune question.
+
+### 2026-11-15 — D62 : Écran Solo
+- **Contexte** : intention I20. L'auteur veut envoyer un lien pour qu'une personne joue seule, chez elle, sans TV ni hôte.
+- **Décision** :
+  1. **Route `/solo/[setId]`**, écran unique sur téléphone, sans Realtime ni polling : intro (personnage du thème, prénom facultatif), manches, résultat. Pas de verrou d'avatar : une seule personne joue.
+  2. **Même cadencement et même barème que le live** pour que les scores soient comparables : 5 s de lecture sans aucun choix affiché, chrono = `audio_duration_sec`, 1000 → 500 points. Le calcul est extrait dans `src/scoring.ts` et utilisé tel quel par la Manette live (seule modification de la Manette).
+  3. **L'Écran Solo diffuse les médias** : image dès la lecture, extrait YouTube (zoom de D48 conservé) et son pendant la réponse, pochette et titre du Blind Test à la révélation. Exception à D26 et D31 limitée au solo. Un unique élément `<audio>` est débloqué au clic « Commencer » pour que le son passe sur mobile ; si le navigateur refuse, un bouton « ▶️ Lancer le son » apparaît.
+  4. Réponse donnée : révélation immédiate avec la bonne réponse. Chrono écoulé : « Temps écoulé ! », aucune ligne `quiz_answers`, comme en live.
+  5. Les écrans live (Hôte, Manette, Salon) ne sont pas refactorés (I20 : aucune régression).
+- **Alternatives écartées** : jouer le solo avec l'Écran Hôte et la Manette existants dans deux onglets, inutilisable sur un seul téléphone ; refactor commun Hôte / Manette / Solo, trop risqué pour les soirées.
+- **Limites** : la lecture du son et de la vidéo YouTube sur iPhone et Android n'est pas vérifiable par Playwright (Chromium sans AAC ni H.264) : à contrôler sur de vrais téléphones. Si la vidéo ne démarre pas seule, le joueur la touche ; le chrono tourne quand même. Un rechargement en pleine partie ramène à l'intro.
+
+### 2026-11-15 — D63 : `play_mode`, `is_training` et tableau des scores
+- **Contexte** : les scores live doivent être enregistrés aussi, avec la mention solo ou live.
+- **Décision** :
+  1. Migration `20261115120000_quiz_games_play_mode.sql` (idempotente, `quiz_games` seulement) : `play_mode text default 'live'` contraint à `live`/`solo`, `is_training boolean default false`. Le lancement live normal n'écrit aucune nouvelle colonne : il fonctionne même sans la migration.
+  2. Une partie solo est une vraie ligne `quiz_games` (+ 1 participant + ses réponses), sans nouvelle table. La recherche par PIN de l'accueil ignore les parties solo.
+  3. **Tableau des scores** (`src/leaderboard.ts`, `src/components/PackLeaderboard.tsx`, page `/scores/[setId]`) lu sur `quiz_games` avec participants et réponses imbriqués, hors training. Live : chaque joueur d'une partie terminée. Solo : règle de D65. Chaque ligne porte le mode, la date et le personnage. La vue `quiz_game_results` n'est pas modifiée.
+  4. Studio : liens « 🏆 Scores », « 🧪 Solo training » et « 🔗 Lien solo » (copie) sur chaque pack.
+- **Alternatives écartées** : table `quiz_scores` dédiée (doublon de `quiz_answers`) ; étendre la vue (ordre des colonnes figé par `create or replace view`).
+- **Limites** : « 🔄 Rejouer ce Pack » sur le podium Hôte efface les réponses de la session, donc les scores de cette soirée. L'éditeur du Studio supprime et recrée les questions à l'enregistrement (D38) et efface ainsi les scores du pack : passer par `npm run pack:sync`. Un pack qui évolue rend les scores de dates différentes peu comparables, d'où la date affichée.
+
+### 2026-11-15 — D64 : Mode training
+- **Contexte** : l'auteur veut pouvoir jouer sans enregistrer, et que les E2E ne polluent pas les scores.
+- **Décision** :
+  1. Live : bouton « 🧪 Training » à côté de « ▶ Lancer la partie » (libellé inchangé). Bandeau « 🧪 Training — scores non enregistrés » sur l'Écran Hôte. Solo : `?training=1`, accepté seulement si le Studio est déverrouillé dans ce navigateur, pour qu'un joueur ne puisse pas découvrir les questions avant sa vraie partie.
+  2. Une partie training écrit en base pendant le jeu (le live en a besoin pour synchroniser les écrans, et les E2E confrontent les écrans à la base), mais n'est jamais classée. En solo, elle est supprimée à la fin, après le commentaire ; les trainings de plus de 24 h sont purgés à l'ouverture du Studio.
+  3. Les E2E live lancent par « 🧪 Training » et vérifient `is_training` en base ; `npm test` et `retro-lobby` créent leurs parties en training ; le scénario solo joue en training, sauf la vérification de la règle de D65, jouée sur un pack temporaire supprimé à la fin.
+- **Alternative écartée** : un training sans aucune écriture, incompatible avec la synchronisation live et avec les E2E.
+
+### 2026-11-15 — D65 : Mot de passe solo et première partie seule comptée
+- **Contexte** : arbitrages de l'auteur : un mot de passe pour que des inconnus ne jouent pas ; empêcher de refaire le quiz en solo pour améliorer son score (on peut le refaire, ce n'est pas comptabilisé) ; une partie commencée et non finie n'est pas comptabilisée. Les joueurs joueront soit en live, soit en solo.
+- **Décision** :
+  1. `/api/solo-auth` compare à `SOLO_PASSWORD`, sinon à `SITE_PASSWORD` (le mot de passe du Studio), sinon au défaut du Studio. L'écran de saisie (`src/components/SoloGate.tsx`) protège `/solo` et `/scores` ; le déverrouillage est mémorisé sur l'appareil, et un Studio déverrouillé passe directement.
+  2. Une personne = un appareil (`client_session_id`) **ou** un prénom saisi (normalisé : casse, accents, espaces). Seule sa toute première partie solo non training est classée, et seulement si elle est terminée : une première partie abandonnée bloque aussi les suivantes, sinon abandonner permettrait de voir les questions avant de rejouer.
+  3. À l'ouverture du lien, l'intro prévient si l'appareil a déjà tenté le quiz. À la fin, le joueur voit « Score enregistré » ou « Partie rejouée : ce score n'est pas classé ». Les parties non classées sont listées dans une section repliée, visible seulement Studio déverrouillé.
+  4. Pas de rapprochement entre live et solo, puisqu'une personne joue l'un ou l'autre.
+- **Alternatives écartées** : reprise d'une partie interrompue, signaux de triche (sorties d'onglet, vitesse), codes d'invitation personnels : plus que ce que l'auteur demande.
+- **Limites** : sans le mot de passe dédié `SOLO_PASSWORD`, les joueurs reçoivent le mot de passe du Studio et peuvent donc y entrer. Le mot de passe est un verrou d'écran : les données restent lisibles avec la clé anon. Un joueur qui vide son navigateur **et** change de prénom (ou garde le nom du personnage) peut rejouer en étant classé ; deux personnes différentes qui saisissent le même prénom ne sont classées qu'une fois.
+
+### 2026-11-15 — D66 : Commentaire humoristique de fin de solo
+- **Contexte** : arbitrage de l'auteur : un commentaire humoristique en fin de solo, forcément fondé sur la performance individuelle.
+- **Décision** :
+  1. `/api/solo-analysis` (`POST { gameId }`) calcule les statistiques du joueur (`src/soloAnalysis.ts`) : bonnes et mauvaises réponses, manches laissées au chrono, plus longue série, part du chrono utilisée sur les bonnes réponses (déduite du score), première moitié contre seconde, meilleure manche. Aucune comparaison avec d'autres joueurs.
+  2. Gemini si une clé existe (prompt par univers, sans aucune question ni réponse), sinon texte déterministe par univers : Love Actually, Harry Potter « à peu près » (D41), Rétro 2026 (le joueur est taquiné, jamais la personnalité qu'il incarne), et une voix neutre pour un univers sans texte dédié. Cache par partie.
+  3. `npm test` (test 9) génère les textes de chaque univers sur plusieurs profils et vérifie qu'aucun ne contient une bonne réponse, un titre ou un artiste d'un pack du même univers. Ce test a fait retirer des premiers jets des allusions à des réponses (un serpent, le Chemin de Traverse, la cape, l'aéroport, le CD de Karen).
+  4. `/api/game-analysis` n'est pas modifié ; l'appel Gemini est dupliqué plutôt que partagé, pour ne pas toucher au débrief live.
+- **Limites** : le texte produit par Gemini n'est pas contrôlé par le test ; seul son prompt l'est. Le prompt interdit de citer lieux, objets, chansons et personnages autres que celui incarné.

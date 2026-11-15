@@ -2,6 +2,7 @@
 
 import { resolveAvatarTheme } from '@/avatars'
 import { DEFAULT_QUESTION_DURATION_SEC } from '@/constants'
+import { purgeStaleTrainingGames } from '@/leaderboard'
 import {
   isSupabaseClientConfigured,
   QuizSet,
@@ -143,6 +144,7 @@ export default function HostDashboardPage() {
   useEffect(() => {
     if (isUnlocked) {
       fetchQuizSets()
+      purgeStaleTrainingGames().catch(() => {})
     }
   }, [isUnlocked])
 
@@ -162,24 +164,43 @@ export default function HostDashboardPage() {
     }
   }
 
-  const startGame = async (quizSetId: string) => {
+  const startGame = async (quizSetId: string, isTraining = false) => {
     const pinCode = Math.floor(100000 + Math.random() * 900000).toString()
     const { data, error } = await supabase
       .from('quiz_games')
       .insert({
         quiz_set_id: quizSetId,
         pin_code: pinCode,
+        // Partie normale : insertion inchangée. Training : scores jamais classés (D64)
+        ...(isTraining ? { is_training: true } : {}),
       })
       .select()
       .single()
 
     if (error) {
       console.error(error)
-      alert(`Impossible de lancer la partie : ${error.message}`)
+      alert(
+        isTraining && error.message.includes('is_training')
+          ? 'Le mode training attend la migration 20261115120000_quiz_games_play_mode.sql.'
+          : `Impossible de lancer la partie : ${error.message}`
+      )
       return
     }
 
     window.open(`/host/game/${data.id}`, '_blank', 'noopener,noreferrer')
+  }
+
+  const [copiedSoloSetId, setCopiedSoloSetId] = useState<string | null>(null)
+
+  const copySoloLink = async (quizSetId: string) => {
+    const url = `${window.location.origin}/solo/${quizSetId}`
+    try {
+      await navigator.clipboard.writeText(url)
+      setCopiedSoloSetId(quizSetId)
+      setTimeout(() => setCopiedSoloSetId(null), 2500)
+    } catch {
+      window.prompt('Lien de la partie solo à partager :', url)
+    }
   }
 
   const deleteQuizSet = async (quizSetId: string) => {
@@ -796,11 +817,46 @@ export default function HostDashboardPage() {
                       </button>
                     </div>
 
-                    <button
-                      onClick={() => startGame(set.id)}
-                      className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm shadow-lg shadow-emerald-600/20 transition"
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => startGame(set.id, true)}
+                        title="Partie live dont les scores ne sont pas enregistrés"
+                        className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition"
+                      >
+                        🧪 Training
+                      </button>
+                      <button
+                        onClick={() => startGame(set.id)}
+                        className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm shadow-lg shadow-emerald-600/20 transition"
+                      >
+                        ▶ Lancer la partie
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Parties solo à distance et tableau des scores (D62, D63) */}
+                  <div className="flex flex-wrap justify-end gap-2 pt-3">
+                    <a
+                      href={`/scores/${set.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3 py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/30 text-amber-200 text-xs font-semibold"
                     >
-                      ▶ Lancer la partie
+                      🏆 Scores
+                    </a>
+                    <a
+                      href={`/solo/${set.id}?training=1`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-semibold"
+                    >
+                      🧪 Solo training
+                    </a>
+                    <button
+                      onClick={() => copySoloLink(set.id)}
+                      className="px-3 py-1.5 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/35 text-indigo-200 text-xs font-semibold"
+                    >
+                      {copiedSoloSetId === set.id ? '✅ Lien copié' : '🔗 Lien solo'}
                     </button>
                   </div>
                 </div>

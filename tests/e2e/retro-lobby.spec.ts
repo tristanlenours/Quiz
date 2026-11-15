@@ -27,7 +27,7 @@ test('Rétro 2026 : le Salon propose les 15 personnalités de l’année', async
   expect(set?.id, 'Le pack Rétro 2026 doit exister en base').toBeTruthy()
   const { data: game, error } = await db
     .from('quiz_games')
-    .insert({ quiz_set_id: set!.id })
+    .insert({ quiz_set_id: set!.id, is_training: true })
     .select('id')
     .single()
   expect(error).toBeNull()

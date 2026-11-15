@@ -32,6 +32,7 @@ export default function HostGamePage({
   const [pinCode, setPinCode] = useState<string>('')
   const [currentQuestionSequence, setCurrentQuestionSequence] = useState(0)
   const [isAnswerRevealed, setIsAnswerRevealed] = useState(false)
+  const [isTraining, setIsTraining] = useState(false)
 
   useEffect(() => {
     const getQuestions = async () => {
@@ -45,6 +46,7 @@ export default function HostGamePage({
         return
       }
       setPinCode(gameData.pin_code)
+      setIsTraining(Boolean(gameData.is_training))
 
       const { data, error } = await supabase
         .from('quiz_sets')
@@ -146,6 +148,12 @@ export default function HostGamePage({
 
   return (
     <main className="bg-slate-950 min-h-screen">
+      {/* Partie training : scores jamais classés (D64) */}
+      {isTraining && (
+        <div className="fixed bottom-14 left-4 z-50 pointer-events-none px-3 py-1 rounded-full bg-amber-500/90 text-slate-950 text-xs font-black shadow-lg">
+          🧪 Training — scores non enregistrés
+        </div>
+      )}
       {/* Salon (avatars, musique) affiché seulement une fois le pack chargé : jamais l'univers d'un autre quiz */}
       {currentScreen === AdminScreens.lobby && !quizSet && (
         <div className="min-h-screen bg-slate-950" />

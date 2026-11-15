@@ -65,6 +65,18 @@ create table if not exists public.quiz_games (
 
 create index if not exists idx_quiz_games_pin_code on public.quiz_games(pin_code);
 
+-- Parties solo et mode training (Décisions D62 à D64)
+alter table public.quiz_games add column if not exists play_mode text not null default 'live';
+alter table public.quiz_games add column if not exists is_training boolean not null default false;
+do $$
+begin
+  if not exists (select 1 from pg_constraint where conname = 'quiz_games_play_mode_check') then
+    alter table public.quiz_games
+      add constraint quiz_games_play_mode_check check (play_mode in ('live', 'solo'));
+  end if;
+end $$;
+create index if not exists idx_quiz_games_set_mode on public.quiz_games (quiz_set_id, play_mode);
+
 -- 5. Table des Participants (Sans friction Auth obligatoire — Décision D05 + Avatars D21)
 create table if not exists public.quiz_participants (
     id uuid default gen_random_uuid() not null primary key,

@@ -19,13 +19,13 @@ export default function Home() {
     setLoading(true)
     setErrorMsg(null)
 
-    const { data, error } = await supabase
+    // select() complet : `play_mode` n'existe qu'après la migration D63
+    const { data: games, error } = await supabase
       .from('quiz_games')
-      .select('id, phase')
+      .select()
       .eq('pin_code', cleanPin)
       .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle()
+      .limit(5)
 
     setLoading(false)
 
@@ -34,6 +34,8 @@ export default function Home() {
       return
     }
 
+    // Une partie solo a aussi un PIN par défaut : on ne rejoint que les parties live
+    const data = (games ?? []).find((g) => g.play_mode !== 'solo')
     if (!data) {
       setErrorMsg('Aucune partie trouvée avec ce code PIN.')
       return
