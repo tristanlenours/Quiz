@@ -2,7 +2,7 @@ import { test } from '@playwright/test'
 import { runFullGame, type PlayerAction, type PlayerKey, type RoundScenario } from './full-game'
 
 /**
- * E2E « vraie soirée » sur le Grand Quiz Love Actually (20 manches actives, Décisions D31, D38, D67, D68).
+ * E2E « vraie soirée » sur le Grand Quiz Love Actually (20 manches actives, Décisions D31, D38, D67 à D69).
  *
  * Même moteur que le Warm-Up (1 TV + 4 manettes sur la vraie base), sur toutes
  * les manches du pack : images, 2 Blind Tests, 5 extraits YouTube, des questions en texte seul. À chaque
@@ -65,79 +65,79 @@ const SCENARIO: RoundScenario[] = [
       max: { at: 5000, pick: 'wrong' },
     },
   },
-  quick('Manche 7 — image Milwaukee', {
+  quick("Manche 7 — image Milwaukee (accent)", {
     titou: { at: 1100, pick: 'wrong' },
     chloe: { at: 2100, pick: 'correct' },
     sam: { at: 600, pick: 'correct' },
     max: { at: 2900, pick: 'correct' },
   }),
-  quick('Manche 8 — image Milwaukee (accent)', {
+  quick("Manche 8 — question éclair (20 s)", {
     titou: { at: 1300, pick: 'correct' },
     chloe: { at: 2400, pick: 'wrong' },
     sam: { at: 3100, pick: 'correct' },
     max: { at: 800, pick: 'correct' },
   }),
-  quick('Manche 9 — question éclair (20 s)', {
+  quick("Manche 9 — image", {
     titou: { at: 600, pick: 'correct' },
     chloe: { at: 1000, pick: 'correct' },
     sam: { at: 1400, pick: 'correct' },
     max: { at: 1800, pick: 'correct' },
   }),
-  quick('Manche 10 — image', {
+  quick("Manche 10 — question éclair (20 s)", {
     titou: { at: 2000, pick: 'correct' },
     chloe: { at: 1500, pick: 'wrong' },
     sam: { at: 2500, pick: 'wrong' },
     max: { at: 3000, pick: 'correct' },
   }),
-  quick('Manche 11 — question éclair (20 s)', {
+  quick("Manche 11 — extrait Rufus (végétal), tout le monde répond vite", {
     titou: { at: 900, pick: 'wrong' },
     chloe: { at: 1700, pick: 'correct' },
     sam: { at: 2300, pick: 'correct' },
     max: { at: 1200, pick: 'correct' },
   }),
-  quick('Manche 12 — question éclair (20 s)', {
+  quick("Manche 12 — extrait de l'emballage (durée)", {
     titou: { at: 1500, pick: 'correct' },
     chloe: { at: 600, pick: 'correct' },
     sam: { at: 3300, pick: 'wrong' },
     max: { at: 2700, pick: 'correct' },
   }),
-  quick('Manche 13 — extrait Rufus (végétal), tout le monde répond vite', {
+  quick("Manche 13 — image, la rue de Mia", {
     titou: { at: 1200, pick: 'correct' },
     chloe: { at: 2200, pick: 'correct' },
     sam: { at: 800, pick: 'wrong' },
     max: { at: 3400, pick: 'correct' },
   }),
-  quick("Manche 14 — extrait de l'emballage (durée)", {
+  quick("Manche 14 — texte seul, la promesse de Billy Mack", {
     titou: { at: 1800, pick: 'wrong' },
     chloe: { at: 900, pick: 'correct' },
     sam: { at: 2600, pick: 'correct' },
     max: { at: 1300, pick: 'correct' },
   }),
-  quick('Manche 15 — image, la rue de Mia', {
+  quick("Manche 15 — texte seul, le film de Daniel et Sam", {
     titou: { at: 700, pick: 'correct' },
     chloe: { at: 2800, pick: 'wrong' },
     sam: { at: 1500, pick: 'wrong' },
     max: { at: 2100, pick: 'correct' },
   }),
-  quick('Manche 16 — texte seul, Sarah et Karl', {
+  quick("Manche 16 — texte seul, le chant de Noël de David", {
     titou: { at: 2400, pick: 'correct' },
     chloe: { at: 1100, pick: 'correct' },
     sam: { at: 600, pick: 'wrong' },
     max: { at: 3000, pick: 'wrong' },
   }),
-  quick('Manche 17 — texte seul, le surnom de Natalie', {
+  quick("Manche 17 — texte seul, Sarah et Karl", {
     titou: { at: 900, pick: 'correct' },
     chloe: { at: 1900, pick: 'wrong' },
     sam: { at: 2700, pick: 'correct' },
     max: { at: 1400, pick: 'correct' },
   }),
-  quick('Manche 18 — texte seul, Daniel et la top model', {
+  quick("Manche 18 — texte seul, le surnom de Natalie", {
     titou: { at: 1600, pick: 'wrong' },
     chloe: { at: 800, pick: 'correct' },
     sam: { at: 2200, pick: 'correct' },
     max: { at: 3100, pick: 'correct' },
   }),
-  quick('Manche 19 — texte seul, le frère de Sarah', {
+  quick("Manche 19 — texte seul, Daniel et la top model", {
     titou: { at: 1200, pick: 'correct' },
     chloe: { at: 2500, pick: 'correct' },
     sam: { at: 700, pick: 'wrong' },

@@ -180,8 +180,8 @@ test('3. Grand Quiz « 🎄 Love Actually — Le Grand Quiz (20 manches) » : in
   const questions = mainPack.questions
     .filter((q) => !q.is_disabled)
     .sort((a, b) => a.order - b.order)
-  assert.equal(questions.length, 20, 'Le grand quiz Love actually doit avoir 20 questions actives (D68)')
-  assert.equal(mainPack.questions.length, 23, 'Les questions désactivées restent en base (D38)')
+  assert.equal(questions.length, 20, 'Le grand quiz Love actually doit avoir 20 questions actives (D69)')
+  assert.equal(mainPack.questions.length, 26, 'Les questions désactivées restent en base (D38)')
 
   // D30 : des blind tests et des extraits vidéo ponctuent le quiz
   assert.ok(

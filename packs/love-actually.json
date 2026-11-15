@@ -141,6 +141,7 @@
     {
       "order": 7,
       "question_type": "quiz",
+      "is_disabled": true,
       "body": "Au bar de Milwaukee, quelle Américaine est « folle des Anglais » d'après ses copines ?",
       "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q02.png",
       "audio_url": null,
@@ -236,6 +237,7 @@
     {
       "order": 12,
       "question_type": "quiz",
+      "is_disabled": true,
       "body": "Où repart Joanna juste après le spectacle de l'école ?",
       "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q13.png",
       "audio_url": null,
@@ -350,7 +352,64 @@
       ]
     },
     {
-      "order": 18,
+      "question_type": "quiz",
+      "body": "Que promet Billy Mack de faire à la télévision si sa chanson est numéro 1 à Noël ?",
+      "image_url": null,
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "Se raser la tête en direct", "is_correct": false },
+        { "body": "Chanter entièrement nu", "is_correct": true },
+        { "body": "Épouser son manager", "is_correct": false },
+        { "body": "Arrêter la musique pour toujours", "is_correct": false }
+      ],
+      "order": 18
+    },
+    {
+      "question_type": "quiz",
+      "body": "Quel film Daniel et Sam regardent-ils ensemble sur le canapé ?",
+      "image_url": null,
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "Titanic", "is_correct": true },
+        { "body": "Dirty Dancing", "is_correct": false },
+        { "body": "Ghost", "is_correct": false },
+        { "body": "Coup de foudre à Notting Hill", "is_correct": false }
+      ],
+      "order": 19
+    },
+    {
+      "question_type": "quiz",
+      "body": "En cherchant Natalie de porte en porte, David doit chanter un chant de Noël pour des enfants. Lequel ?",
+      "image_url": null,
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "Silent Night", "is_correct": false },
+        { "body": "Jingle Bells", "is_correct": false },
+        { "body": "Good King Wenceslas", "is_correct": true },
+        { "body": "We Wish You a Merry Christmas", "is_correct": false }
+      ],
+      "order": 20
+    },
+    {
+      "order": 21,
       "question_type": "quiz",
       "body": "Sarah sait à l'heure près depuis quand elle travaille pour Harry : 2 ans, 7 mois, 3 jours et 2 heures. Et depuis combien de temps est-elle amoureuse de Karl ?",
       "image_url": null,
@@ -369,7 +428,7 @@
       ]
     },
     {
-      "order": 19,
+      "order": 22,
       "question_type": "quiz",
       "body": "Quel surnom le père de Natalie donne-t-il à sa fille ?",
       "image_url": null,
@@ -388,7 +447,7 @@
       ]
     },
     {
-      "order": 20,
+      "order": 23,
       "question_type": "quiz",
       "body": "Aux obsèques de sa femme, Daniel raconte qu'elle voulait le voir arriver au bras de quelle top model ?",
       "image_url": null,
@@ -407,8 +466,9 @@
       ]
     },
     {
-      "order": 21,
+      "order": 24,
       "question_type": "quiz",
+      "is_disabled": true,
       "body": "Comment s'appelle le frère de Sarah, qui lui téléphone à toute heure ?",
       "image_url": null,
       "audio_url": null,
@@ -426,7 +486,7 @@
       ]
     },
     {
-      "order": 22,
+      "order": 25,
       "question_type": "quiz",
       "body": "🎬 Regardez l'extrait : David tient tête au président américain, puis énumère les fiertés du Royaume-Uni. Laquelle ne cite-t-il PAS ?",
       "image_url": null,
