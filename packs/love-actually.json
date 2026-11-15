@@ -1,5 +1,5 @@
 {
-  "name": "🎄 Love Actually — Le Grand Quiz (15 manches)",
+  "name": "🎄 Love Actually — Le Grand Quiz (20 manches)",
   "description": "Le quiz des vrais fans, en trois actes : on s'échauffe sur les chansons et les scènes cultes, on monte en puissance avec des extraits vidéo et des blind tests, puis on finit sur les détails que seuls les obsessionnels ont remarqués. Adapté du Kahoot « Do you really love Love actually ? ».",
   "mode": "mixed",
   "avatar_theme": "love_actually",
@@ -83,6 +83,7 @@
     {
       "order": 4,
       "question_type": "blind_test",
+      "is_disabled": true,
       "body": "🎵 Blind Test : Karen s'isole dans sa chambre pour pleurer sur ce morceau de Joni Mitchell. Lequel ?",
       "image_url": null,
       "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/65/31/e2/6531e209-4a87-583e-f3ed-24b87a91b443/mzaf_7139891475603500190.plus.aac.p.m4a",
@@ -274,12 +275,12 @@
     {
       "order": 14,
       "question_type": "quiz",
-      "body": "Quand Rufus (Mr Bean) emballe le collier, quel végétal n'utilise-t-il pas ?",
-      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q07.png",
+      "body": "🎬 Regardez l'extrait : Quand Rufus (Mr Bean) emballe le collier, quel végétal n'utilise-t-il pas ?",
+      "image_url": null,
       "audio_url": null,
-      "audio_start_sec": 0,
+      "audio_start_sec": 40,
       "audio_duration_sec": 30,
-      "video_url": null,
+      "video_url": "https://www.youtube.com/watch?v=1C_hd1y8ncU",
       "reveal_title": null,
       "reveal_artist": null,
       "reveal_cover_url": null,
@@ -296,7 +297,7 @@
       "body": "🎬 Regardez l'extrait : Combien de temps dure l'emballage du collier dans le film (temps réel, pas ressenti) ?",
       "image_url": null,
       "audio_url": null,
-      "audio_start_sec": 40,
+      "audio_start_sec": 72,
       "audio_duration_sec": 30,
       "video_url": "https://www.youtube.com/watch?v=1C_hd1y8ncU",
       "reveal_title": null,
@@ -312,7 +313,6 @@
     {
       "order": 16,
       "question_type": "quiz",
-      "is_disabled": true,
       "body": "Dans quelle rue habite Mia, la secrétaire de Harry ?",
       "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/q11.png",
       "audio_url": null,
@@ -347,6 +347,101 @@
         { "body": "En bas du dos", "is_correct": true },
         { "body": "Sur l'épaule droite", "is_correct": false },
         { "body": "Sur l'épaule gauche", "is_correct": false }
+      ]
+    },
+    {
+      "order": 18,
+      "question_type": "quiz",
+      "body": "Sarah sait à l'heure près depuis quand elle travaille pour Harry : 2 ans, 7 mois, 3 jours et 2 heures. Et depuis combien de temps est-elle amoureuse de Karl ?",
+      "image_url": null,
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "2 ans, 7 mois, 3 jours et 2 heures", "is_correct": false },
+        { "body": "2 ans, 7 mois et 2 jours", "is_correct": false },
+        { "body": "2 ans, 7 mois, 3 jours et 1 h 30", "is_correct": true },
+        { "body": "1 an, 7 mois, 3 jours et 2 heures", "is_correct": false }
+      ]
+    },
+    {
+      "order": 19,
+      "question_type": "quiz",
+      "body": "Quel surnom le père de Natalie donne-t-il à sa fille ?",
+      "image_url": null,
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "Chubby", "is_correct": false },
+        { "body": "Plumpy", "is_correct": true },
+        { "body": "Piggy", "is_correct": false },
+        { "body": "Dumpling", "is_correct": false }
+      ]
+    },
+    {
+      "order": 20,
+      "question_type": "quiz",
+      "body": "Aux obsèques de sa femme, Daniel raconte qu'elle voulait le voir arriver au bras de quelle top model ?",
+      "image_url": null,
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "Cindy Crawford", "is_correct": false },
+        { "body": "Naomi Campbell", "is_correct": false },
+        { "body": "Kate Moss", "is_correct": false },
+        { "body": "Claudia Schiffer", "is_correct": true }
+      ]
+    },
+    {
+      "order": 21,
+      "question_type": "quiz",
+      "body": "Comment s'appelle le frère de Sarah, qui lui téléphone à toute heure ?",
+      "image_url": null,
+      "audio_url": null,
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "Michael", "is_correct": true },
+        { "body": "Peter", "is_correct": false },
+        { "body": "Tony", "is_correct": false },
+        { "body": "Jamie", "is_correct": false }
+      ]
+    },
+    {
+      "order": 22,
+      "question_type": "quiz",
+      "body": "🎬 Regardez l'extrait : David tient tête au président américain, puis énumère les fiertés du Royaume-Uni. Laquelle ne cite-t-il PAS ?",
+      "image_url": null,
+      "audio_url": null,
+      "audio_start_sec": 95,
+      "audio_duration_sec": 30,
+      "video_url": "https://www.youtube.com/watch?v=pBmo_xlPILU",
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        { "body": "Harry Potter", "is_correct": false },
+        { "body": "Le pied gauche de David Beckham", "is_correct": false },
+        { "body": "Les Rolling Stones", "is_correct": true },
+        { "body": "Sean Connery", "is_correct": false }
       ]
     }
   ]

@@ -167,7 +167,7 @@ test('2. Pack « 🎄 Love Actually — Le Warm-Up (5 manches) » : présence en
   }
 })
 
-test('3. Grand Quiz « 🎄 Love Actually — Le Grand Quiz (15 manches) » : intégrité des questions, choix et médias en base', async () => {
+test('3. Grand Quiz « 🎄 Love Actually — Le Grand Quiz (20 manches) » : intégrité des questions, choix et médias en base', async () => {
   const { data: sets, error } = await supabase
     .from('quiz_sets')
     .select('*, questions:quiz_questions(*, choices:quiz_choices(*))')
@@ -180,17 +180,17 @@ test('3. Grand Quiz « 🎄 Love Actually — Le Grand Quiz (15 manches) » : in
   const questions = mainPack.questions
     .filter((q) => !q.is_disabled)
     .sort((a, b) => a.order - b.order)
-  assert.equal(questions.length, 15, 'Le grand quiz Love actually doit avoir 15 questions actives (D38)')
-  assert.equal(mainPack.questions.length, 18, 'Les questions désactivées restent en base (D38)')
+  assert.equal(questions.length, 20, 'Le grand quiz Love actually doit avoir 20 questions actives (D68)')
+  assert.equal(mainPack.questions.length, 23, 'Les questions désactivées restent en base (D38)')
 
   // D30 : des blind tests et des extraits vidéo ponctuent le quiz
   assert.ok(
-    questions.filter((q) => q.question_type === 'blind_test' && q.audio_url && q.reveal_title).length >= 3,
-    'Le grand quiz doit inclure au moins 3 Blind Tests'
+    questions.filter((q) => q.question_type === 'blind_test' && q.audio_url && q.reveal_title).length >= 2,
+    'Le grand quiz doit inclure au moins 2 Blind Tests'
   )
   assert.ok(
-    questions.filter((q) => q.video_url).length >= 2,
-    'Le grand quiz doit inclure au moins 2 extraits vidéo'
+    questions.filter((q) => q.video_url).length >= 5,
+    'Le grand quiz doit inclure au moins 5 extraits vidéo'
   )
 
   for (const q of questions) {

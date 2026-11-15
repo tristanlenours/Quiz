@@ -2,10 +2,10 @@ import { test } from '@playwright/test'
 import { runFullGame, type PlayerAction, type PlayerKey, type RoundScenario } from './full-game'
 
 /**
- * E2E « vraie soirée » sur le Grand Quiz Love Actually (15 manches actives, Décisions D31, D38).
+ * E2E « vraie soirée » sur le Grand Quiz Love Actually (20 manches actives, Décisions D31, D38, D67, D68).
  *
  * Même moteur que le Warm-Up (1 TV + 4 manettes sur la vraie base), sur toutes
- * les manches du pack : images, 3 Blind Tests, 3 extraits YouTube. À chaque
+ * les manches du pack : images, 2 Blind Tests, 5 extraits YouTube, des questions en texte seul. À chaque
  * manche, la TV doit porter le bon média (extrait calé, bande-son, image
  * chargée) et les manettes n'afficher que la question et les réponses.
  */
@@ -44,14 +44,8 @@ const SCENARIO: RoundScenario[] = [
     sam: { at: 1800, pick: 'correct' },
     max: { at: 3500, pick: 'wrong' },
   }),
-  quick('Manche 5 — Blind Test Both Sides Now', {
-    titou: { at: 2500, pick: 'wrong' },
-    chloe: { at: 900, pick: 'correct' },
-    sam: { at: 1600, pick: 'correct' },
-    max: { at: 3200, pick: 'correct' },
-  }),
   {
-    label: "Manche 6 — Blind Test Bye Bye Baby, l'hôte révèle en avance, un retardataire bloqué",
+    label: "Manche 5 — Blind Test Bye Bye Baby, l'hôte révèle en avance, un retardataire bloqué",
     reveal: 'host',
     hostRevealAt: 10_000,
     actions: {
@@ -62,7 +56,7 @@ const SCENARIO: RoundScenario[] = [
     },
   },
   {
-    label: 'Manche 7 — extrait des pancartes, rechargement de manette après réponse',
+    label: 'Manche 6 — extrait des pancartes, rechargement de manette après réponse',
     reveal: 'timer',
     actions: {
       titou: { at: 20_000, pick: 'correct' },
@@ -71,50 +65,86 @@ const SCENARIO: RoundScenario[] = [
       max: { at: 5000, pick: 'wrong' },
     },
   },
-  quick('Manche 8 — image Milwaukee', {
+  quick('Manche 7 — image Milwaukee', {
     titou: { at: 1100, pick: 'wrong' },
     chloe: { at: 2100, pick: 'correct' },
     sam: { at: 600, pick: 'correct' },
     max: { at: 2900, pick: 'correct' },
   }),
-  quick('Manche 9 — image Milwaukee (accent)', {
+  quick('Manche 8 — image Milwaukee (accent)', {
     titou: { at: 1300, pick: 'correct' },
     chloe: { at: 2400, pick: 'wrong' },
     sam: { at: 3100, pick: 'correct' },
     max: { at: 800, pick: 'correct' },
   }),
-  quick('Manche 10 — question éclair (20 s)', {
+  quick('Manche 9 — question éclair (20 s)', {
     titou: { at: 600, pick: 'correct' },
     chloe: { at: 1000, pick: 'correct' },
     sam: { at: 1400, pick: 'correct' },
     max: { at: 1800, pick: 'correct' },
   }),
-  quick('Manche 11 — image', {
+  quick('Manche 10 — image', {
     titou: { at: 2000, pick: 'correct' },
     chloe: { at: 1500, pick: 'wrong' },
     sam: { at: 2500, pick: 'wrong' },
     max: { at: 3000, pick: 'correct' },
   }),
-  quick('Manche 12 — question éclair (20 s)', {
+  quick('Manche 11 — question éclair (20 s)', {
     titou: { at: 900, pick: 'wrong' },
     chloe: { at: 1700, pick: 'correct' },
     sam: { at: 2300, pick: 'correct' },
     max: { at: 1200, pick: 'correct' },
   }),
-  quick('Manche 13 — question éclair (20 s)', {
+  quick('Manche 12 — question éclair (20 s)', {
     titou: { at: 1500, pick: 'correct' },
     chloe: { at: 600, pick: 'correct' },
     sam: { at: 3300, pick: 'wrong' },
     max: { at: 2700, pick: 'correct' },
   }),
-  quick('Manche 14 — image Rufus', {
+  quick('Manche 13 — extrait Rufus (végétal), tout le monde répond vite', {
     titou: { at: 1200, pick: 'correct' },
     chloe: { at: 2200, pick: 'correct' },
     sam: { at: 800, pick: 'wrong' },
     max: { at: 3400, pick: 'correct' },
   }),
+  quick("Manche 14 — extrait de l'emballage (durée)", {
+    titou: { at: 1800, pick: 'wrong' },
+    chloe: { at: 900, pick: 'correct' },
+    sam: { at: 2600, pick: 'correct' },
+    max: { at: 1300, pick: 'correct' },
+  }),
+  quick('Manche 15 — image, la rue de Mia', {
+    titou: { at: 700, pick: 'correct' },
+    chloe: { at: 2800, pick: 'wrong' },
+    sam: { at: 1500, pick: 'wrong' },
+    max: { at: 2100, pick: 'correct' },
+  }),
+  quick('Manche 16 — texte seul, Sarah et Karl', {
+    titou: { at: 2400, pick: 'correct' },
+    chloe: { at: 1100, pick: 'correct' },
+    sam: { at: 600, pick: 'wrong' },
+    max: { at: 3000, pick: 'wrong' },
+  }),
+  quick('Manche 17 — texte seul, le surnom de Natalie', {
+    titou: { at: 900, pick: 'correct' },
+    chloe: { at: 1900, pick: 'wrong' },
+    sam: { at: 2700, pick: 'correct' },
+    max: { at: 1400, pick: 'correct' },
+  }),
+  quick('Manche 18 — texte seul, Daniel et la top model', {
+    titou: { at: 1600, pick: 'wrong' },
+    chloe: { at: 800, pick: 'correct' },
+    sam: { at: 2200, pick: 'correct' },
+    max: { at: 3100, pick: 'correct' },
+  }),
+  quick('Manche 19 — texte seul, le frère de Sarah', {
+    titou: { at: 1200, pick: 'correct' },
+    chloe: { at: 2500, pick: 'correct' },
+    sam: { at: 700, pick: 'wrong' },
+    max: { at: 1900, pick: 'correct' },
+  }),
   {
-    label: "Manche 15 — dernière question, extrait de l'emballage en entier, un absent, réponse à 26 s",
+    label: 'Manche 20 — dernière question, extrait du discours de David en entier, un absent, réponse à 26 s',
     reveal: 'timer',
     actions: {
       titou: null,
@@ -125,7 +155,7 @@ const SCENARIO: RoundScenario[] = [
   },
 ]
 
-test('Grand Quiz Love Actually : 15 manches à 4 joueurs jusqu’au podium et à l’analyse', async ({
+test('Grand Quiz Love Actually : 20 manches à 4 joueurs jusqu’au podium et à l’analyse', async ({
   browser,
   baseURL,
 }) => {
