@@ -4,8 +4,11 @@
  * Principe (esprit Lapins Crétins / 1, 2, 3 Soleil) :
  * - Course de 100 m dans le couloir du 10 Downing Street jusqu'au bas de l'escalier (max 60 s).
  * - Les joueurs alternent GAUCHE (L) et DROITE (R) sur leur téléphone pour faire danser leur avatar.
- * - Quand la secrétaire ouvre la porte (`watching`), tout joueur qui tape encore après 250 ms
- *   de grâce se fait prendre en flagrant délit : recul de 8 m + gel de honte pendant 2,5 s.
+ * - La musique baisse (`warning`), puis la secrétaire apparaît dans l'encadrement de la porte
+ *   (`watching`) : tout joueur qui tape encore après 250 ms de grâce se fait prendre en flagrant
+ *   délit, recul de 8 m + gel de honte pendant 2,5 s.
+ * - Une fois sur deux, la musique repart alors qu'elle est toujours là à juger (`lingering`, D75) :
+ *   repartir danser avant qu'elle ne s'en aille est sanctionné de la même façon, sans grâce.
  */
 
 const CHARACTER_META: Record<string, { name: string; emoji: string }> = {
@@ -63,7 +66,17 @@ export const STUN_DURATION_MS = 2500
 export const PENALTY_METERS = 8
 export const COMPOSURE_BONUS_METERS = 2
 
-export type DoorState = 'dancing' | 'warning' | 'watching'
+export type DoorState = 'dancing' | 'warning' | 'watching' | 'lingering'
+
+/** Probabilité que la secrétaire s'attarde alors que la musique repart (D75) */
+export const LINGER_CHANCE = 0.5
+export const LINGER_MIN_MS = 900
+export const LINGER_MAX_MS = 1700
+
+/** La secrétaire est dans l'encadrement de la porte : il faut rester figé */
+export function isLadyPresent(state: DoorState): boolean {
+  return state === 'watching' || state === 'lingering'
+}
 export type GroovePhase = 'lobby' | 'countdown' | 'racing' | 'result'
 export type StepSide = 'L' | 'R'
 
@@ -153,10 +166,11 @@ export function applyRacerStep(
     return { racer, outcome: 'stunned' }
   }
 
-  // Porte ouverte au-delà de la fenêtre de grâce : PRIS EN FLAGRANT DÉLIT !
+  // Porte ouverte au-delà de la fenêtre de grâce, ou reparti trop tôt alors qu'elle
+  // est toujours là : PRIS EN FLAGRANT DÉLIT !
   if (
-    doorState === 'watching' &&
-    nowMs - doorOpenedAtMs > GRACE_PERIOD_MS
+    (doorState === 'watching' && nowMs - doorOpenedAtMs > GRACE_PERIOD_MS) ||
+    doorState === 'lingering'
   ) {
     const updated: RacerState = {
       ...racer,

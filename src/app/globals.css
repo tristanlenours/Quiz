@@ -32,3 +32,25 @@ body {
     .groove-twinkle, .groove-snowflake { animation: none; }
     .groove-snowflake { display: none; }
 }
+
+/* Scène de Downing Street (D75) : la porte tremble, la secrétaire apparaît */
+@keyframes groove-rattle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-0.8deg); }
+    75% { transform: rotate(0.8deg); }
+}
+@keyframes groove-appear {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.groove-rattle {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: groove-rattle 0.16s linear infinite;
+}
+.groove-appear {
+    animation: groove-appear 0.3s ease-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+    .groove-rattle, .groove-appear { animation: none; }
+}

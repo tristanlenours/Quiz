@@ -12,12 +12,17 @@ import {
   FINAL_SPRINT_SEC,
   FINISH_DISTANCE,
   GroovePhase,
+  isLadyPresent,
+  LINGER_CHANCE,
+  LINGER_MAX_MS,
+  LINGER_MIN_MS,
   RACE_DURATION_SEC,
   RacerState,
   rankRacers,
   StepSide,
   WARNING_DURATION_MS,
 } from '@/groove'
+import { CorridorBackdrop, StaffLady } from '@/components/DowningStreetScene'
 import { ChristmasTree, Garland, Snowfall } from '@/components/GrooveDecor'
 import { Participant, supabase } from '@/types/types'
 import { useQRCode } from 'next-qrcode'
@@ -84,7 +89,17 @@ export default function HostGroovePage({
 
   // Synthétiseur d'effets sonores Web Audio (poignée, ouverture de porte, flag, victoire)
   const playSfx = useCallback(
-    (type: 'tick' | 'go' | 'warning' | 'door_open' | 'caught' | 'win') => {
+    (
+      type:
+        | 'tick'
+        | 'go'
+        | 'warning'
+        | 'door_open'
+        | 'judge'
+        | 'door_close'
+        | 'caught'
+        | 'win',
+    ) => {
       if (!soundEnabledRef.current || typeof window === 'undefined') return
       try {
         const Ctx =
@@ -136,6 +151,13 @@ export default function HostGroovePage({
           // Bruit de porte / raclement de gorge sévère
           tone(220, 0, 0.18, 'sawtooth', 0.2)
           tone(165, 0.16, 0.28, 'sawtooth', 0.22)
+        } else if (type === 'judge') {
+          // « Hmm… » réprobateur : elle est toujours là
+          tone(196, 0, 0.35, 'sine', 0.22)
+          tone(174.61, 0.3, 0.45, 'sine', 0.2)
+        } else if (type === 'door_close') {
+          tone(140, 0, 0.08, 'square', 0.12)
+          tone(110, 0.06, 0.12, 'square', 0.1)
         } else if (type === 'caught') {
           // Sirène descendante comique « Pris en flag ! »
           tone(392, 0, 0.14, 'sawtooth', 0.22)
@@ -154,18 +176,50 @@ export default function HostGroovePage({
     [],
   )
 
-  const syncMusicPlayback = useCallback((state: DoorState, active: boolean) => {
+  // Fondu de la musique : elle baisse quand quelqu'un approche, comme dans la scène (D75)
+  const fadeTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const fadeMusicTo = useCallback((target: number, durationMs: number) => {
     const audio = musicRef.current
     if (!audio) return
-    if (!active || !soundEnabledRef.current || state === 'watching') {
-      audio.pause()
-      return
-    }
-    audio.volume = state === 'warning' ? 0.22 : 0.55
+    if (fadeTimerRef.current) clearInterval(fadeTimerRef.current)
     if (audio.paused) {
       audio.play().catch(() => {})
     }
+    const start = audio.volume
+    const steps = Math.max(1, Math.round(durationMs / 50))
+    let step = 0
+    fadeTimerRef.current = setInterval(() => {
+      step += 1
+      audio.volume = Math.min(
+        1,
+        Math.max(0, start + ((target - start) * step) / steps),
+      )
+      if (step >= steps && fadeTimerRef.current) {
+        clearInterval(fadeTimerRef.current)
+        fadeTimerRef.current = null
+      }
+    }, 50)
   }, [])
+
+  const syncMusicPlayback = useCallback(
+    (state: DoorState, active: boolean) => {
+      const audio = musicRef.current
+      if (!audio) return
+      if (!active || !soundEnabledRef.current) {
+        if (fadeTimerRef.current) clearInterval(fadeTimerRef.current)
+        audio.pause()
+        return
+      }
+      if (state === 'dancing') fadeMusicTo(0.6, 300)
+      // La musique baisse pendant que la poignée tourne…
+      else if (state === 'warning') fadeMusicTo(0.12, WARNING_DURATION_MS)
+      // … presque plus rien pendant qu'elle observe…
+      else if (state === 'watching') fadeMusicTo(0.03, 250)
+      // … et elle repart alors qu'elle est toujours là : c'est le piège
+      else fadeMusicTo(0.5, 500)
+    },
+    [fadeMusicTo],
+  )
 
   const broadcastState = useCallback(
     (
@@ -280,7 +334,10 @@ export default function HostGroovePage({
           id.hasCustomName && id.characterName
             ? `${id.displayName} (${id.characterName})`
             : id.displayName
-        const flagMsg = `🚨 ${label} s'est fait griller en plein déhanché ! (-8 m)`
+        const flagMsg =
+          doorStateRef.current === 'lingering'
+            ? `😒 ${label} est reparti trop tôt : elle était toujours là ! (-8 m)`
+            : `🚨 ${label} s'est fait griller en plein déhanché ! (-8 m)`
         recentFlagTextRef.current = flagMsg
         setRecentFlagText(flagMsg)
         playSfx('caught')
@@ -485,22 +542,46 @@ export default function HostGroovePage({
           broadcastState({ doorState: 'watching' })
           scheduleNextDoorPhase('watching')
         }, WARNING_DURATION_MS)
-      } else {
-        // La secrétaire regarde pendant 2,1 s à 3,0 s
+      } else if (current === 'watching') {
+        // La secrétaire regarde pendant 2,1 s à 3,0 s, puis s'en va… ou s'attarde (D75)
         const watchDuration = 2100 + Math.floor(Math.random() * 900)
         timer = setTimeout(() => {
           if (cancelled || phaseRef.current !== 'racing') return
-          const now = Date.now()
-          const boosted = applyDoorCloseComposureBonus(racersRef.current, now)
-          racersRef.current = boosted
-          setRacers(boosted)
-          doorStateRef.current = 'dancing'
-          setDoorState('dancing')
-          syncMusicPlayback('dancing', true)
-          broadcastState({ doorState: 'dancing', racers: boosted })
-          scheduleNextDoorPhase('dancing')
+          if (Math.random() < LINGER_CHANCE) {
+            doorStateRef.current = 'lingering'
+            setDoorState('lingering')
+            playSfx('judge')
+            syncMusicPlayback('lingering', true)
+            broadcastState({ doorState: 'lingering' })
+            scheduleNextDoorPhase('lingering')
+          } else {
+            closeDoor()
+          }
         }, watchDuration)
+      } else {
+        // La musique est repartie mais elle est toujours là, à juger
+        const lingerDuration =
+          LINGER_MIN_MS +
+          Math.floor(Math.random() * (LINGER_MAX_MS - LINGER_MIN_MS))
+        timer = setTimeout(closeDoor, lingerDuration)
       }
+    }
+
+    // Elle s'en va : bonus de sang-froid pour ceux qui sont restés de marbre
+    const closeDoor = () => {
+      if (cancelled || phaseRef.current !== 'racing') return
+      const boosted = applyDoorCloseComposureBonus(
+        racersRef.current,
+        Date.now(),
+      )
+      racersRef.current = boosted
+      setRacers(boosted)
+      doorStateRef.current = 'dancing'
+      setDoorState('dancing')
+      playSfx('door_close')
+      syncMusicPlayback('dancing', true)
+      broadcastState({ doorState: 'dancing', racers: boosted })
+      scheduleNextDoorPhase('dancing')
     }
 
     scheduleNextDoorPhase('dancing')
@@ -556,6 +637,7 @@ export default function HostGroovePage({
   const trophies = computeGrooveTrophies(racers)
   const chronicle = buildGrooveChronicle(racers)
   const remainingSec = Math.max(0, RACE_DURATION_SEC - elapsedSec)
+  const ladyPresent = isLadyPresent(doorState)
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-emerald-950 via-slate-950 to-red-950 text-white flex flex-col justify-between p-4 md:p-6 pt-0 md:pt-0 select-none">
@@ -563,7 +645,7 @@ export default function HostGroovePage({
       <Snowfall flakes={40} />
       <Garland
         bulbs={30}
-        lit={doorState !== 'watching' || phase !== 'racing'}
+        lit={!ladyPresent || phase !== 'racing'}
         className="shrink-0 z-10 -mx-4 md:-mx-6 mb-2"
       />
 
@@ -751,44 +833,55 @@ export default function HostGroovePage({
             data-testid="groove-door-banner"
             data-door-state={doorState}
             className={`rounded-3xl p-4 md:p-5 border-2 transition-all duration-200 shadow-2xl flex flex-wrap items-center justify-between gap-4 ${
-              doorState === 'watching'
-                ? 'bg-red-950/95 border-red-400 shadow-red-600/40'
-                : doorState === 'warning'
-                  ? 'bg-amber-950/95 border-amber-400 animate-pulse shadow-amber-500/30'
-                  : 'bg-gradient-to-r from-emerald-950/95 via-indigo-950/95 to-rose-950/95 border-emerald-400/60 shadow-emerald-500/20'
+              doorState === 'lingering'
+                ? 'bg-red-950/95 border-fuchsia-400 shadow-fuchsia-600/40'
+                : doorState === 'watching'
+                  ? 'bg-red-950/95 border-red-400 shadow-red-600/40'
+                  : doorState === 'warning'
+                    ? 'bg-amber-950/95 border-amber-400 animate-pulse shadow-amber-500/30'
+                    : 'bg-gradient-to-r from-emerald-950/95 via-indigo-950/95 to-rose-950/95 border-emerald-400/60 shadow-emerald-500/20'
             }`}
           >
             <div className="flex items-center gap-4">
               <div
-                className={`w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center text-4xl md:text-5xl border-2 shrink-0 ${
-                  doorState === 'watching'
-                    ? 'bg-red-600 border-white animate-bounce'
+                className={`w-16 h-16 md:w-20 md:h-20 rounded-2xl flex justify-center text-4xl md:text-5xl border-2 shrink-0 overflow-hidden ${
+                  ladyPresent
+                    ? 'bg-[#f6e9b4] border-white items-start'
                     : doorState === 'warning'
-                      ? 'bg-amber-500 border-amber-200'
-                      : 'bg-emerald-600/40 border-emerald-300'
+                      ? 'bg-amber-500 border-amber-200 items-center'
+                      : 'bg-emerald-600/40 border-emerald-300 items-center'
                 }`}
               >
-                {doorState === 'watching'
-                  ? '🧐'
-                  : doorState === 'warning'
-                    ? '🚪'
-                    : '🪩'}
+                {ladyPresent ? (
+                  <StaffLady
+                    judging={doorState === 'lingering'}
+                    className="w-full h-auto mt-1 scale-[1.6] origin-top"
+                  />
+                ) : doorState === 'warning' ? (
+                  '🔉'
+                ) : (
+                  '🪩'
+                )}
               </div>
 
               <div>
                 <div className="text-xs font-black uppercase tracking-widest opacity-90">
-                  {doorState === 'watching'
-                    ? '🚨 PORTE DU CABINET OUVERTE — INSPECTION EN COURS !'
-                    : doorState === 'warning'
-                      ? '⚠️ ATTENTION — LA POIGNÉE DE LA PORTE BOUGE !'
-                      : '🟢 PORTE FERMÉE — MUSIQUE À FOND DANS LE COULOIR !'}
+                  {doorState === 'lingering'
+                    ? '🎵 LA MUSIQUE REPART… MAIS ELLE N’EST PAS PARTIE !'
+                    : doorState === 'watching'
+                      ? '🚨 LA SECRÉTAIRE EST DANS L’ENCADREMENT — ELLE VOUS OBSERVE'
+                      : doorState === 'warning'
+                        ? '🔉 LA MUSIQUE BAISSE… QUELQU’UN ARRIVE !'
+                        : '🟢 PORTE FERMÉE — MUSIQUE À FOND DANS LE COULOIR !'}
                 </div>
                 <h2 className="text-2xl md:text-4xl font-black tracking-tight mt-0.5">
-                  {doorState === 'watching'
-                    ? 'STATUE MINISTÉRIELLE : NE BOUGEZ PLUS !'
-                    : doorState === 'warning'
-                      ? 'PRÉPAREZ-VOUS À TOUT LÂCHER…'
-                      : 'DÉHANCHEZ-VOUS ! (GAUCHE ⇄ DROITE)'}
+                  {doorState === 'lingering'
+                    ? 'ELLE VOUS JUGE ENCORE : NE BOUGEZ PAS !'
+                    : doorState === 'watching'
+                      ? 'FIGEZ-VOUS ! PAS UN GESTE !'
+                      : doorState === 'warning'
+                        ? 'PRÉPAREZ-VOUS À VOUS FIGER…'
+                        : 'DÉHANCHEZ-VOUS ! (GAUCHE ⇄ DROITE)'}
                 </h2>
               </div>
             </div>
@@ -844,16 +937,30 @@ export default function HostGroovePage({
           )}
 
           {/* Piste de course : Le Grand Couloir du 10 Downing Street */}
-          <div className="flex-1 bg-gradient-to-b from-red-950/80 via-slate-950/90 to-emerald-950/80 border-2 border-amber-500/40 rounded-3xl px-4 pb-4 md:px-6 md:pb-6 flex flex-col relative overflow-hidden shadow-2xl">
-            <Garland
-              bulbs={24}
-              lit={doorState !== 'watching'}
-              className="shrink-0 -mx-4 md:-mx-6 mb-2"
-            />
-            <div className="flex-1 flex gap-4 min-h-0">
+          <div className="flex-1 border-2 border-amber-400/60 rounded-3xl flex flex-col relative overflow-hidden shadow-2xl">
+            {/* Le couloir de la scène : porte du bureau, tableaux, escalier aux portraits (D75) */}
+            <div className="relative shrink-0 bg-[#efdd9f]">
+              <Garland bulbs={24} lit={!ladyPresent} className="shrink-0" />
+              <CorridorBackdrop
+                doorState={doorState}
+                className="block w-full h-[24vh] min-h-[140px] max-h-[260px]"
+              />
+              <ChristmasTree
+                lit={!ladyPresent}
+                className="absolute right-3 bottom-1 h-[78%] w-auto drop-shadow-[0_0_18px_rgba(250,204,21,0.35)]"
+              />
+            </div>
+            {/* Le parquet et les tapis rouges */}
+            <div
+              className="flex-1 flex gap-4 min-h-0 px-4 pb-4 pt-3 md:px-6 md:pb-6"
+              style={{
+                backgroundImage:
+                  'repeating-linear-gradient(90deg, #6b3f19 0 54px, #5a3414 54px 108px)',
+              }}
+            >
               <div className="flex-1 min-w-0 flex flex-col justify-between">
                 {/* Repères de distance (0 m -> 25 m -> 50 m -> 75 m -> 100 m Sapin) */}
-                <div className="grid grid-cols-5 text-xs font-black uppercase tracking-wider text-amber-300/80 border-b border-white/10 pb-2 mb-3">
+                <div className="grid grid-cols-5 text-xs font-black uppercase tracking-wider text-amber-100 border-b border-amber-200/20 pb-2 mb-3">
                   <div>🚪 0 m • Bureau</div>
                   <div className="text-center">🖼️ 25 m • Portraits</div>
                   <div className="text-center">🕯️ 50 m • Grand Couloir</div>
@@ -910,7 +1017,7 @@ export default function HostGroovePage({
                               </span>
                             )}
                             {!isStunned &&
-                              doorState === 'watching' &&
+                              ladyPresent &&
                               r.finishedAtMs === null && (
                                 <span className="px-2 py-0.5 rounded-full bg-slate-800 border border-slate-500 text-slate-200 text-[11px] font-semibold">
                                   🧐 Pose sérieuse…
@@ -934,7 +1041,7 @@ export default function HostGroovePage({
                         </div>
 
                         {/* Barre de progression Tapis Rouge + Pion Avatar */}
-                        <div className="relative h-12 bg-slate-900/90 rounded-xl border border-white/10 overflow-hidden">
+                        <div className="relative h-12 bg-red-950/90 rounded-xl border border-amber-300/30 overflow-hidden">
                           <div
                             className={`h-full transition-all duration-150 ${
                               isStunned
@@ -969,8 +1076,7 @@ export default function HostGroovePage({
                             <span className="text-xl drop-shadow">
                               {isStunned
                                 ? '😱'
-                                : doorState === 'watching' &&
-                                    r.finishedAtMs === null
+                                : ladyPresent && r.finishedAtMs === null
                                   ? '🧐'
                                   : r.lastPose}
                             </span>
@@ -981,17 +1087,6 @@ export default function HostGroovePage({
                   })}
                 </div>
               </div>
-
-              {/* Le sapin de Downing Street : ligne d'arrivée, éteint quand la porte s'ouvre */}
-              <aside className="hidden md:flex w-36 lg:w-48 shrink-0 flex-col items-center justify-end">
-                <ChristmasTree
-                  lit={doorState !== 'watching'}
-                  className="w-full h-auto max-h-[60vh] drop-shadow-[0_0_25px_rgba(250,204,21,0.25)]"
-                />
-                <div className="mt-1 text-[11px] font-black uppercase tracking-wider text-amber-300 text-center">
-                  🏁 Arrivée au sapin
-                </div>
-              </aside>
             </div>
 
             {/* Overlay Compte à Rebours 3, 2, 1 */}

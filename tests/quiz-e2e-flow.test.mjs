@@ -523,6 +523,7 @@ test('11. Downing Street Groove (D71) : moteur de course 1, 2, 3 Soleil, trophé
     GRACE_PERIOD_MS,
     PENALTY_METERS,
     STUN_DURATION_MS,
+    isLadyPresent,
   } = await import('../src/groove.ts')
 
   let david = createInitialRacer({ id: 'p1', nickname: '[#david]Tristan', avatar_id: 'david' })
@@ -587,6 +588,19 @@ test('11. Downing Street Groove (D71) : moteur de course 1, 2, 3 Soleil, trophé
     doorOpenMs
   )
   assert.equal(stunnedAttempt.outcome, 'stunned')
+
+  // Elle est toujours là (`lingering`, D75) : repartir trop tôt est sanctionné, sans grâce
+  const early = applyRacerStep(
+    createInitialRacer({ id: 'p3', nickname: '[#mark]Max', avatar_id: 'mark' }),
+    'L',
+    doorOpenMs + 4000,
+    startMs,
+    'lingering',
+    doorOpenMs + 3900
+  )
+  assert.equal(early.outcome, 'caught')
+  assert.ok(isLadyPresent('watching') && isLadyPresent('lingering'))
+  assert.ok(!isLadyPresent('warning') && !isLadyPresent('dancing'))
 
   // 4. David n'a pas bougé pendant `watching` après avoir dansé -> bonus de sang-froid (+2 m) à la fermeture
   const boosted = applyDoorCloseComposureBonus([david, natalie], doorOpenMs + 3000)

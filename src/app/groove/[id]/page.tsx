@@ -10,10 +10,12 @@ import {
   FINISH_DISTANCE,
   GROOVE_SEQUENCE_MARKER,
   GroovePhase,
+  isLadyPresent,
   RacerState,
   rankRacers,
   StepSide,
 } from '@/groove'
+import { StaffLady } from '@/components/DowningStreetScene'
 import { ChristmasTree, Garland, Snowfall } from '@/components/GrooveDecor'
 import { getClientSessionId, Participant, supabase } from '@/types/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -306,13 +308,14 @@ export default function PlayerGroovePage({
     100,
     Math.max(0, (distanceMeters / FINISH_DISTANCE) * 100),
   )
-  const lightsOn = doorState !== 'watching' && !isStunned
+  const ladyPresent = isLadyPresent(doorState)
+  const lightsOn = !ladyPresent && !isStunned
   const buttonsDisabled = phase !== 'racing' || hasFinished
 
   const stepButtonClass = (side: StepSide) => {
     const recommended =
       nextRecommendedSide === side || nextRecommendedSide === null
-    if (doorState === 'watching') {
+    if (ladyPresent) {
       return 'bg-slate-900/90 border-red-500/60 text-red-300'
     }
     if (side === 'L') {
@@ -330,7 +333,7 @@ export default function PlayerGroovePage({
       className={`relative h-[100dvh] overflow-hidden flex flex-col select-none touch-manipulation transition-colors duration-150 text-white ${
         isStunned
           ? 'bg-red-950'
-          : doorState === 'watching'
+          : ladyPresent
             ? 'bg-gradient-to-b from-red-950 via-slate-950 to-red-950'
             : doorState === 'warning'
               ? 'bg-gradient-to-b from-amber-950 via-slate-950 to-amber-950'
@@ -392,20 +395,34 @@ export default function PlayerGroovePage({
         <div
           data-testid="player-door-signal"
           data-door-state={doorState}
-          className={`shrink-0 rounded-3xl px-4 py-3 text-center border-2 shadow-2xl flex flex-col items-center justify-center min-h-[104px] transition-all ${
+          className={`relative shrink-0 rounded-3xl px-4 py-3 text-center border-2 shadow-2xl flex flex-col items-center justify-center min-h-[104px] transition-all overflow-hidden ${
+            ladyPresent && !isStunned && !hasFinished && phase === 'racing'
+              ? 'pl-24 '
+              : ''
+          }${
             phase === 'countdown'
               ? 'bg-slate-900/95 border-amber-400'
               : hasFinished
                 ? 'bg-emerald-900/90 border-emerald-300'
                 : isStunned
                   ? 'bg-red-700 border-white animate-pulse'
-                  : doorState === 'watching'
-                    ? 'bg-red-600/95 border-white shadow-red-600/50'
-                    : doorState === 'warning'
-                      ? 'bg-amber-500/90 border-amber-200 text-slate-950'
-                      : 'bg-emerald-950/85 border-emerald-400/70'
+                  : doorState === 'lingering'
+                    ? 'bg-fuchsia-800/95 border-white shadow-fuchsia-600/50'
+                    : doorState === 'watching'
+                      ? 'bg-red-600/95 border-white shadow-red-600/50'
+                      : doorState === 'warning'
+                        ? 'bg-amber-500/90 border-amber-200 text-slate-950'
+                        : 'bg-emerald-950/85 border-emerald-400/70'
           }`}
         >
+          {ladyPresent && !isStunned && !hasFinished && phase === 'racing' && (
+            <div className="absolute left-2 bottom-0 top-2 w-20 rounded-t-2xl bg-[#f6e9b4] border-x-4 border-t-4 border-white overflow-hidden groove-appear">
+              <StaffLady
+                judging={doorState === 'lingering'}
+                className="w-full h-auto"
+              />
+            </div>
+          )}
           {phase === 'countdown' ? (
             <>
               <div className="text-[11px] font-black uppercase tracking-widest text-amber-300">
@@ -437,22 +454,31 @@ export default function PlayerGroovePage({
                 La secrétaire t’a vu danser : -8 mètres &amp; gelé de honte !
               </div>
             </>
+          ) : doorState === 'lingering' ? (
+            <>
+              <div className="text-xl font-black uppercase tracking-tight">
+                😒 ELLE EST TOUJOURS LÀ !
+              </div>
+              <div className="text-xs font-bold mt-1 opacity-95">
+                La musique repart, pas elle : attends qu’elle s’en aille !
+              </div>
+            </>
           ) : doorState === 'watching' ? (
             <>
               <div className="text-2xl font-black uppercase tracking-tight">
-                🧐 STOP ! NE BOUGE PLUS !
+                🧐 FIGE-TOI !
               </div>
               <div className="text-xs font-bold mt-1 opacity-95">
-                La porte est ouverte : lâche les boutons !
+                La secrétaire te regarde : pas un geste !
               </div>
             </>
           ) : doorState === 'warning' ? (
             <>
               <div className="text-xl font-black uppercase">
-                ⚠️ LA POIGNÉE BOUGE…
+                🔉 LA MUSIQUE BAISSE…
               </div>
               <div className="text-xs font-bold mt-1">
-                Prépare-toi à lever les pouces immédiatement !
+                Quelqu’un arrive : prépare-toi à te figer !
               </div>
             </>
           ) : (
