@@ -144,8 +144,9 @@ export function createInitialRacer(participant: {
 /** Gain en mètres d'un pas selon l'alternance G/D et le combo de groove */
 export function computeStepGain(combo: number, alternated: boolean): number {
   if (!alternated) return 0.25
-  if (combo >= 14) return 1.75
-  if (combo >= 6) return 1.5
+  // Combo plafonnée (D77) : 1,45 m au lieu de 1,75 m, la course ralentit d'environ 16 %
+  if (combo >= 14) return 1.45
+  if (combo >= 6) return 1.35
   return 1.25
 }
 

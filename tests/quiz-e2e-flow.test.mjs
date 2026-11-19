@@ -524,7 +524,14 @@ test('11. Downing Street Groove (D71) : moteur de course 1, 2, 3 Soleil, trophé
     PENALTY_METERS,
     STUN_DURATION_MS,
     isLadyPresent,
+    computeStepGain,
   } = await import('../src/groove.ts')
+
+  // Paliers de combo plafonnés (D77) : 1,25 m, puis 1,35 m dès 6 pas, 1,45 m dès 14
+  assert.deepEqual(
+    [computeStepGain(1, true), computeStepGain(6, true), computeStepGain(14, true), computeStepGain(40, true), computeStepGain(0, false)],
+    [1.25, 1.35, 1.45, 1.45, 0.25]
+  )
 
   let david = createInitialRacer({ id: 'p1', nickname: '[#david]Tristan', avatar_id: 'david' })
   let natalie = createInitialRacer({ id: 'p2', nickname: '[#natalie]Chloé', avatar_id: 'natalie' })
@@ -576,7 +583,7 @@ test('11. Downing Street Groove (D71) : moteur de course 1, 2, 3 Soleil, trophé
   assert.equal(res.outcome, 'caught')
   assert.equal(natalie.caughtCount, 1)
   assert.equal(natalie.combo, 0)
-  assert.equal(natalie.distance, Number((distBeforeDoor + 1.75 - PENALTY_METERS).toFixed(2)))
+  assert.equal(natalie.distance, Number((distBeforeDoor + 1.45 - PENALTY_METERS).toFixed(2)))
 
   // Tant que le gel dure, impossible d'avancer
   const stunnedAttempt = applyRacerStep(
