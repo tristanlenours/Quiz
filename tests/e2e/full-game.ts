@@ -95,7 +95,8 @@ const PLAYER_DEFS: Array<Pick<Player, 'key' | 'nickname' | 'displayName' | 'avat
   { key: 'titou', nickname: 'Titou', displayName: 'Titou', avatarName: 'Le Premier Ministre' },
   { key: 'chloe', nickname: 'Chloé', displayName: 'Chloé', avatarName: 'Natalie' },
   // Pas de surnom : le joueur prend le nom du personnage
-  { key: 'sam', nickname: '', displayName: 'Sam', avatarName: 'Sam' },
+  // Prénom obligatoire (D72) : Sam garde le nom de son personnage
+  { key: 'sam', nickname: 'Sam', displayName: 'Sam', avatarName: 'Sam' },
   { key: 'max', nickname: 'Max', displayName: 'Max', avatarName: 'Rufus (Mr Bean)' },
 ]
 
@@ -416,7 +417,7 @@ export async function runFullGame(
       await join(chloe)
     })
 
-    await test.step('Sam (sans surnom) et Max rejoignent en même temps', async () => {
+    await test.step('Sam et Max rejoignent en même temps', async () => {
       await Promise.all([join(byKey('sam')), join(byKey('max'))])
     })
 

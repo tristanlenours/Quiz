@@ -2,6 +2,8 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import path from 'node:path'
+import os from 'node:os'
+import { execFileSync } from 'node:child_process'
 import { createClient } from '@supabase/supabase-js'
 
 // Load environment from .env.local or process.env
@@ -436,6 +438,66 @@ test('9. Commentaire solo (D66) : statistiques individuelles, repli déterminist
   }
 })
 
+test('10. Scores effacés quand un pack change (D70) : synchro sans différence conservée, changement purgé', async () => {
+  const name = '🧪 Purge des scores D70 (pack temporaire)'
+  const file = path.join(os.tmpdir(), `quiz-purge-${process.pid}.json`)
+  const pack = {
+    name,
+    description: 'Pack temporaire de test, supprimé à la fin',
+    mode: 'quiz',
+    avatar_theme: 'love_actually',
+    questions: [
+      {
+        order: 0,
+        question_type: 'quiz',
+        body: 'Question temporaire ?',
+        choices: [
+          { body: 'A', is_correct: true },
+          { body: 'B', is_correct: false },
+          { body: 'C', is_correct: false },
+          { body: 'D', is_correct: false },
+        ],
+      },
+    ],
+  }
+  const sync = (...args) => {
+    fs.writeFileSync(file, JSON.stringify(pack))
+    return execFileSync(process.execPath, ['scripts/sync-pack.mjs', file, ...args], { encoding: 'utf8' })
+  }
+  const games = async (setId) =>
+    (await supabase.from('quiz_games').select('*', { count: 'exact', head: true }).eq('quiz_set_id', setId)).count
+
+  await supabase.from('quiz_sets').delete().eq('name', name)
+  try {
+    sync('--create', '--apply')
+    const { data: set } = await supabase.from('quiz_sets').select('id').eq('name', name).single()
+    const { error } = await supabase
+      .from('quiz_games')
+      .insert({ quiz_set_id: set.id, play_mode: 'solo', is_training: true, phase: 'result' })
+    assert.ifError(error)
+
+    assert.match(sync('--apply'), /Aucun changement de jeu/)
+    assert.equal(await games(set.id), 1, 'Une synchro sans différence conserve les parties')
+
+    pack.description = 'Description modifiée'
+    sync('--apply')
+    assert.equal(await games(set.id), 1, 'Le nom et la description ne sont pas du jeu : parties conservées')
+
+    pack.questions[0].choices[1].body = 'B modifié'
+    assert.match(sync(), /seront effacés/)
+    assert.equal(await games(set.id), 1, 'La simulation n’efface rien')
+    sync('--apply')
+    assert.equal(await games(set.id), 0, 'Un choix modifié efface les parties du pack')
+
+    // Le Studio efface aussi les scores : éditeur et interrupteur d'une manche
+    const studio = fs.readFileSync(path.resolve(process.cwd(), 'src/app/host/dashboard/page.tsx'), 'utf8')
+    assert.equal(studio.match(/await purgePackScores\(/g)?.length, 2, 'Éditeur et interrupteur doivent purger les scores')
+  } finally {
+    await supabase.from('quiz_sets').delete().eq('name', name)
+    fs.rmSync(file, { force: true })
+  }
+})
+
 test('7. AGENTS.md relu jusqu’à la dernière décision de DECISIONS.md (D33)', () => {
   const decisions = fs.readFileSync(path.resolve(process.cwd(), 'DECISIONS.md'), 'utf8')
   const agents = fs.readFileSync(path.resolve(process.cwd(), 'AGENTS.md'), 'utf8')
@@ -447,4 +509,118 @@ test('7. AGENTS.md relu jusqu’à la dernière décision de DECISIONS.md (D33)'
     `DECISIONS.md va jusqu’à D${latest} mais AGENTS.md n’a été relu que jusqu’à D${marker[1]} : ` +
       `vérifier si les décisions récentes changent une règle de travail, mettre AGENTS.md à jour si besoin, puis avancer le marqueur.`
   )
+})
+
+test('11. Downing Street Groove (D71) : moteur de course 1, 2, 3 Soleil, trophées et zéro spoil', async () => {
+  const {
+    createInitialRacer,
+    applyRacerStep,
+    applyDoorCloseComposureBonus,
+    rankRacers,
+    computeGrooveTrophies,
+    buildGrooveChronicle,
+    FINISH_DISTANCE,
+    GRACE_PERIOD_MS,
+    PENALTY_METERS,
+    STUN_DURATION_MS,
+  } = await import('../src/groove.ts')
+
+  let david = createInitialRacer({ id: 'p1', nickname: '[#david]Tristan', avatar_id: 'david' })
+  let natalie = createInitialRacer({ id: 'p2', nickname: '[#natalie]Chloé', avatar_id: 'natalie' })
+
+  const startMs = 1_000_000
+  // 1. Alternance G/D fait monter le combo et avancer
+  let res = applyRacerStep(david, 'L', startMs + 100, startMs, 'dancing', 0)
+  david = res.racer
+  assert.equal(res.outcome, 'grooved')
+  assert.equal(david.combo, 1)
+  assert.equal(david.distance, 1.25)
+
+  res = applyRacerStep(david, 'R', startMs + 200, startMs, 'dancing', 0)
+  david = res.racer
+  assert.equal(res.outcome, 'grooved')
+  assert.equal(david.combo, 2)
+  assert.equal(david.distance, 2.5)
+
+  // 2. Même pied deux fois = trébuchement (+0.25 m et combo remis à 0)
+  res = applyRacerStep(david, 'R', startMs + 300, startMs, 'dancing', 0)
+  david = res.racer
+  assert.equal(res.outcome, 'stumbled')
+  assert.equal(david.combo, 0)
+  assert.equal(david.distance, 2.75)
+
+  // 3. Faire avancer Natalie à 20 m puis tester l'ouverture de la porte
+  for (let i = 0; i < 16; i++) {
+    natalie = applyRacerStep(
+      natalie,
+      i % 2 === 0 ? 'L' : 'R',
+      startMs + 400 + i * 50,
+      startMs,
+      'dancing',
+      0
+    ).racer
+  }
+  assert.ok(natalie.distance >= 20)
+  const distBeforeDoor = natalie.distance
+  const doorOpenMs = startMs + 2000
+
+  // Dans la fenêtre de grâce (250 ms), pas de pénalité
+  res = applyRacerStep(natalie, 'L', doorOpenMs + GRACE_PERIOD_MS - 50, startMs, 'watching', doorOpenMs)
+  natalie = res.racer
+  assert.notEqual(res.outcome, 'caught')
+
+  // Au-delà de 250 ms pendant `watching` : PRIS EN FLAG (-8 m + gel 2,5 s)
+  res = applyRacerStep(natalie, 'R', doorOpenMs + GRACE_PERIOD_MS + 100, startMs, 'watching', doorOpenMs)
+  natalie = res.racer
+  assert.equal(res.outcome, 'caught')
+  assert.equal(natalie.caughtCount, 1)
+  assert.equal(natalie.combo, 0)
+  assert.equal(natalie.distance, Number((distBeforeDoor + 1.75 - PENALTY_METERS).toFixed(2)))
+
+  // Tant que le gel dure, impossible d'avancer
+  const stunnedAttempt = applyRacerStep(
+    natalie,
+    'L',
+    doorOpenMs + GRACE_PERIOD_MS + 100 + STUN_DURATION_MS - 100,
+    startMs,
+    'dancing',
+    doorOpenMs
+  )
+  assert.equal(stunnedAttempt.outcome, 'stunned')
+
+  // 4. David n'a pas bougé pendant `watching` après avoir dansé -> bonus de sang-froid (+2 m) à la fermeture
+  const boosted = applyDoorCloseComposureBonus([david, natalie], doorOpenMs + 3000)
+  assert.equal(boosted[0].composureCount, 1)
+  assert.equal(boosted[0].distance, 4.75)
+  assert.equal(boosted[1].composureCount, 0)
+
+  // 5. Amener David jusqu'à la ligne d'arrivée (100 m)
+  david = boosted[0]
+  let t = startMs + 6000
+  while (david.finishedAtMs === null) {
+    const side = david.lastSide === 'L' ? 'R' : 'L'
+    t += 80
+    david = applyRacerStep(david, side, t, startMs, 'dancing', 0).racer
+  }
+  assert.equal(david.distance, FINISH_DISTANCE)
+  assert.ok(david.finishedAtMs > 0)
+
+  const ranked = rankRacers([natalie, david])
+  assert.equal(ranked[0].participantId, 'p1')
+
+  const trophies = computeGrooveTrophies(ranked)
+  assert.ok(trophies.length >= 3)
+  const chronicle = buildGrooveChronicle(ranked)
+  assert.match(chronicle, /Tristan/)
+
+  // 6. Zéro spoil du titre du Blind Test du Grand Quiz (« Jump (For My Love) » / « Pointer Sisters »)
+  for (const relPath of [
+    'src/groove.ts',
+    'src/app/host/groove/[id]/page.tsx',
+    'src/app/groove/[id]/page.tsx',
+  ]) {
+    const src = fs.readFileSync(path.resolve(process.cwd(), relPath), 'utf8').toLowerCase()
+    assert.ok(!src.includes('jump (for my love)'), `${relPath} ne doit pas divulgâcher Jump (For My Love)`)
+    assert.ok(!src.includes('pointer sisters'), `${relPath} ne doit pas divulgâcher The Pointer Sisters`)
+  }
 })

@@ -2,7 +2,8 @@
 
 import { resolveAvatarTheme } from '@/avatars'
 import { DEFAULT_QUESTION_DURATION_SEC } from '@/constants'
-import { purgeStaleTrainingGames } from '@/leaderboard'
+import { GROOVE_SEQUENCE_MARKER } from '@/groove'
+import { purgePackScores, purgeStaleTrainingGames } from '@/leaderboard'
 import {
   isSupabaseClientConfigured,
   QuizSet,
@@ -190,6 +191,38 @@ export default function HostDashboardPage() {
     window.open(`/host/game/${data.id}`, '_blank', 'noopener,noreferrer')
   }
 
+  // Mini-jeu Party-Game TV « Downing Street Groove » (D71)
+  const startGrooveGame = async () => {
+    const loveActuallySet =
+      quizSets.find((s) => resolveAvatarTheme(s) === 'love_actually') ||
+      quizSets[0]
+    if (!loveActuallySet) {
+      alert('Créez ou importez au moins un pack pour initialiser le salon.')
+      return
+    }
+    const pinCode = Math.floor(100000 + Math.random() * 900000).toString()
+    // Toujours en training : sans la colonne `is_training` (D64), on refuse plutôt que de
+    // créer une partie « live » que le tableau des scores du pack pourrait compter.
+    const { data, error } = await supabase
+      .from('quiz_games')
+      .insert({
+        quiz_set_id: loveActuallySet.id,
+        pin_code: pinCode,
+        current_question_sequence: GROOVE_SEQUENCE_MARKER,
+        is_training: true,
+      })
+      .select()
+      .single()
+
+    if (error || !data) {
+      console.error(error)
+      alert(`Impossible de lancer Downing Street Groove : ${error?.message}`)
+      return
+    }
+
+    window.open(`/host/groove/${data.id}`, '_blank', 'noopener,noreferrer')
+  }
+
   const [copiedSoloSetId, setCopiedSoloSetId] = useState<string | null>(null)
 
   const copySoloLink = async (quizSetId: string) => {
@@ -357,6 +390,8 @@ export default function HostDashboardPage() {
         .from('quiz_questions')
         .delete()
         .eq('quiz_set_id', targetSetId)
+      // Le pack change : ses scores ne sont plus comparables (D70)
+      await purgePackScores(targetSetId)
     }
 
     for (let i = 0; i < questions.length; i++) {
@@ -396,13 +431,21 @@ export default function HostDashboardPage() {
     }
   }
 
-  // Écriture directe sur la ligne : l'éditeur recrée les questions et perdrait l'historique (D38)
+  // Écriture directe sur la ligne, sans recréer les questions (D38). Les manches jouées
+  // changent : les scores du pack sont effacés (D70).
   const toggleQuestionDisabled = async (questionId: string, isDisabled: boolean) => {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('quiz_questions')
       .update({ is_disabled: isDisabled })
       .eq('id', questionId)
+      .select('quiz_set_id')
+      .single()
     if (error) return alert(error.message)
+    try {
+      await purgePackScores(data.quiz_set_id)
+    } catch (err: any) {
+      alert(err?.message || 'Scores du pack non effacés')
+    }
     await fetchQuizSets()
   }
 
@@ -722,6 +765,39 @@ export default function HostDashboardPage() {
                 tester immédiatement un Quiz + Blind Test, ou créez votre propre
                 pack !
               </p>
+            </div>
+          )}
+
+          {quizSets.length > 0 && (
+            <div className="bg-gradient-to-r from-rose-950/90 via-indigo-950/90 to-amber-950/80 border border-rose-400/30 rounded-2xl p-5 flex flex-wrap items-center justify-between gap-4 shadow-xl">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-rose-500/20 border border-rose-400/40 flex items-center justify-center text-3xl shrink-0">
+                  🕺
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider bg-rose-500/30 text-rose-200 border border-rose-400/40">
+                      Party-Game TV • Thème Love Actually
+                    </span>
+                    <span className="text-xs text-amber-300 font-bold">
+                      ⚡ Zéro culture G • 100 % réflexes &amp; mauvaise foi
+                    </span>
+                  </div>
+                  <h2 className="text-xl font-black text-white mt-1">
+                    Downing Street Groove — « 1, 2, 3 Soleil » au 10 Downing Street
+                  </h2>
+                  <p className="text-slate-300 text-xs sm:text-sm mt-0.5">
+                    Les téléphones deviennent des manettes : alternez GAUCHE / DROITE pour vous déhancher dans le couloir… et figez-vous net quand la secrétaire ouvre la porte !
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={startGrooveGame}
+                className="px-5 py-3 rounded-xl bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-black text-sm shadow-lg shadow-rose-600/30 transition shrink-0"
+              >
+                🕺 Lancer Downing Street Groove
+              </button>
             </div>
           )}
 

@@ -10,6 +10,8 @@
 // identifiants et l'historique quiz_answers. Questions et choix manquants sont insérés.
 // Le script refuse de supprimer : s'il y a plus de lignes en base que dans le JSON,
 // il s'arrête avant toute écriture.
+// Si une question, un choix, un média ou l'activation d'une manche change, toutes les parties
+// du pack sont effacées, donc ses scores (D70). Une synchro sans différence n'efface rien.
 import { createClient } from '@supabase/supabase-js'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -84,7 +86,9 @@ const setId = sets[0].id
 const existing = check(
   await db
     .from('quiz_questions')
-    .select('id, order, choices:quiz_choices(id, created_at)')
+    .select(
+      'id, order, question_type, body, image_url, audio_url, audio_start_sec, audio_duration_sec, video_url, reveal_title, reveal_artist, reveal_cover_url, is_disabled, choices:quiz_choices(id, created_at, body, is_correct)'
+    )
     .eq('quiz_set_id', setId)
     .order('order', { ascending: true })
 )
@@ -100,11 +104,24 @@ for (const [i, q] of existing.entries()) {
   }
 }
 
-const history = existing.length
-  ? (await db.from('quiz_answers').select('*', { count: 'exact', head: true }).in('question_id', existing.map((q) => q.id))).count
-  : 0
+// Ce qui se joue : questions, choix, médias, calages, manches actives. Le nom et la description n'en font pas partie.
+const QUESTION_FIELDS = ['question_type', 'body', 'image_url', 'audio_url', 'video_url', 'reveal_title', 'reveal_artist', 'reveal_cover_url']
+const sameQuestion = (row, q) =>
+  QUESTION_FIELDS.every((f) => (row[f] ?? null) === (q[f] ?? null)) &&
+  (row.audio_start_sec ?? 0) === (q.audio_start_sec ?? 0) &&
+  (row.audio_duration_sec ?? 30) === (q.audio_duration_sec ?? 30) &&
+  Boolean(row.is_disabled) === Boolean(q.is_disabled) &&
+  row.choices.length === q.choices.length &&
+  sortedChoices(row).every((c, j) => c.body === q.choices[j].body && c.is_correct === q.choices[j].is_correct)
+const changed = pack.questions.filter((q, i) => !existing[i] || !sameQuestion(existing[i], q))
+const games = (await db.from('quiz_games').select('*', { count: 'exact', head: true }).eq('quiz_set_id', setId)).count ?? 0
 console.log(`« ${sets[0].name} » → « ${pack.name} »`)
-console.log(`${existing.length} → ${pack.questions.length} questions, ${history} réponses historiques conservées`)
+console.log(`${existing.length} → ${pack.questions.length} questions, ${changed.length} modifiée(s) ou ajoutée(s)`)
+console.log(
+  changed.length
+    ? `Le pack change : ses ${games} partie(s) et leurs scores seront effacés (D70)`
+    : `Aucun changement de jeu : les ${games} partie(s) et leurs scores sont conservés`
+)
 if (!apply) {
   console.log('Simulation uniquement : relancer avec --apply pour écrire en base.')
   process.exit(0)
@@ -148,6 +165,11 @@ for (const [i, q] of pack.questions.entries()) {
     if (oldChoices[j]) check(await db.from('quiz_choices').update(choice).eq('id', oldChoices[j].id))
     else check(await db.from('quiz_choices').insert({ ...choice, question_id: questionId }))
   }
+}
+
+if (changed.length) {
+  check(await db.from('quiz_games').delete().eq('quiz_set_id', setId))
+  console.log(`${games} partie(s) effacée(s) : le tableau des scores du pack repart de zéro`)
 }
 
 // Vérification : la base reflète exactement le JSON

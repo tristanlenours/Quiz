@@ -109,8 +109,19 @@ export async function fetchPackScores(quizSetId: string): Promise<ScoreEntry[]> 
     )
     .eq('quiz_set_id', quizSetId)
     .eq('is_training', false)
+    // Un salon Downing Street Groove (séquence -1, D71) n'est jamais une partie de quiz
+    .neq('current_question_sequence', -1)
   if (error) throw new Error(error.message)
   return rankPackGames((data ?? []) as unknown as GameRow[])
+}
+
+/**
+ * Efface toutes les parties d'un pack, donc ses scores (D70) : un classement ne compare que des
+ * parties jouées sur les mêmes questions. Participants et réponses suivent par cascade.
+ */
+export async function purgePackScores(quizSetId: string): Promise<void> {
+  const { error } = await supabase.from('quiz_games').delete().eq('quiz_set_id', quizSetId)
+  if (error) throw new Error(error.message)
 }
 
 /** Supprime les parties training de plus de 24 h (D64). Silencieux si la migration n'est pas jouée. */

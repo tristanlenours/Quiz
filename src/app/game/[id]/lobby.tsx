@@ -4,6 +4,12 @@ import {
   getParticipantIdentity,
 } from '@/avatars'
 import { UniverseTheme, getUniverseTheme } from '@/themes'
+import {
+  cleanPlayerName,
+  PLAYER_NAME_MAX_LENGTH,
+  readSavedPlayerName,
+  savePlayerName,
+} from '@/playerName'
 import { getClientSessionId, Participant, supabase } from '@/types/types'
 import { FormEvent, useCallback, useEffect, useState } from 'react'
 
@@ -239,6 +245,14 @@ function Register({
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [sending, setSending] = useState(false)
 
+  // Prénom gardé d'un jeu précédent (cookie, D72), lu après le montage pour ne pas casser l'hydratation
+  useEffect(() => {
+    const saved = readSavedPlayerName()
+    if (saved) setNickname((current) => current || saved)
+  }, [])
+
+  const cleanNickname = cleanPlayerName(nickname)
+
   const mySessionId = getClientSessionId()
 
   // Map avatarId -> owner displayName (excluding current player)
@@ -277,6 +291,11 @@ function Register({
       return
     }
 
+    if (!cleanNickname) {
+      setErrorMsg('Écris ton prénom ou ton pseudo pour rejoindre la partie.')
+      return
+    }
+
     // Re-check latest participants in DB to prevent race condition on same avatar
     setSending(true)
     const { data: latestParticipants } = await supabase
@@ -299,7 +318,7 @@ function Register({
       return
     }
 
-    const encodedNickname = encodeNicknameWithAvatar(nickname, selectedAvatarId)
+    const encodedNickname = encodeNicknameWithAvatar(cleanNickname, selectedAvatarId)
 
     // Try upserting with `avatar_id` column first; fallback cleanly if SQL migration hasn't been run yet
     let result = await supabase
@@ -338,6 +357,7 @@ function Register({
     }
 
     if (result.data) {
+      savePlayerName(cleanNickname)
       onRegisterCompleted(result.data)
     }
   }
@@ -435,19 +455,25 @@ function Register({
 
       {/* Champ Prénom / Surnom */}
       <div>
-        <label className="block text-xs font-bold text-slate-300 mb-1.5 text-center">
-          Ton prénom ou surnom{' '}
-          <span className="text-slate-400 font-normal">
-            (ou laisse vide pour utiliser « {selectedAvatar?.name} »)
-          </span>
+        <label
+          htmlFor="player-nickname"
+          className="block text-xs font-bold text-slate-300 mb-1.5 text-center"
+        >
+          Ton prénom ou pseudo <span className="text-rose-300">*</span>
         </label>
         <input
+          id="player-nickname"
+          autoComplete="nickname"
+          aria-required="true"
           className="p-3.5 w-full rounded-xl bg-slate-950 border border-slate-700 text-white text-base font-bold text-center focus:outline-none focus:border-rose-400"
           type="text"
           value={nickname}
-          onChange={(val) => setNickname(val.currentTarget.value)}
-          placeholder={`Ex: Titou (${selectedAvatar?.name || 'Ton rôle'})`}
-          maxLength={18}
+          onChange={(val) => {
+            setNickname(val.currentTarget.value)
+            setErrorMsg(null)
+          }}
+          placeholder="Ex: Titou"
+          maxLength={PLAYER_NAME_MAX_LENGTH}
         />
       </div>
 
@@ -469,16 +495,14 @@ function Register({
         )}
         <button
           type="submit"
-          disabled={sending || !selectedAvatar}
+          disabled={sending || !selectedAvatar || !cleanNickname}
           className="flex-1 py-3.5 rounded-xl bg-gradient-to-r from-rose-600 to-indigo-600 hover:from-rose-500 hover:to-indigo-500 disabled:opacity-40 text-white font-black text-base transition shadow-lg"
         >
           {sending
             ? 'Entrée en scène...'
-            : `🎬 Rejoindre en tant que ${
-                nickname.trim()
-                  ? `${nickname.trim()} (${selectedAvatar?.name})`
-                  : selectedAvatar?.name || 'Joueur'
-              }`}
+            : !cleanNickname
+              ? '✍️ Écris ton prénom ou pseudo'
+              : `🎬 Rejoindre en tant que ${cleanNickname} (${selectedAvatar?.name ?? 'Joueur'})`}
         </button>
       </div>
     </form>

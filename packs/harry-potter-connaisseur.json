@@ -1,6 +1,6 @@
 {
-  "name": "⚡ Harry Potter — Le Quiz du Vrai Connaisseur (9 manches)",
-  "description": "9 manches écrites par un immense spécialiste de l'univers (il a vu au moins un bout d'un film). Cape du maraudeur, nain géant, rouquin malin : ici, on maîtrise son sujet.",
+  "name": "⚡ Harry Potter — Le Quiz du Vrai Connaisseur (12 manches)",
+  "description": "12 manches écrites par un immense spécialiste de l'univers (il a vu au moins un bout d'un film). Cape du maraudeur, nain géant, rouquin malin : ici, on maîtrise son sujet.",
   "mode": "mixed",
   "avatar_theme": "harry_potter",
   "questions": [
@@ -254,6 +254,99 @@
     },
     {
       "order": 8,
+      "question_type": "quiz",
+      "body": "🦡 Quel est le Poufsouf le plus connu… ou plutôt le seul (lol) ?",
+      "image_url": null,
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/71/49/6d/71496d6c-67b0-c684-02d9-fcc543e22078/mzaf_6055771900274130683.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        {
+          "body": "Grégory Pattinson",
+          "is_correct": true
+        },
+        {
+          "body": "Édouard Cullen",
+          "is_correct": false
+        },
+        {
+          "body": "Cédric machin-chose",
+          "is_correct": false
+        },
+        {
+          "body": "Un blaireau avec une écharpe jaune",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 9,
+      "question_type": "quiz",
+      "body": "🧹 Au quidisch, à quoi sert la petite balle dorée avec des ailes ?",
+      "image_url": null,
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/06/d0/e2/06d0e212-3cfc-d56a-a556-83383da598aa/mzaf_1095038464649433962.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        {
+          "body": "À faire gagner l'équipe direct, même si les autres ont joué pour rien",
+          "is_correct": true
+        },
+        {
+          "body": "À débloquer la tireuse à bièreaubeurre au club-house",
+          "is_correct": false
+        },
+        {
+          "body": "À remplacer l'arbitre quand il est parti boire un coup",
+          "is_correct": false
+        },
+        {
+          "body": "À faire peur aux Poufsouf",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 10,
+      "question_type": "quiz",
+      "body": "🎩 À la rentrée en 6e à Poudlard, comment décide-t-on dans quelle maison tu vas passer les 7 prochaines années ?",
+      "image_url": null,
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/d8/57/61/d857619c-2369-8251-9872-723887abfc9f/mzaf_16652206452432754333.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        {
+          "body": "Un vieux chapeau sale te juge à voix haute devant tout le réfectoire",
+          "is_correct": true
+        },
+        {
+          "body": "C'est Parcoursup qui tranche en juillet",
+          "is_correct": false
+        },
+        {
+          "body": "Si tu ne sais pas quoi faire de ta vie, tu finis d'office chez Poufsouf",
+          "is_correct": false
+        },
+        {
+          "body": "Le nain géant te regarde deux secondes et te jette dans une salle au pif",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 11,
       "question_type": "blind_test",
       "body": "🎵 Blind Test final : ce thème bouleversant du dernier film, c'est de qui ?",
       "image_url": null,

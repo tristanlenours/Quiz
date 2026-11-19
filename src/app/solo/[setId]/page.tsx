@@ -9,6 +9,12 @@ import {
 import { PackLeaderboard } from '@/components/PackLeaderboard'
 import { SoloGate, isHostUnlocked } from '@/components/SoloGate'
 import { ScoreEntry, fetchPackScores } from '@/leaderboard'
+import {
+  cleanPlayerName,
+  PLAYER_NAME_MAX_LENGTH,
+  readSavedPlayerName,
+  savePlayerName,
+} from '@/playerName'
 import { getUniverseTheme } from '@/themes'
 import {
   Choice,
@@ -148,6 +154,7 @@ function SoloGame({ setId }: { setId: string }) {
       setWriteError(`Impossible de démarrer la partie : ${pErr?.message}`)
       return
     }
+    savePlayerName(nickname)
     setGameId(game.id)
     setParticipant(player)
     setResults([])
@@ -270,6 +277,13 @@ function Intro({
   const [nickname, setNickname] = useState('')
   const [sending, setSending] = useState(false)
   const selected = theme.avatars.find((a) => a.id === avatarId)
+  const cleanNickname = cleanPlayerName(nickname)
+
+  // Prénom gardé d'un jeu précédent (cookie, D72)
+  useEffect(() => {
+    const saved = readSavedPlayerName()
+    if (saved) setNickname((current) => current || saved)
+  }, [])
 
   if (trainingRefused) {
     return (
@@ -286,9 +300,9 @@ function Intro({
       <form
         onSubmit={async (e) => {
           e.preventDefault()
-          if (!avatarId) return
+          if (!avatarId || !cleanNickname) return
           setSending(true)
-          await onStart(nickname, avatarId)
+          await onStart(cleanNickname, avatarId)
           setSending(false)
         }}
         className="bg-slate-900/95 border border-white/15 p-5 rounded-3xl max-w-2xl w-full shadow-2xl space-y-4 text-white my-auto"
@@ -345,14 +359,22 @@ function Intro({
           ))}
         </div>
 
-        <input
-          className="p-3.5 w-full rounded-xl bg-slate-950 border border-slate-700 text-white text-base font-bold text-center focus:outline-none focus:border-rose-400"
-          type="text"
-          value={nickname}
-          onChange={(e) => setNickname(e.currentTarget.value)}
-          placeholder={`Ton prénom (sinon « ${selected?.name ?? 'Joueur'} »)`}
-          maxLength={18}
-        />
+        <div>
+          <label htmlFor="solo-nickname" className="block text-xs font-bold text-slate-300 mb-1.5 text-center">
+            Ton prénom ou pseudo <span className="text-rose-300">*</span>
+          </label>
+          <input
+            id="solo-nickname"
+            className="p-3.5 w-full rounded-xl bg-slate-950 border border-slate-700 text-white text-base font-bold text-center focus:outline-none focus:border-rose-400"
+            type="text"
+            autoComplete="nickname"
+            aria-required="true"
+            value={nickname}
+            onChange={(e) => setNickname(e.currentTarget.value)}
+            placeholder="Ton prénom ou pseudo"
+            maxLength={PLAYER_NAME_MAX_LENGTH}
+          />
+        </div>
 
         {error && (
           <div className="p-3 rounded-xl bg-red-500/20 border border-red-400/40 text-red-200 text-xs font-bold text-center">
@@ -362,10 +384,10 @@ function Intro({
 
         <button
           type="submit"
-          disabled={sending || !selected}
+          disabled={sending || !selected || !cleanNickname}
           className="w-full py-4 rounded-xl bg-gradient-to-r from-rose-600 to-indigo-600 disabled:opacity-40 font-black text-lg shadow-lg"
         >
-          {sending ? 'Entrée en scène...' : '🎬 Commencer'}
+          {sending ? 'Entrée en scène...' : cleanNickname ? '🎬 Commencer' : '✍️ Écris ton prénom ou pseudo'}
         </button>
       </form>
     </div>

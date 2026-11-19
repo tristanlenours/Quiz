@@ -58,6 +58,9 @@ Personnage issu du thème associé au pack (par défaut *Love Actually* et ses 1
 **Débrief du Réalisateur & Trophées Spéciaux (`/api/game-analysis`)** :
 Analyse humoristique de fin de partie générée à partir des statistiques réelles des joueurs (vitesse, précision, séries, remontada), combinant des **Trophées déterministes** (*Lucky Luke du Buzzer*, *Sniper de Downing Street*, *Prix Mr Bean de l'Emballage*, *Sprint Final à Heathrow*) et une **chronique personnalisée** propulsée par l'API gratuite **Gemini** (`GEMINI_API_KEY`) avec repli déterministe automatique.
 
+**Downing Street Groove (`/host/groove/[id]`, `/groove/[id]`, `src/groove.ts`)** :
+Mini-jeu de soirée (style *Lapins Crétins*) sur le thème *Love Actually* : course de 100 m (60 s max) dans les couloirs du 10 Downing Street projetée sur l'Écran Hôte (TV), où chaque joueur alterne GAUCHE / DROITE sur sa Manette mobile pour faire danser son personnage et doit s'arrêter net dès que la secrétaire ouvre la porte (« 1, 2, 3 Soleil »).
+
 ---
 
 ## 3. Architecture & Cohabitation Supabase / Railway

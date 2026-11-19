@@ -41,6 +41,11 @@ export default function Home() {
       return
     }
 
+    if (data.current_question_sequence === -1) {
+      router.push(`/groove/${data.id}`)
+      return
+    }
+
     router.push(`/game/${data.id}`)
   }
 

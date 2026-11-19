@@ -7,6 +7,7 @@ import {
   resolveAvatarTheme,
 } from '@/avatars'
 import { FunPodiumAndAnalysis } from '@/components/FunPodiumAndAnalysis'
+import { GROOVE_SEQUENCE_MARKER } from '@/groove'
 import { getUniverseTheme } from '@/themes'
 import {
   Game,
@@ -44,9 +45,14 @@ export default function PlayerGamePage({
     const fetchTheme = async () => {
       const { data: game } = await supabase
         .from('quiz_games')
-        .select('quiz_set_id')
+        .select('quiz_set_id, current_question_sequence')
         .eq('id', gameId)
         .single()
+      // Lien d'un salon Downing Street Groove ouvert ici par erreur : manette du mini-jeu (D71)
+      if (game?.current_question_sequence === GROOVE_SEQUENCE_MARKER) {
+        window.location.replace(`/groove/${gameId}`)
+        return
+      }
       if (!game?.quiz_set_id) return
       const { data: set, error } = await supabase
         .from('quiz_sets')
