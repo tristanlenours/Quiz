@@ -35,6 +35,7 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **I24** | 2026-11-19 | Vérifier le jeu navigateur *Love Actually* (Downing Street Groove), en améliorer la qualité si nécessaire et contrôler les effets de bord sur les quiz. Les joueurs doivent **obligatoirement** renseigner un **prénom ou pseudo**, gardé dans un **cookie** pour être **pré-rempli** quand on enchaîne sur un autre jeu. | Demande explicite auteur | Actif |
 | **I25** | 2026-11-19 | Manette du Groove : « *les touches de la manette sont trop basses sur le téléphone* » ; « *un thème davantage présent* », « *un décor avec un sapin de Noël* » ; « *la musique n'est pas celle de la scène en question* ». Arbitrage : la vraie musique de la scène, en lançant le Groove **après** le Grand Quiz. | Demande & arbitrage auteur | Actif |
 | **I26** | 2026-11-19 | Mieux retransmettre l'ambiance de la scène de danse (captures du couloir et de l'escalier aux portraits fournies) : « *la vieille qui apparaît quand la musique baisse pour surveiller et juger. Si on repart trop tôt à danser alors qu'on est encore en freeze et que la vieille est toujours là, sanction* ». | Demande explicite auteur | Actif |
+| **I27** | 2026-11-19 | Le Groove doit tenir **jusqu'à 10 joueurs** sur l'écran : « *la hauteur de l'écran pourrait peut-être se révéler un peu juste* ». La TV est en 4K, mais l'image vient d'une **Surface Pro 7** qui streame vers elle. | Demande explicite auteur | Actif |
 
 ---
 
@@ -117,6 +118,7 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **D73** | 2026-11-19 | Groove : touches remontées, décor de Noël, musique de la scène | Manette calée sur la hauteur visible (`100dvh`, zone sûre iOS) : touches au milieu de l'écran, message de flag à emplacement fixe. Décor partagé `src/components/GrooveDecor.tsx` (sapin illuminé avec cadeaux, guirlande lumineuse, neige) sur la manette, le salon TV, la piste (sapin = ligne d'arrivée des 100 m) et le podium ; lumières éteintes quand la porte s'ouvre. Musique : extrait iTunes de la scène (celui du Blind Test du Grand Quiz), Groove à lancer après le Grand Quiz (avertissement dans le Studio). | Adopté |
 | **D74** | 2026-11-19 | Retouche du Groove : pas de suite E2E complète avant de livrer | Une modification limitée au mini-jeu (routes `/groove` et `/host/groove`, `src/groove.ts`, `src/components/GrooveDecor.tsx`) se livre après `npm test` et `tests/e2e/groove-game.spec.ts`. La suite complète reste due dès qu'un fichier partagé avec le quiz change (Salon, manette quiz, scores). | Adopté |
 | **D75** | 2026-11-19 | Groove : la secrétaire qui juge, la fausse sortie, le décor de la scène | La musique baisse en fondu (`warning`), la secrétaire apparaît dans l'encadrement de la double porte (`watching`, musique presque coupée), puis une fois sur deux la musique repart alors qu'elle est toujours là (`lingering`, 0,9 à 1,7 s) : tout pas est alors sanctionné, sans grâce. Décor dessiné d'après la scène (`src/components/DowningStreetScene.tsx`) : murs crème, cadres dorés, double porte blanche, escalier aux portraits noir et blanc et rampe en fer forgé, parquet et tapis rouges. | Adopté |
+| **D76** | 2026-11-19 | Écran TV du Groove : mis à l'échelle de l'écran, 15 couloirs sans défilement | L'écran TV est dessiné pour 1920×1080 et mis à l'échelle de la fenêtre réelle par la taille de police racine (tout ce qui est en rem suit). Pendant la course, la page tient en `100dvh` : le décor rétrécit avec le nombre de danseurs et chaque couloir tient sur une ligne, à hauteur partagée. Message de flag en surimpression, bouton plein écran au salon. Mesuré : 15 couloirs visibles de 1280×720 à 3840×2160. | Adopté |
 
 ---
 
@@ -708,3 +710,26 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 - **Vérifié** dans le navigateur : la TV en 1440×900 et la manette en 375×812, dans les quatre états. Un pas envoyé pendant `lingering` déclenche bien le flag et le gel. `npm test` couvre la sanction sans grâce en `lingering`.
 - **Choix laissés à l'agent** : la secrétaire n'est pas nommée (le film ne la présente pas) et est dessinée, pas photographiée (personne réelle). La fréquence de la fausse sortie (une fois sur deux) et ses durées sont des constantes de `src/groove.ts` (`LINGER_CHANCE`, `LINGER_MIN_MS`, `LINGER_MAX_MS`), faciles à régler après une répétition.
 - **Alternatives écartées** : couper la musique pendant toute sa présence (pas de piège) ; une fausse sortie sans retour de la musique (le piège serait seulement visuel, moins drôle).
+
+### 2026-11-19 — D76 : Écran TV du Groove, mis à l'échelle de l'écran et 15 couloirs sans défilement
+- **Contexte** : Intention I27. TV 4K, mais l'image vient d'une Surface Pro 7 (2736×1824, mise à l'échelle 200 % par défaut) : le navigateur y voit une page de **1368×912** en 3:2, moins la barre d'onglets s'il n'est pas en plein écran (environ 1368×830).
+- **Constat avant correction** (10 joueurs fictifs, 1368×830) : seuls **5 couloirs sur 10** étaient visibles, la page faisait 1525 px de haut ; au salon, le bouton « Lancer la course » était déjà sous le bord (920 px). Chaque couloir prenait 91 px (nom au-dessus, barre de 48 px dessous) et le décor 24 % de la hauteur.
+- **Décision** :
+  1. **Mise à l'échelle** : l'écran TV (`/host/groove/[id]`) est pensé pour 1920×1080 ; la taille de police racine vaut `16 px × min(largeur / 1920, hauteur / 1080)` (entre 8 et 48 px), recalculée au redimensionnement (`resize`, `ResizeObserver` et contrôle toutes les 2 s, l'événement seul ne suffisant pas) et rétablie en quittant la page. Les tailles en px du salon (QR code, petits textes, guirlande) passent en rem pour suivre.
+  2. **Course en `100dvh`**, pleine largeur : plus de défilement. Le décor du couloir rétrécit selon le nombre de danseurs (26 % de la hauteur jusqu'à 4, 19 % jusqu'à 8, 14 % jusqu'à 12, 12 % au-delà).
+  3. **Couloirs sur une ligne** (prénom, tapis rouge avec le pion, distance) dont la hauteur est calculée : `(100 − 26 − décor − 0,6 × n) / n` % de l'écran, entre 3 % et 9 %. Textes et pions proportionnels à cette hauteur. Avec de la place, une seconde ligne donne le personnage et l'état (flag, pose sérieuse, combo) ; sinon icônes à côté du prénom.
+  4. **Le message de flag** s'affiche en surimpression sur le décor : la piste ne bouge plus quand il apparaît.
+  5. **Bouton « ⛶ Plein écran »** au salon : sur la Surface, il rend la hauteur prise par la barre du navigateur.
+  6. Salon : danseurs sur 4 colonnes en grand écran.
+- **Mesures après correction** (15 joueurs, le maximum ; tous les couloirs visibles, page = hauteur d'écran) :
+  | Fenêtre | Hauteur d'un couloir | Prénom |
+  |---|---|---|
+  | 1280×720 | 25 px | 11 px |
+  | 1368×830 (Surface, fenêtre) | 29 px | 12 px |
+  | 1368×912 (Surface, plein écran) | 32 px | 14 px |
+  | 1920×1080 | 38 px | 16 px |
+  | 2560×1440 | 51 px | 21 px |
+  | 3840×2160 | 76 px | 32 px |
+  À 10 joueurs sur la Surface en fenêtre : 42 px par couloir, prénoms en 17 px. Salon et podium tiennent aussi en 1368×830.
+- **Alternatives écartées** : deux colonnes de couloirs au-delà de 10 joueurs (moins lisible pour voir qui mène) ; zoom CSS de toute la page (moins standard que la police racine) ; garder des tailles en px (illisible en 4K à 100 %, tronqué sur la Surface).
+- **Limite** : en recopie d'écran, la TV 16:9 affiche l'image 3:2 de la Surface avec des bandes noires sur les côtés ; le plein écran du navigateur reste conseillé.

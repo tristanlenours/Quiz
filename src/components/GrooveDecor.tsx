@@ -130,7 +130,7 @@ export function Garland({
               key={i}
               className={`block w-2.5 h-3.5 rounded-full ${lit ? 'groove-twinkle' : ''}`}
               style={{
-                marginTop: `${2 + sag * 9}px`,
+                marginTop: `${(2 + sag * 9) / 16}rem`,
                 background: lit ? color : '#334155',
                 boxShadow: lit ? `0 0 8px 2px ${color}` : 'none',
                 animationDelay: `${(i % 4) * 0.4}s`,

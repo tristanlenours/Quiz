@@ -37,6 +37,9 @@ import useWindowSize from 'react-use/lib/useWindowSize'
 const GROOVE_MUSIC_URL =
   'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/a9/b6/16/a9b61684-87c1-2b2a-b255-5b951a4dcaff/mzaf_17251563327851743190.plus.aac.p.m4a'
 
+const TV_DESIGN_WIDTH = 1920
+const TV_DESIGN_HEIGHT = 1080
+
 export default function HostGroovePage({
   params: { id: gameId },
 }: {
@@ -60,6 +63,8 @@ export default function HostGroovePage({
   const [racers, setRacers] = useState<RacerState[]>([])
   const [recentFlagText, setRecentFlagText] = useState<string | null>(null)
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true)
+  // Taille d'un rem en px : l'écran TV est dessiné pour 1920×1080 puis mis à l'échelle
+  const [remPx, setRemPx] = useState<number>(16)
   // Re-rendu régulier pendant la course : les badges « Pris en flag » s'éteignent à l'heure
   const [, setFrameTick] = useState<number>(0)
 
@@ -78,6 +83,51 @@ export default function HostGroovePage({
   const soundEnabledRef = useRef<boolean>(true)
 
   soundEnabledRef.current = soundEnabled
+
+  // Écran TV dessiné pour 1920×1080, mis à l'échelle de l'écran réel (Surface en 200 %,
+  // TV 4K, 720p…) via la taille de police racine : tout ce qui est en rem suit (D76)
+  useEffect(() => {
+    const html = document.documentElement
+    const previous = html.style.fontSize
+    const apply = () => {
+      const scale = Math.min(
+        window.innerWidth / TV_DESIGN_WIDTH,
+        window.innerHeight / TV_DESIGN_HEIGHT,
+      )
+      const px = Math.max(8, Math.min(48, 16 * scale))
+      html.style.fontSize = `${px}px`
+      setRemPx(px)
+    }
+    apply()
+    // `resize` n'arrive pas toujours (passage en plein écran, projection) : on observe aussi
+    // la fenêtre visible elle-même
+    window.addEventListener('resize', apply)
+    const observer =
+      typeof ResizeObserver !== 'undefined' ? new ResizeObserver(apply) : null
+    observer?.observe(document.body)
+    const poll = setInterval(apply, 2000)
+    return () => {
+      window.removeEventListener('resize', apply)
+      observer?.disconnect()
+      clearInterval(poll)
+      html.style.fontSize = previous
+    }
+  }, [])
+
+  // Plein écran : sur une Surface dupliquée vers la TV, la barre du navigateur mange la hauteur
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false)
+  useEffect(() => {
+    const onChange = () => setIsFullscreen(Boolean(document.fullscreenElement))
+    document.addEventListener('fullscreenchange', onChange)
+    return () => document.removeEventListener('fullscreenchange', onChange)
+  }, [])
+  const toggleFullscreen = () => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {})
+    } else {
+      document.documentElement.requestFullscreen?.().catch(() => {})
+    }
+  }
 
   useEffect(() => {
     preloadAvatarImages('love_actually')
@@ -638,15 +688,31 @@ export default function HostGroovePage({
   const chronicle = buildGrooveChronicle(racers)
   const remainingSec = Math.max(0, RACE_DURATION_SEC - elapsedSec)
   const ladyPresent = isLadyPresent(doorState)
+  const isRaceScreen = phase === 'countdown' || phase === 'racing'
+
+  // Jusqu'à 15 danseurs : le décor rétrécit et les couloirs se partagent la hauteur restante
+  // (en % de la hauteur d'écran, environ 26 % pris par le bandeau, les guirlandes et les marges)
+  const laneCount = Math.max(1, racers.length)
+  const corridorVh =
+    laneCount <= 4 ? 26 : laneCount <= 8 ? 19 : laneCount <= 12 ? 14 : 12
+  const laneVh = Math.max(
+    3,
+    Math.min(9, (100 - 26 - corridorVh - 0.6 * laneCount) / laneCount),
+  )
+  const roomyLanes = laneVh >= 5.5
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-emerald-950 via-slate-950 to-red-950 text-white flex flex-col justify-between p-4 md:p-6 pt-0 md:pt-0 select-none">
+    <div
+      className={`relative ${
+        isRaceScreen ? 'h-[100dvh]' : 'min-h-[100dvh]'
+      } overflow-hidden bg-gradient-to-b from-emerald-950 via-slate-950 to-red-950 text-white flex flex-col justify-between p-6 pt-0 select-none`}
+    >
       <audio ref={musicRef} src={GROOVE_MUSIC_URL} loop preload="auto" />
       <Snowfall flakes={40} />
       <Garland
         bulbs={30}
         lit={!ladyPresent || phase !== 'racing'}
-        className="shrink-0 z-10 -mx-4 md:-mx-6 mb-2"
+        className="shrink-0 z-10 -mx-6 mb-2"
       />
 
       {/* =====================================================================
@@ -658,12 +724,21 @@ export default function HostGroovePage({
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-500/20 border border-rose-400/30 text-rose-200 text-xs font-black uppercase tracking-widest">
               📺 PARTY-GAME TV • 10 DOWNING STREET GROOVE
             </div>
-            <Link
-              href="/host/dashboard"
-              className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-slate-200 transition"
-            >
-              ← Retour au Studio
-            </Link>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={toggleFullscreen}
+                className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-slate-200 transition"
+              >
+                {isFullscreen ? '🗗 Quitter le plein écran' : '⛶ Plein écran'}
+              </button>
+              <Link
+                href="/host/dashboard"
+                className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-slate-200 transition"
+              >
+                ← Retour au Studio
+              </Link>
+            </div>
           </div>
 
           <div className="bg-slate-900/90 border border-white/15 rounded-3xl p-6 md:p-8 shadow-2xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
@@ -744,7 +819,7 @@ export default function HostGroovePage({
                     personnage de Love Actually et entrer sur le tapis rouge !
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                  <div className="grid grid-cols-3 xl:grid-cols-4 gap-2">
                     {participants.map((p) => {
                       const id = getParticipantIdentity(p)
                       return (
@@ -768,7 +843,7 @@ export default function HostGroovePage({
                               {id.displayName}
                             </div>
                             {id.characterName && (
-                              <div className="text-[10px] text-rose-300 truncate">
+                              <div className="text-[0.625rem] text-rose-300 truncate">
                                 {id.characterName}
                               </div>
                             )}
@@ -805,7 +880,7 @@ export default function HostGroovePage({
                       errorCorrectionLevel: 'M',
                       margin: 2,
                       scale: 4,
-                      width: 220,
+                      width: Math.round((220 * remPx) / 16),
                     }}
                   />
                 </div>
@@ -827,12 +902,12 @@ export default function HostGroovePage({
           2. COURSE EN DIRECT (COUNTDOWN & RACING)
       ===================================================================== */}
       {(phase === 'countdown' || phase === 'racing') && (
-        <div className="relative z-10 max-w-7xl w-full mx-auto flex-1 flex flex-col justify-between gap-4">
+        <div className="relative z-10 w-full flex-1 min-h-0 flex flex-col gap-4">
           {/* Bandeau supérieur : État de la Porte de la Secrétaire + Chrono */}
           <div
             data-testid="groove-door-banner"
             data-door-state={doorState}
-            className={`rounded-3xl p-4 md:p-5 border-2 transition-all duration-200 shadow-2xl flex flex-wrap items-center justify-between gap-4 ${
+            className={`shrink-0 rounded-3xl px-5 py-3 border-2 transition-all duration-200 shadow-2xl flex items-center justify-between gap-4 ${
               doorState === 'lingering'
                 ? 'bg-red-950/95 border-fuchsia-400 shadow-fuchsia-600/40'
                 : doorState === 'watching'
@@ -844,7 +919,7 @@ export default function HostGroovePage({
           >
             <div className="flex items-center gap-4">
               <div
-                className={`w-16 h-16 md:w-20 md:h-20 rounded-2xl flex justify-center text-4xl md:text-5xl border-2 shrink-0 overflow-hidden ${
+                className={`w-20 h-20 rounded-2xl flex justify-center text-5xl border-2 shrink-0 overflow-hidden ${
                   ladyPresent
                     ? 'bg-[#f6e9b4] border-white items-start'
                     : doorState === 'warning'
@@ -874,7 +949,7 @@ export default function HostGroovePage({
                         ? '🔉 LA MUSIQUE BAISSE… QUELQU’UN ARRIVE !'
                         : '🟢 PORTE FERMÉE — MUSIQUE À FOND DANS LE COULOIR !'}
                 </div>
-                <h2 className="text-2xl md:text-4xl font-black tracking-tight mt-0.5">
+                <h2 className="text-4xl font-black tracking-tight mt-0.5">
                   {doorState === 'lingering'
                     ? 'ELLE VOUS JUGE ENCORE : NE BOUGEZ PAS !'
                     : doorState === 'watching'
@@ -894,7 +969,7 @@ export default function HostGroovePage({
                 </div>
               ) : (
                 <div className="px-4 py-2 rounded-2xl bg-slate-950/80 border border-white/15 text-center">
-                  <div className="text-[10px] uppercase font-bold text-slate-400">
+                  <div className="text-[0.625rem] uppercase font-bold text-slate-400">
                     Chrono
                   </div>
                   <div className="text-2xl font-mono font-black text-amber-300">
@@ -929,163 +1004,185 @@ export default function HostGroovePage({
             </div>
           </div>
 
-          {/* Alerte Flagrant Délit en direct */}
-          {recentFlagText && (
-            <div className="bg-red-600/90 border-2 border-red-300 text-white px-5 py-2.5 rounded-2xl text-center font-black text-sm md:text-base shadow-lg">
-              {recentFlagText}
-            </div>
-          )}
-
           {/* Piste de course : Le Grand Couloir du 10 Downing Street */}
-          <div className="flex-1 border-2 border-amber-400/60 rounded-3xl flex flex-col relative overflow-hidden shadow-2xl">
+          <div className="flex-1 min-h-0 border-2 border-amber-400/60 rounded-3xl flex flex-col relative overflow-hidden shadow-2xl">
             {/* Le couloir de la scène : porte du bureau, tableaux, escalier aux portraits (D75) */}
             <div className="relative shrink-0 bg-[#efdd9f]">
               <Garland bulbs={24} lit={!ladyPresent} className="shrink-0" />
               <CorridorBackdrop
                 doorState={doorState}
-                className="block w-full h-[24vh] min-h-[140px] max-h-[260px]"
+                className="block w-full"
+                style={{ height: `${corridorVh}vh` }}
               />
               <ChristmasTree
                 lit={!ladyPresent}
                 className="absolute right-3 bottom-1 h-[78%] w-auto drop-shadow-[0_0_18px_rgba(250,204,21,0.35)]"
               />
+              {/* Alerte Flagrant Délit, en surimpression : rien ne bouge sur la piste */}
+              {recentFlagText && (
+                <div className="absolute left-1/2 -translate-x-1/2 bottom-2 z-20 max-w-[80%] truncate bg-red-600/95 border-2 border-red-200 text-white px-5 py-2 rounded-2xl text-center font-black text-xl shadow-2xl">
+                  {recentFlagText}
+                </div>
+              )}
             </div>
-            {/* Le parquet et les tapis rouges */}
+            {/* Le parquet et les tapis rouges : une ligne par danseur, hauteur partagée (D76) */}
             <div
-              className="flex-1 flex gap-4 min-h-0 px-4 pb-4 pt-3 md:px-6 md:pb-6"
+              className="flex-1 min-h-0 flex flex-col px-6 pb-5 pt-2"
               style={{
                 backgroundImage:
                   'repeating-linear-gradient(90deg, #6b3f19 0 54px, #5a3414 54px 108px)',
               }}
             >
-              <div className="flex-1 min-w-0 flex flex-col justify-between">
-                {/* Repères de distance (0 m -> 25 m -> 50 m -> 75 m -> 100 m Sapin) */}
-                <div className="grid grid-cols-5 text-xs font-black uppercase tracking-wider text-amber-100 border-b border-amber-200/20 pb-2 mb-3">
+              {/* Repères de distance, alignés sur les tapis */}
+              <div className="shrink-0 flex gap-4 text-xs font-black uppercase tracking-wider text-amber-100 border-b border-amber-200/20 pb-1.5 mb-2">
+                <div className="w-60 shrink-0" />
+                <div className="flex-1 grid grid-cols-5">
                   <div>🚪 0 m • Bureau</div>
                   <div className="text-center">🖼️ 25 m • Portraits</div>
                   <div className="text-center">🕯️ 50 m • Grand Couloir</div>
                   <div className="text-center">🪜 75 m • Rampe</div>
                   <div className="text-right">🎄 100 m • Sapin</div>
                 </div>
+                <div className="w-24 shrink-0" />
+              </div>
 
-                {/* Couloirs des joueurs */}
-                <div className="space-y-3 my-auto">
-                  {racers.map((r) => {
-                    const id = getParticipantIdentity({
-                      nickname: r.nickname,
-                      avatar_id: r.avatarId,
-                    })
-                    const now = Date.now()
-                    const isStunned = now < r.stunnedUntilMs
-                    const pct = Math.min(
-                      100,
-                      Math.max(0, (r.distance / FINISH_DISTANCE) * 100),
-                    )
+              {/* Couloirs des joueurs */}
+              <div
+                className="flex-1 min-h-0 flex flex-col justify-center gap-[0.6vh]"
+                style={{ ['--lane' as string]: `${laneVh}vh` }}
+              >
+                {racers.map((r) => {
+                  const id = getParticipantIdentity({
+                    nickname: r.nickname,
+                    avatar_id: r.avatarId,
+                  })
+                  const isStunned = Date.now() < r.stunnedUntilMs
+                  const hasFinished = r.finishedAtMs !== null
+                  const frozen = ladyPresent && !hasFinished && !isStunned
+                  const pct = Math.min(
+                    100,
+                    Math.max(0, (r.distance / FINISH_DISTANCE) * 100),
+                  )
 
-                    return (
-                      <div
-                        key={r.participantId}
-                        data-testid={`racer-lane-${r.participantId}`}
-                        data-distance={r.distance}
-                        className={`relative rounded-2xl p-2.5 border transition-colors ${
-                          isStunned
-                            ? 'bg-red-950/70 border-red-500/70'
-                            : r.finishedAtMs !== null
-                              ? 'bg-emerald-950/70 border-emerald-400/70'
-                              : 'bg-gradient-to-r from-rose-950/50 via-red-950/40 to-amber-950/50 border-amber-500/25'
-                        }`}
-                      >
-                        {/* Ligne d'arrivée en damier à droite */}
-                        <div className="absolute right-3 top-2 bottom-2 w-2 rounded bg-gradient-to-b from-amber-300 via-white to-amber-300 opacity-60" />
-
-                        {/* Infos coureur en surimpression gauche */}
-                        <div className="flex items-center justify-between text-xs mb-1.5 relative z-10">
-                          <div className="flex items-center gap-2">
-                            <span className="font-black text-white">
-                              {id.hasCustomName && id.characterName
-                                ? `${id.displayName} (${id.characterName})`
-                                : id.displayName}
+                  return (
+                    <div
+                      key={r.participantId}
+                      data-testid={`racer-lane-${r.participantId}`}
+                      data-distance={r.distance}
+                      className={`shrink-0 flex items-center gap-4 rounded-xl px-3 border transition-colors ${
+                        isStunned
+                          ? 'bg-red-900/80 border-red-400/80'
+                          : hasFinished
+                            ? 'bg-emerald-950/80 border-emerald-400/70'
+                            : 'bg-black/25 border-amber-500/20'
+                      }`}
+                      style={{ height: 'var(--lane)' }}
+                    >
+                      {/* Nom (et, s'il y a la place, personnage et état) */}
+                      <div className="w-60 shrink-0 min-w-0 leading-tight">
+                        <div
+                          className="font-black text-white truncate"
+                          style={{
+                            fontSize: roomyLanes
+                              ? 'calc(var(--lane) * 0.3)'
+                              : 'calc(var(--lane) * 0.42)',
+                          }}
+                        >
+                          {id.displayName}
+                          {!roomyLanes && r.combo >= 4 && !isStunned && (
+                            <span className="ml-1.5 text-amber-300">
+                              🔥{r.combo}
                             </span>
-                            {r.combo >= 4 && !isStunned && (
-                              <span className="px-2 py-0.5 rounded-full bg-amber-500/30 border border-amber-400 text-amber-200 text-[11px] font-black">
-                                🔥 Groove x{r.combo}
-                              </span>
-                            )}
-                            {isStunned && (
-                              <span className="px-2 py-0.5 rounded-full bg-red-600 text-white text-[11px] font-black animate-pulse">
-                                😱 PRIS EN FLAG ! (-8 m)
-                              </span>
-                            )}
-                            {!isStunned &&
-                              ladyPresent &&
-                              r.finishedAtMs === null && (
-                                <span className="px-2 py-0.5 rounded-full bg-slate-800 border border-slate-500 text-slate-200 text-[11px] font-semibold">
-                                  🧐 Pose sérieuse…
-                                </span>
-                              )}
-                          </div>
-
-                          <div className="flex items-center gap-3 font-mono font-bold">
-                            {r.caughtCount > 0 && (
-                              <span className="text-red-300 text-[11px]">
-                                🚨 {r.caughtCount} flag
-                                {r.caughtCount > 1 ? 's' : ''}
-                              </span>
-                            )}
-                            <span className="text-amber-300">
-                              {r.finishedAtMs !== null
-                                ? `🏁 ${(r.finishedAtMs / 1000).toFixed(1)}s`
-                                : `${Math.round(r.distance)} m`}
+                          )}
+                          {!roomyLanes && r.caughtCount > 0 && (
+                            <span className="ml-1.5 text-red-300">
+                              🚨{r.caughtCount}
                             </span>
-                          </div>
+                          )}
                         </div>
-
-                        {/* Barre de progression Tapis Rouge + Pion Avatar */}
-                        <div className="relative h-12 bg-red-950/90 rounded-xl border border-amber-300/30 overflow-hidden">
+                        {roomyLanes && (
                           <div
-                            className={`h-full transition-all duration-150 ${
-                              isStunned
-                                ? 'bg-gradient-to-r from-red-800 to-red-600'
-                                : 'bg-gradient-to-r from-rose-700 via-amber-500 to-emerald-400'
-                            }`}
-                            style={{ width: `${Math.max(4, pct)}%` }}
-                          />
-
-                          {/* Avatar positionné sur la piste */}
-                          <div
-                            className="absolute top-1/2 -translate-y-1/2 flex items-center gap-1.5 transition-all duration-150"
-                            style={{
-                              left: `calc(${Math.min(92, Math.max(2, pct))}% - 12px)`,
-                            }}
+                            className="truncate font-bold text-rose-200/90"
+                            style={{ fontSize: 'calc(var(--lane) * 0.2)' }}
                           >
-                            {id.avatar ? (
-                              <img
-                                src={id.avatar.imageUrl}
-                                alt={id.avatar.name}
-                                className={`w-10 h-10 rounded-full object-cover border-2 shadow-lg ${
-                                  isStunned
-                                    ? 'border-red-400 grayscale'
-                                    : 'border-amber-300'
-                                }`}
-                              />
-                            ) : (
-                              <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-xl">
-                                🕺
-                              </div>
+                            {isStunned
+                              ? '😱 Pris en flag ! (-8 m)'
+                              : frozen
+                                ? '🧐 Pose sérieuse…'
+                                : r.combo >= 4
+                                  ? `🔥 Groove x${r.combo}`
+                                  : id.hasCustomName && id.characterName
+                                    ? id.characterName
+                                    : ' '}
+                            {r.caughtCount > 0 && (
+                              <span className="ml-2 text-red-300">
+                                🚨 {r.caughtCount}
+                              </span>
                             )}
-                            <span className="text-xl drop-shadow">
-                              {isStunned
-                                ? '😱'
-                                : ladyPresent && r.finishedAtMs === null
-                                  ? '🧐'
-                                  : r.lastPose}
-                            </span>
                           </div>
+                        )}
+                      </div>
+
+                      {/* Tapis rouge + pion */}
+                      <div className="relative flex-1 h-[72%] bg-red-950/90 rounded-lg border border-amber-300/30">
+                        <div
+                          className={`h-full rounded-lg transition-all duration-150 ${
+                            isStunned
+                              ? 'bg-gradient-to-r from-red-800 to-red-600'
+                              : 'bg-gradient-to-r from-rose-700 via-amber-500 to-emerald-400'
+                          }`}
+                          style={{ width: `${Math.max(2, pct)}%` }}
+                        />
+                        <div className="absolute right-1 top-1 bottom-1 w-1.5 rounded bg-gradient-to-b from-amber-300 via-white to-amber-300 opacity-70" />
+                        <div
+                          className="absolute top-1/2 flex items-center gap-1 transition-all duration-150"
+                          style={{
+                            left: `${pct}%`,
+                            transform: `translate(-${pct}%, -50%)`,
+                          }}
+                        >
+                          {id.avatar ? (
+                            <img
+                              src={id.avatar.imageUrl}
+                              alt={id.avatar.name}
+                              className={`rounded-full object-cover border-2 shadow-lg ${
+                                isStunned
+                                  ? 'border-red-300 grayscale'
+                                  : 'border-amber-300'
+                              }`}
+                              style={{
+                                width: 'calc(var(--lane) * 0.86)',
+                                height: 'calc(var(--lane) * 0.86)',
+                              }}
+                            />
+                          ) : (
+                            <span
+                              style={{ fontSize: 'calc(var(--lane) * 0.6)' }}
+                            >
+                              🕺
+                            </span>
+                          )}
+                          <span
+                            className="drop-shadow"
+                            style={{ fontSize: 'calc(var(--lane) * 0.5)' }}
+                          >
+                            {isStunned ? '😱' : frozen ? '🧐' : r.lastPose}
+                          </span>
                         </div>
                       </div>
-                    )
-                  })}
-                </div>
+
+                      {/* Distance ou temps */}
+                      <div
+                        className="w-24 shrink-0 text-right font-mono font-black text-amber-300"
+                        style={{ fontSize: 'calc(var(--lane) * 0.34)' }}
+                      >
+                        {hasFinished
+                          ? `${((r.finishedAtMs ?? 0) / 1000).toFixed(1)}s`
+                          : `${Math.round(r.distance)} m`}
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
             </div>
 

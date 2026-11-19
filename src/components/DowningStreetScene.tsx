@@ -3,6 +3,7 @@
  * dorés, double porte blanche où apparaît la secrétaire, escalier aux portraits noir et blanc
  * avec rampe en fer forgé. Dessins originaux en SVG, purement décoratifs (aria-hidden).
  */
+import type React from 'react'
 import { DoorState, isLadyPresent } from '@/groove'
 
 /** La secrétaire, dossiers serrés contre elle, qui observe et juge. */
@@ -145,9 +146,11 @@ for (let col = 0; col < 7; col++) {
 export function CorridorBackdrop({
   doorState,
   className = '',
+  style,
 }: {
   doorState: DoorState
   className?: string
+  style?: React.CSSProperties
 }) {
   const ladyThere = isLadyPresent(doorState)
   return (
@@ -155,6 +158,7 @@ export function CorridorBackdrop({
       viewBox="0 0 1200 240"
       preserveAspectRatio="xMidYMax meet"
       className={className}
+      style={style}
       aria-hidden="true"
       data-testid="groove-corridor"
       data-door-state={doorState}
