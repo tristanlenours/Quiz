@@ -10,3 +10,25 @@ body {
     background-size: cover;
     background-repeat: no-repeat; */
 }
+/* Décor de Noël de Downing Street Groove (D73) */
+@keyframes groove-twinkle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+}
+@keyframes groove-snow {
+    from { transform: translate3d(0, -12px, 0); }
+    to { transform: translate3d(14px, 110dvh, 0); }
+}
+.groove-twinkle {
+    animation: groove-twinkle 1.6s ease-in-out infinite;
+}
+.groove-snowflake {
+    top: -12px;
+    animation-name: groove-snow;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+    .groove-twinkle, .groove-snowflake { animation: none; }
+    .groove-snowflake { display: none; }
+}

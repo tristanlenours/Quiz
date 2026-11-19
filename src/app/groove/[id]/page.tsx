@@ -14,7 +14,7 @@ import {
   rankRacers,
   StepSide,
 } from '@/groove'
-import { getUniverseTheme } from '@/themes'
+import { ChristmasTree, Garland, Snowfall } from '@/components/GrooveDecor'
 import { getClientSessionId, Participant, supabase } from '@/types/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
@@ -23,14 +23,13 @@ export default function PlayerGroovePage({
 }: {
   params: { id: string }
 }) {
-  const theme = getUniverseTheme('love_actually')
   const [participant, setParticipant] = useState<Participant | null>(null)
   const participantRef = useRef<Participant | null>(null)
   participantRef.current = participant
 
   const [phase, setPhase] = useState<GroovePhase>('lobby')
   const [countdownSec, setCountdownSec] = useState<number>(
-    COUNTDOWN_DURATION_SEC
+    COUNTDOWN_DURATION_SEC,
   )
   const [doorState, setDoorState] = useState<DoorState>('dancing')
   const [remainingSec, setRemainingSec] = useState<number>(60)
@@ -195,8 +194,7 @@ export default function PlayerGroovePage({
   const identity = getParticipantIdentity(participant)
   const ranked = rankRacers(racers)
   const myRacer = racers.find((r) => r.participantId === participant.id)
-  const myRank =
-    ranked.findIndex((r) => r.participantId === participant.id) + 1
+  const myRank = ranked.findIndex((r) => r.participantId === participant.id) + 1
   const isStunned = myRacer
     ? Date.now() + hostClockOffsetRef.current < myRacer.stunnedUntilMs
     : false
@@ -215,10 +213,11 @@ export default function PlayerGroovePage({
     const trophies = computeGrooveTrophies(racers)
     const chronicle = buildGrooveChronicle(racers)
     return (
-      <div
-        className={`min-h-screen bg-gradient-to-br ${theme.pageBg} text-white p-4 flex flex-col justify-between select-none`}
-      >
-        <div className="max-w-lg w-full mx-auto my-auto space-y-4">
+      <div className="relative min-h-[100dvh] overflow-hidden bg-gradient-to-b from-emerald-950 via-slate-950 to-red-950 text-white flex flex-col select-none">
+        <Snowfall flakes={18} />
+        <Garland bulbs={12} className="shrink-0 z-10" />
+        <div className="relative z-10 max-w-lg w-full mx-auto my-auto space-y-4 p-4">
+          <ChristmasTree className="h-24 w-auto mx-auto" />
           <div className="bg-slate-900/95 border-2 border-amber-400/50 rounded-3xl p-6 text-center shadow-2xl space-y-3">
             <div className="text-xs font-black uppercase tracking-widest text-amber-300">
               🏁 Course Terminée • 10 Downing Street
@@ -303,205 +302,221 @@ export default function PlayerGroovePage({
   // MANETTE DE COURSE (COUNTDOWN & RACING)
   // ===========================================================================
   const distanceMeters = Math.round(myRacer?.distance ?? 0)
-  const pct = Math.min(100, Math.max(0, (distanceMeters / FINISH_DISTANCE) * 100))
+  const pct = Math.min(
+    100,
+    Math.max(0, (distanceMeters / FINISH_DISTANCE) * 100),
+  )
+  const lightsOn = doorState !== 'watching' && !isStunned
+  const buttonsDisabled = phase !== 'racing' || hasFinished
+
+  const stepButtonClass = (side: StepSide) => {
+    const recommended =
+      nextRecommendedSide === side || nextRecommendedSide === null
+    if (doorState === 'watching') {
+      return 'bg-slate-900/90 border-red-500/60 text-red-300'
+    }
+    if (side === 'L') {
+      return recommended
+        ? 'bg-gradient-to-b from-emerald-500 to-emerald-800 border-emerald-200 text-white shadow-emerald-500/40'
+        : 'bg-slate-900/90 border-emerald-500/40 text-emerald-200'
+    }
+    return recommended
+      ? 'bg-gradient-to-b from-rose-500 to-red-800 border-rose-200 text-white shadow-rose-500/40'
+      : 'bg-slate-900/90 border-rose-500/40 text-rose-200'
+  }
 
   return (
     <div
-      className={`min-h-screen flex flex-col justify-between p-4 select-none touch-manipulation transition-colors duration-150 ${
+      className={`relative h-[100dvh] overflow-hidden flex flex-col select-none touch-manipulation transition-colors duration-150 text-white ${
         isStunned
-          ? 'bg-red-950 text-white'
+          ? 'bg-red-950'
           : doorState === 'watching'
-            ? 'bg-gradient-to-b from-red-950 via-slate-950 to-red-950 text-white'
+            ? 'bg-gradient-to-b from-red-950 via-slate-950 to-red-950'
             : doorState === 'warning'
-              ? 'bg-gradient-to-b from-amber-950 via-slate-950 to-amber-950 text-white'
-              : `bg-gradient-to-br ${theme.pageBg} text-white`
+              ? 'bg-gradient-to-b from-amber-950 via-slate-950 to-amber-950'
+              : 'bg-gradient-to-b from-emerald-950 via-slate-950 to-red-950'
       }`}
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
-      {/* En-tête Joueur : Avatar + Distance + Rang + Chrono */}
-      <div className="bg-slate-900/90 border border-white/15 rounded-2xl p-3 space-y-2 shadow-lg">
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2.5 min-w-0">
-            {identity.avatar && (
-              <img
-                src={identity.avatar.imageUrl}
-                alt={identity.avatar.name}
-                className="w-10 h-10 rounded-full object-cover border-2 border-rose-400 shrink-0"
-              />
-            )}
-            <div className="min-w-0">
-              <div className="font-black text-sm truncate">
-                {identity.displayName}
+      <Snowfall flakes={18} />
+      <Garland lit={lightsOn} bulbs={12} className="shrink-0 z-10" />
+
+      <div className="relative z-10 flex-1 min-h-0 flex flex-col gap-2 px-3 pb-2">
+        {/* En-tête Joueur : Avatar + Distance + Rang + Chrono */}
+        <div className="shrink-0 bg-slate-900/90 border border-white/15 rounded-2xl p-2.5 space-y-1.5 shadow-lg">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              {identity.avatar && (
+                <img
+                  src={identity.avatar.imageUrl}
+                  alt={identity.avatar.name}
+                  className="w-9 h-9 rounded-full object-cover border-2 border-rose-400 shrink-0"
+                />
+              )}
+              <div className="min-w-0">
+                <div className="font-black text-sm truncate">
+                  {identity.displayName}
+                </div>
+                <div className="text-[11px] text-rose-300 truncate">
+                  {myRank > 0 ? `Rang #${myRank}` : 'En piste'} • Combo x
+                  {myRacer?.combo ?? 0}
+                </div>
               </div>
-              <div className="text-[11px] text-rose-300 truncate">
-                {myRank > 0 ? `Rang #${myRank}` : 'En piste'} • Combo x
-                {myRacer?.combo ?? 0}
+            </div>
+
+            <div className="text-right shrink-0">
+              <div className="text-base font-mono font-black text-amber-300">
+                {distanceMeters} / {FINISH_DISTANCE} m
+              </div>
+              <div className="text-[10px] font-bold uppercase text-slate-400">
+                {finalSprintRemainingSec !== null
+                  ? `Sprint : ${finalSprintRemainingSec}s`
+                  : `Chrono : ${remainingSec}s`}
               </div>
             </div>
           </div>
 
-          <div className="text-right shrink-0">
-            <div className="text-lg font-mono font-black text-amber-300">
-              {distanceMeters} / {FINISH_DISTANCE} m
-            </div>
-            <div className="text-[10px] font-bold uppercase text-slate-400">
-              {finalSprintRemainingSec !== null
-                ? `Sprint : ${finalSprintRemainingSec}s`
-                : `Chrono : ${remainingSec}s`}
-            </div>
+          {/* Jauge de progression jusqu'au sapin */}
+          <div className="relative h-2.5 bg-slate-950 rounded-full border border-white/10">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-red-600 via-amber-400 to-emerald-400 transition-all duration-150"
+              style={{ width: `${pct}%` }}
+            />
+            <span className="absolute -right-1 -top-2 text-sm leading-none">
+              🎄
+            </span>
           </div>
         </div>
 
-        {/* Jauge de progression personnelle */}
-        <div className="h-2.5 bg-slate-950 rounded-full overflow-hidden border border-white/10">
-          <div
-            className="h-full bg-gradient-to-r from-rose-500 via-amber-400 to-emerald-400 transition-all duration-150"
-            style={{ width: `${pct}%` }}
+        {/* Signal lumineux « 1, 2, 3 Soleil » */}
+        <div
+          data-testid="player-door-signal"
+          data-door-state={doorState}
+          className={`shrink-0 rounded-3xl px-4 py-3 text-center border-2 shadow-2xl flex flex-col items-center justify-center min-h-[104px] transition-all ${
+            phase === 'countdown'
+              ? 'bg-slate-900/95 border-amber-400'
+              : hasFinished
+                ? 'bg-emerald-900/90 border-emerald-300'
+                : isStunned
+                  ? 'bg-red-700 border-white animate-pulse'
+                  : doorState === 'watching'
+                    ? 'bg-red-600/95 border-white shadow-red-600/50'
+                    : doorState === 'warning'
+                      ? 'bg-amber-500/90 border-amber-200 text-slate-950'
+                      : 'bg-emerald-950/85 border-emerald-400/70'
+          }`}
+        >
+          {phase === 'countdown' ? (
+            <>
+              <div className="text-[11px] font-black uppercase tracking-widest text-amber-300">
+                Départ imminent
+              </div>
+              <div className="text-5xl font-black leading-none my-1">
+                {countdownSec}
+              </div>
+              <div className="text-xs text-slate-300">
+                Alterne GAUCHE et DROITE dès le GO !
+              </div>
+            </>
+          ) : hasFinished ? (
+            <>
+              <div className="text-xl font-black">
+                🎄 TU AS ATTEINT LE SAPIN !
+              </div>
+              <div className="text-xs text-emerald-200 mt-1">
+                Temps : {((myRacer?.finishedAtMs ?? 0) / 1000).toFixed(1)} s •
+                Regarde la fin du sprint sur la TV !
+              </div>
+            </>
+          ) : isStunned ? (
+            <>
+              <div className="text-xl font-black uppercase">
+                😱 PRIS EN FLAGRANT DÉLIT !
+              </div>
+              <div className="text-xs font-bold mt-1">
+                La secrétaire t’a vu danser : -8 mètres &amp; gelé de honte !
+              </div>
+            </>
+          ) : doorState === 'watching' ? (
+            <>
+              <div className="text-2xl font-black uppercase tracking-tight">
+                🧐 STOP ! NE BOUGE PLUS !
+              </div>
+              <div className="text-xs font-bold mt-1 opacity-95">
+                La porte est ouverte : lâche les boutons !
+              </div>
+            </>
+          ) : doorState === 'warning' ? (
+            <>
+              <div className="text-xl font-black uppercase">
+                ⚠️ LA POIGNÉE BOUGE…
+              </div>
+              <div className="text-xs font-bold mt-1">
+                Prépare-toi à lever les pouces immédiatement !
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="text-2xl font-black uppercase text-emerald-300">
+                🪩 DANSE À FOND !
+              </div>
+              <div className="text-xs text-slate-200 mt-1">
+                Alterne <strong>GAUCHE</strong> et <strong>DROITE</strong>{' '}
+                jusqu’au sapin !
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Emplacement fixe du message de flag : les touches ne bougent pas */}
+        <div className="shrink-0 h-6">
+          {recentFlagText && (
+            <div className="text-center text-[11px] font-bold text-rose-200 bg-rose-950/80 border border-rose-400/40 rounded-xl py-1 px-3 truncate">
+              {recentFlagText}
+            </div>
+          )}
+        </div>
+
+        {/* Deux énormes boutons GAUCHE / DROITE, au milieu de l'écran sous les pouces */}
+        <div className="shrink-0 grid grid-cols-2 gap-3 h-[34dvh] min-h-[160px] max-h-[300px]">
+          {(['L', 'R'] as const).map((side) => (
+            <button
+              key={side}
+              type="button"
+              data-testid={
+                side === 'L' ? 'groove-btn-left' : 'groove-btn-right'
+              }
+              disabled={buttonsDisabled}
+              onPointerDown={(e) => {
+                e.preventDefault()
+                sendStep(side)
+              }}
+              onContextMenu={(e) => e.preventDefault()}
+              className={`rounded-3xl border-4 font-black flex flex-col items-center justify-center gap-1.5 shadow-2xl active:scale-95 transition select-none touch-manipulation disabled:opacity-60 ${stepButtonClass(side)}`}
+            >
+              <span className="text-5xl">{side === 'L' ? '🕺' : '💃'}</span>
+              <span className="text-xl tracking-wider">
+                {side === 'L' ? 'GAUCHE' : 'DROITE'}
+              </span>
+              {doorState === 'dancing' && nextRecommendedSide === side && (
+                <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-white/20 text-white">
+                  ⚡ À TOI !
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Décor : le sapin du 10 Downing Street, ligne d'arrivée de la course */}
+        <div className="flex-1 min-h-0 flex items-end justify-center gap-3 overflow-hidden">
+          <ChristmasTree
+            lit={lightsOn}
+            className="h-full max-h-[200px] w-auto"
           />
+          <div className="pb-2 text-[11px] font-bold text-amber-200/90 leading-tight max-w-[9rem]">
+            🎄 Le sapin du 10 Downing Street t’attend en bas de l’escalier
+          </div>
         </div>
-      </div>
-
-      {/* Zone Centrale : Signal lumineux « 1, 2, 3 Soleil » */}
-      <div
-        data-testid="player-door-signal"
-        data-door-state={doorState}
-        className={`my-3 rounded-3xl p-5 text-center border-2 shadow-2xl flex flex-col items-center justify-center min-h-[160px] transition-all ${
-          phase === 'countdown'
-            ? 'bg-slate-900/95 border-amber-400'
-            : hasFinished
-              ? 'bg-emerald-900/90 border-emerald-300'
-              : isStunned
-                ? 'bg-red-700 border-white animate-pulse'
-                : doorState === 'watching'
-                  ? 'bg-red-600/95 border-white shadow-red-600/50'
-                  : doorState === 'warning'
-                    ? 'bg-amber-500/90 border-amber-200 text-slate-950'
-                    : 'bg-emerald-950/85 border-emerald-400/70'
-        }`}
-      >
-        {phase === 'countdown' ? (
-          <>
-            <div className="text-xs font-black uppercase tracking-widest text-amber-300">
-              Départ imminent
-            </div>
-            <div className="text-6xl font-black my-1">{countdownSec}</div>
-            <div className="text-xs text-slate-300">
-              Alterne GAUCHE et DROITE dès le GO !
-            </div>
-          </>
-        ) : hasFinished ? (
-          <>
-            <div className="text-4xl mb-1">🏆</div>
-            <div className="text-xl font-black">
-              TU ES EN BAS DE L’ESCALIER !
-            </div>
-            <div className="text-xs text-emerald-200 mt-1">
-              Temps : {((myRacer?.finishedAtMs ?? 0) / 1000).toFixed(1)} s •
-              Regarde la fin du sprint sur la TV !
-            </div>
-          </>
-        ) : isStunned ? (
-          <>
-            <div className="text-4xl mb-1">😱🚨</div>
-            <div className="text-xl font-black uppercase">
-              PRIS EN FLAGRANT DÉLIT !
-            </div>
-            <div className="text-xs font-bold mt-1">
-              La secrétaire t’a vu danser : -8 mètres &amp; gelé de honte !
-            </div>
-          </>
-        ) : doorState === 'watching' ? (
-          <>
-            <div className="text-4xl mb-1">🧐🛑</div>
-            <div className="text-2xl font-black uppercase tracking-tight">
-              STOP ! NE BOUGE PLUS !
-            </div>
-            <div className="text-xs font-bold mt-1 opacity-95">
-              La porte est ouverte : lâche les boutons !
-            </div>
-          </>
-        ) : doorState === 'warning' ? (
-          <>
-            <div className="text-4xl mb-1">⚠️🚪</div>
-            <div className="text-xl font-black uppercase">
-              LA POIGNÉE BOUGE…
-            </div>
-            <div className="text-xs font-bold mt-1">
-              Prépare-toi à lever les pouces immédiatement !
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="text-4xl mb-1">🪩🕺</div>
-            <div className="text-2xl font-black uppercase text-emerald-300">
-              DANSE À FOND !
-            </div>
-            <div className="text-xs text-slate-200 mt-1">
-              Alterne <strong>GAUCHE</strong> et <strong>DROITE</strong> le plus
-              vite possible !
-            </div>
-          </>
-        )}
-      </div>
-
-      {recentFlagText && (
-        <div className="text-center text-xs font-bold text-rose-200 bg-rose-950/80 border border-rose-400/40 rounded-xl py-1.5 px-3 mb-2 truncate">
-          {recentFlagText}
-        </div>
-      )}
-
-      {/* Deux énormes boutons GAUCHE / DROITE au pouce */}
-      <div className="grid grid-cols-2 gap-3 h-52 sm:h-60">
-        <button
-          type="button"
-          data-testid="groove-btn-left"
-          disabled={phase !== 'racing' || hasFinished}
-          onPointerDown={(e) => {
-            e.preventDefault()
-            sendStep('L')
-          }}
-          onContextMenu={(e) => e.preventDefault()}
-          className={`rounded-3xl border-4 font-black flex flex-col items-center justify-center gap-2 shadow-2xl active:scale-95 transition select-none touch-manipulation ${
-            doorState === 'watching'
-              ? 'bg-slate-900/90 border-red-500/60 text-red-300'
-              : nextRecommendedSide === 'L' || nextRecommendedSide === null
-                ? 'bg-gradient-to-b from-indigo-500 to-indigo-700 border-indigo-200 text-white shadow-indigo-500/40'
-                : 'bg-slate-900/90 border-indigo-500/40 text-indigo-200'
-          }`}
-        >
-          <span className="text-5xl">🕺</span>
-          <span className="text-xl tracking-wider">GAUCHE</span>
-          {doorState === 'dancing' && nextRecommendedSide === 'L' && (
-            <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-white/20 text-white">
-              ⚡ À TOI !
-            </span>
-          )}
-        </button>
-
-        <button
-          type="button"
-          data-testid="groove-btn-right"
-          disabled={phase !== 'racing' || hasFinished}
-          onPointerDown={(e) => {
-            e.preventDefault()
-            sendStep('R')
-          }}
-          onContextMenu={(e) => e.preventDefault()}
-          className={`rounded-3xl border-4 font-black flex flex-col items-center justify-center gap-2 shadow-2xl active:scale-95 transition select-none touch-manipulation ${
-            doorState === 'watching'
-              ? 'bg-slate-900/90 border-red-500/60 text-red-300'
-              : nextRecommendedSide === 'R' || nextRecommendedSide === null
-                ? 'bg-gradient-to-b from-rose-500 to-rose-700 border-rose-200 text-white shadow-rose-500/40'
-                : 'bg-slate-900/90 border-rose-500/40 text-rose-200'
-          }`}
-        >
-          <span className="text-5xl">💃</span>
-          <span className="text-xl tracking-wider">DROITE</span>
-          {doorState === 'dancing' && nextRecommendedSide === 'R' && (
-            <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-white/20 text-white">
-              ⚡ À TOI !
-            </span>
-          )}
-        </button>
       </div>
     </div>
   )

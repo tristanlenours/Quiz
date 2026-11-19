@@ -18,7 +18,7 @@ import {
   StepSide,
   WARNING_DURATION_MS,
 } from '@/groove'
-import { getUniverseTheme } from '@/themes'
+import { ChristmasTree, Garland, Snowfall } from '@/components/GrooveDecor'
 import { Participant, supabase } from '@/types/types'
 import { useQRCode } from 'next-qrcode'
 import Link from 'next/link'
@@ -26,15 +26,17 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import Confetti from 'react-confetti'
 import useWindowSize from 'react-use/lib/useWindowSize'
 
+// Musique de la scène de danse du film (D73) : le même extrait que la manche Blind Test du
+// Grand Quiz. Le Groove se lance donc APRÈS le Grand Quiz (avertissement dans le Studio).
+// Aucun titre ni artiste n'est affiché à l'écran.
 const GROOVE_MUSIC_URL =
-  'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/4a/67/15/4a671528-6b4d-4932-f7ab-7212db98f0a4/mzaf_10429321169689904795.plus.aac.p.m4a'
+  'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/a9/b6/16/a9b61684-87c1-2b2a-b255-5b951a4dcaff/mzaf_17251563327851743190.plus.aac.p.m4a'
 
 export default function HostGroovePage({
   params: { id: gameId },
 }: {
   params: { id: string }
 }) {
-  const theme = getUniverseTheme('love_actually')
   const { Canvas } = useQRCode()
   const { width, height } = useWindowSize()
 
@@ -43,7 +45,7 @@ export default function HostGroovePage({
   const [participants, setParticipants] = useState<Participant[]>([])
   const [phase, setPhase] = useState<GroovePhase>('lobby')
   const [countdownSec, setCountdownSec] = useState<number>(
-    COUNTDOWN_DURATION_SEC
+    COUNTDOWN_DURATION_SEC,
   )
   const [doorState, setDoorState] = useState<DoorState>('dancing')
   const [elapsedSec, setElapsedSec] = useState<number>(0)
@@ -104,7 +106,7 @@ export default function HostGroovePage({
           startOffset: number,
           duration: number,
           wave: OscillatorType = 'sine',
-          gainVal = 0.15
+          gainVal = 0.15,
         ) => {
           const osc = ctx.createOscillator()
           const gain = ctx.createGain()
@@ -113,7 +115,7 @@ export default function HostGroovePage({
           gain.gain.setValueAtTime(gainVal, now + startOffset)
           gain.gain.exponentialRampToValueAtTime(
             0.001,
-            now + startOffset + duration
+            now + startOffset + duration,
           )
           osc.connect(gain)
           gain.connect(ctx.destination)
@@ -149,7 +151,7 @@ export default function HostGroovePage({
         // Ignorer si l'autoplay audio navigateur est bloqué
       }
     },
-    []
+    [],
   )
 
   const syncMusicPlayback = useCallback((state: DoorState, active: boolean) => {
@@ -166,15 +168,17 @@ export default function HostGroovePage({
   }, [])
 
   const broadcastState = useCallback(
-    (override?: Partial<{
-      phase: GroovePhase
-      countdownSec: number
-      doorState: DoorState
-      elapsedSec: number
-      finalSprintRemainingSec: number | null
-      racers: RacerState[]
-      recentFlagText: string | null
-    }>) => {
+    (
+      override?: Partial<{
+        phase: GroovePhase
+        countdownSec: number
+        doorState: DoorState
+        elapsedSec: number
+        finalSprintRemainingSec: number | null
+        racers: RacerState[]
+        recentFlagText: string | null
+      }>,
+    ) => {
       const ch = channelRef.current
       if (!ch) return
       const curPhase = override?.phase ?? phaseRef.current
@@ -190,7 +194,7 @@ export default function HostGroovePage({
         (raceStartMsRef.current > 0
           ? Math.min(
               RACE_DURATION_SEC,
-              Math.floor((now - raceStartMsRef.current) / 1000)
+              Math.floor((now - raceStartMsRef.current) / 1000),
             )
           : 0)
       const curSprint =
@@ -200,7 +204,7 @@ export default function HostGroovePage({
             ? Math.max(
                 0,
                 FINAL_SPRINT_SEC -
-                  Math.floor((now - firstFinishMsRef.current) / 1000)
+                  Math.floor((now - firstFinishMsRef.current) / 1000),
               )
             : null
 
@@ -221,7 +225,7 @@ export default function HostGroovePage({
         },
       }).catch(() => {})
     },
-    []
+    [],
   )
 
   const finishRace = useCallback(async () => {
@@ -248,7 +252,7 @@ export default function HostGroovePage({
       if (phaseRef.current !== 'racing') return
       const now = Date.now()
       const idx = racersRef.current.findIndex(
-        (r) => r.participantId === participantId
+        (r) => r.participantId === participantId,
       )
       if (idx === -1) return
 
@@ -259,7 +263,7 @@ export default function HostGroovePage({
         now,
         raceStartMsRef.current,
         doorStateRef.current,
-        doorOpenedAtMsRef.current
+        doorOpenedAtMsRef.current,
       )
 
       const nextRacers = [...racersRef.current]
@@ -295,7 +299,7 @@ export default function HostGroovePage({
         broadcastState({ racers: nextRacers })
       }
     },
-    [broadcastState, finishRace, playSfx]
+    [broadcastState, finishRace, playSfx],
   )
 
   // Chargement initial et abonnement aux participants + canal Broadcast
@@ -325,7 +329,7 @@ export default function HostGroovePage({
         } else {
           // Ajouter un éventuel retardataire sans écraser les coureurs en course
           const existingIds = new Set(
-            racersRef.current.map((r) => r.participantId)
+            racersRef.current.map((r) => r.participantId),
           )
           const newcomers = pData
             .filter((p) => !existingIds.has(p.id))
@@ -353,7 +357,7 @@ export default function HostGroovePage({
         },
         () => {
           fetchInitial()
-        }
+        },
       )
       .subscribe()
 
@@ -403,10 +407,7 @@ export default function HostGroovePage({
     setPhase('countdown')
     setCountdownSec(COUNTDOWN_DURATION_SEC)
 
-    await supabase
-      .from('quiz_games')
-      .update({ phase: 'quiz' })
-      .eq('id', gameId)
+    await supabase.from('quiz_games').update({ phase: 'quiz' }).eq('id', gameId)
 
     broadcastState({
       phase: 'countdown',
@@ -521,8 +522,7 @@ export default function HostGroovePage({
 
       if (firstFinishMsRef.current !== null) {
         const sprintLeft =
-          FINAL_SPRINT_SEC -
-          Math.floor((now - firstFinishMsRef.current) / 1000)
+          FINAL_SPRINT_SEC - Math.floor((now - firstFinishMsRef.current) / 1000)
         setFinalSprintRemainingSec(Math.max(0, sprintLeft))
         if (sprintLeft <= 0) {
           clearInterval(tick)
@@ -558,16 +558,20 @@ export default function HostGroovePage({
   const remainingSec = Math.max(0, RACE_DURATION_SEC - elapsedSec)
 
   return (
-    <div
-      className={`min-h-screen bg-gradient-to-br ${theme.pageBg} text-white flex flex-col justify-between p-4 md:p-6 select-none`}
-    >
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-emerald-950 via-slate-950 to-red-950 text-white flex flex-col justify-between p-4 md:p-6 pt-0 md:pt-0 select-none">
       <audio ref={musicRef} src={GROOVE_MUSIC_URL} loop preload="auto" />
+      <Snowfall flakes={40} />
+      <Garland
+        bulbs={30}
+        lit={doorState !== 'watching' || phase !== 'racing'}
+        className="shrink-0 z-10 -mx-4 md:-mx-6 mb-2"
+      />
 
       {/* =====================================================================
           1. SALON D'ATTENTE (LOBBY)
       ===================================================================== */}
       {phase === 'lobby' && (
-        <div className="max-w-6xl w-full mx-auto my-auto space-y-6">
+        <div className="relative z-10 max-w-6xl w-full mx-auto my-auto space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-500/20 border border-rose-400/30 text-rose-200 text-xs font-black uppercase tracking-widest">
               📺 PARTY-GAME TV • 10 DOWNING STREET GROOVE
@@ -583,19 +587,22 @@ export default function HostGroovePage({
           <div className="bg-slate-900/90 border border-white/15 rounded-3xl p-6 md:p-8 shadow-2xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             {/* Colonne gauche : Pitch + Règles Lapins Crétins + Casting */}
             <div className="lg:col-span-7 space-y-6">
-              <div>
-                <div className="text-xs font-bold uppercase tracking-widest text-amber-300 mb-1">
-                  🎄 Épreuve Spéciale Love Actually • Zéro Culture G
+              <div className="flex items-start gap-5">
+                <ChristmasTree className="hidden sm:block h-36 w-auto shrink-0" />
+                <div>
+                  <div className="text-xs font-bold uppercase tracking-widest text-amber-300 mb-1">
+                    🎄 Épreuve Spéciale Love Actually • Zéro Culture G
+                  </div>
+                  <h1 className="text-3xl md:text-5xl font-black tracking-tight">
+                    🕺 Downing Street Groove
+                  </h1>
+                  <p className="text-slate-300 text-sm md:text-base mt-2">
+                    Le Premier Ministre se croit seul dans les couloirs du{' '}
+                    <strong>10 Downing Street</strong>… Déhanchez-vous jusqu’au
+                    sapin de Noël, en bas de l’escalier (100 m), sans vous faire
+                    surprendre par la secrétaire !
+                  </p>
                 </div>
-                <h1 className="text-3xl md:text-5xl font-black tracking-tight">
-                  🕺 Downing Street Groove
-                </h1>
-                <p className="text-slate-300 text-sm md:text-base mt-2">
-                  Le Premier Ministre se croit seul dans les couloirs du{' '}
-                  <strong>10 Downing Street</strong>… Déhanchez-vous jusqu’en bas
-                  de l’escalier (100 m) sans vous faire surprendre par la
-                  secrétaire !
-                </p>
               </div>
 
               {/* Les 3 règles illustrées */}
@@ -636,7 +643,8 @@ export default function HostGroovePage({
               <div className="bg-slate-950/70 border border-white/10 rounded-2xl p-4">
                 <div className="flex justify-between items-center mb-3">
                   <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                    🎬 Danseurs sur la ligne de départ ({participants.length}/15)
+                    🎬 Danseurs sur la ligne de départ ({participants.length}
+                    /15)
                   </span>
                   <a
                     href={`/groove/${gameId}`}
@@ -737,7 +745,7 @@ export default function HostGroovePage({
           2. COURSE EN DIRECT (COUNTDOWN & RACING)
       ===================================================================== */}
       {(phase === 'countdown' || phase === 'racing') && (
-        <div className="max-w-7xl w-full mx-auto flex-1 flex flex-col justify-between gap-4">
+        <div className="relative z-10 max-w-7xl w-full mx-auto flex-1 flex flex-col justify-between gap-4">
           {/* Bandeau supérieur : État de la Porte de la Secrétaire + Chrono */}
           <div
             data-testid="groove-door-banner"
@@ -808,7 +816,10 @@ export default function HostGroovePage({
                   const next = !soundEnabled
                   setSoundEnabled(next)
                   soundEnabledRef.current = next
-                  syncMusicPlayback(doorStateRef.current, next && phase === 'racing')
+                  syncMusicPlayback(
+                    doorStateRef.current,
+                    next && phase === 'racing',
+                  )
                 }}
                 className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold"
               >
@@ -833,133 +844,154 @@ export default function HostGroovePage({
           )}
 
           {/* Piste de course : Le Grand Couloir du 10 Downing Street */}
-          <div className="flex-1 bg-slate-950/90 border border-amber-500/30 rounded-3xl p-4 md:p-6 flex flex-col justify-between relative overflow-hidden shadow-2xl">
-            {/* Repères de distance (0 m -> 25 m -> 50 m -> 75 m -> 100 m Escalier) */}
-            <div className="grid grid-cols-5 text-xs font-black uppercase tracking-wider text-amber-300/80 border-b border-white/10 pb-2 mb-3">
-              <div>🚪 0 m • Bureau</div>
-              <div className="text-center">🖼️ 25 m • Portraits</div>
-              <div className="text-center">🕯️ 50 m • Grand Couloir</div>
-              <div className="text-center">🪜 75 m • Rampe</div>
-              <div className="text-right">🏁 100 m • Escalier</div>
-            </div>
+          <div className="flex-1 bg-gradient-to-b from-red-950/80 via-slate-950/90 to-emerald-950/80 border-2 border-amber-500/40 rounded-3xl px-4 pb-4 md:px-6 md:pb-6 flex flex-col relative overflow-hidden shadow-2xl">
+            <Garland
+              bulbs={24}
+              lit={doorState !== 'watching'}
+              className="shrink-0 -mx-4 md:-mx-6 mb-2"
+            />
+            <div className="flex-1 flex gap-4 min-h-0">
+              <div className="flex-1 min-w-0 flex flex-col justify-between">
+                {/* Repères de distance (0 m -> 25 m -> 50 m -> 75 m -> 100 m Sapin) */}
+                <div className="grid grid-cols-5 text-xs font-black uppercase tracking-wider text-amber-300/80 border-b border-white/10 pb-2 mb-3">
+                  <div>🚪 0 m • Bureau</div>
+                  <div className="text-center">🖼️ 25 m • Portraits</div>
+                  <div className="text-center">🕯️ 50 m • Grand Couloir</div>
+                  <div className="text-center">🪜 75 m • Rampe</div>
+                  <div className="text-right">🎄 100 m • Sapin</div>
+                </div>
 
-            {/* Couloirs des joueurs */}
-            <div className="space-y-3 my-auto">
-              {racers.map((r) => {
-                const id = getParticipantIdentity({
-                  nickname: r.nickname,
-                  avatar_id: r.avatarId,
-                })
-                const now = Date.now()
-                const isStunned = now < r.stunnedUntilMs
-                const pct = Math.min(
-                  100,
-                  Math.max(0, (r.distance / FINISH_DISTANCE) * 100)
-                )
+                {/* Couloirs des joueurs */}
+                <div className="space-y-3 my-auto">
+                  {racers.map((r) => {
+                    const id = getParticipantIdentity({
+                      nickname: r.nickname,
+                      avatar_id: r.avatarId,
+                    })
+                    const now = Date.now()
+                    const isStunned = now < r.stunnedUntilMs
+                    const pct = Math.min(
+                      100,
+                      Math.max(0, (r.distance / FINISH_DISTANCE) * 100),
+                    )
 
-                return (
-                  <div
-                    key={r.participantId}
-                    data-testid={`racer-lane-${r.participantId}`}
-                    data-distance={r.distance}
-                    className={`relative rounded-2xl p-2.5 border transition-colors ${
-                      isStunned
-                        ? 'bg-red-950/70 border-red-500/70'
-                        : r.finishedAtMs !== null
-                          ? 'bg-emerald-950/70 border-emerald-400/70'
-                          : 'bg-gradient-to-r from-rose-950/50 via-red-950/40 to-amber-950/50 border-amber-500/25'
-                    }`}
-                  >
-                    {/* Ligne d'arrivée en damier à droite */}
-                    <div className="absolute right-3 top-2 bottom-2 w-2 rounded bg-gradient-to-b from-amber-300 via-white to-amber-300 opacity-60" />
-
-                    {/* Infos coureur en surimpression gauche */}
-                    <div className="flex items-center justify-between text-xs mb-1.5 relative z-10">
-                      <div className="flex items-center gap-2">
-                        <span className="font-black text-white">
-                          {id.hasCustomName && id.characterName
-                            ? `${id.displayName} (${id.characterName})`
-                            : id.displayName}
-                        </span>
-                        {r.combo >= 4 && !isStunned && (
-                          <span className="px-2 py-0.5 rounded-full bg-amber-500/30 border border-amber-400 text-amber-200 text-[11px] font-black">
-                            🔥 Groove x{r.combo}
-                          </span>
-                        )}
-                        {isStunned && (
-                          <span className="px-2 py-0.5 rounded-full bg-red-600 text-white text-[11px] font-black animate-pulse">
-                            😱 PRIS EN FLAG ! (-8 m)
-                          </span>
-                        )}
-                        {!isStunned &&
-                          doorState === 'watching' &&
-                          r.finishedAtMs === null && (
-                            <span className="px-2 py-0.5 rounded-full bg-slate-800 border border-slate-500 text-slate-200 text-[11px] font-semibold">
-                              🧐 Pose sérieuse…
-                            </span>
-                          )}
-                      </div>
-
-                      <div className="flex items-center gap-3 font-mono font-bold">
-                        {r.caughtCount > 0 && (
-                          <span className="text-red-300 text-[11px]">
-                            🚨 {r.caughtCount} flag{r.caughtCount > 1 ? 's' : ''}
-                          </span>
-                        )}
-                        <span className="text-amber-300">
-                          {r.finishedAtMs !== null
-                            ? `🏁 ${(r.finishedAtMs / 1000).toFixed(1)}s`
-                            : `${Math.round(r.distance)} m`}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Barre de progression Tapis Rouge + Pion Avatar */}
-                    <div className="relative h-12 bg-slate-900/90 rounded-xl border border-white/10 overflow-hidden">
+                    return (
                       <div
-                        className={`h-full transition-all duration-150 ${
+                        key={r.participantId}
+                        data-testid={`racer-lane-${r.participantId}`}
+                        data-distance={r.distance}
+                        className={`relative rounded-2xl p-2.5 border transition-colors ${
                           isStunned
-                            ? 'bg-gradient-to-r from-red-800 to-red-600'
-                            : 'bg-gradient-to-r from-rose-700 via-amber-500 to-emerald-400'
+                            ? 'bg-red-950/70 border-red-500/70'
+                            : r.finishedAtMs !== null
+                              ? 'bg-emerald-950/70 border-emerald-400/70'
+                              : 'bg-gradient-to-r from-rose-950/50 via-red-950/40 to-amber-950/50 border-amber-500/25'
                         }`}
-                        style={{ width: `${Math.max(4, pct)}%` }}
-                      />
-
-                      {/* Avatar positionné sur la piste */}
-                      <div
-                        className="absolute top-1/2 -translate-y-1/2 flex items-center gap-1.5 transition-all duration-150"
-                        style={{
-                          left: `calc(${Math.min(92, Math.max(2, pct))}% - 12px)`,
-                        }}
                       >
-                        {id.avatar ? (
-                          <img
-                            src={id.avatar.imageUrl}
-                            alt={id.avatar.name}
-                            className={`w-10 h-10 rounded-full object-cover border-2 shadow-lg ${
-                              isStunned
-                                ? 'border-red-400 grayscale'
-                                : 'border-amber-300'
-                            }`}
-                          />
-                        ) : (
-                          <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-xl">
-                            🕺
+                        {/* Ligne d'arrivée en damier à droite */}
+                        <div className="absolute right-3 top-2 bottom-2 w-2 rounded bg-gradient-to-b from-amber-300 via-white to-amber-300 opacity-60" />
+
+                        {/* Infos coureur en surimpression gauche */}
+                        <div className="flex items-center justify-between text-xs mb-1.5 relative z-10">
+                          <div className="flex items-center gap-2">
+                            <span className="font-black text-white">
+                              {id.hasCustomName && id.characterName
+                                ? `${id.displayName} (${id.characterName})`
+                                : id.displayName}
+                            </span>
+                            {r.combo >= 4 && !isStunned && (
+                              <span className="px-2 py-0.5 rounded-full bg-amber-500/30 border border-amber-400 text-amber-200 text-[11px] font-black">
+                                🔥 Groove x{r.combo}
+                              </span>
+                            )}
+                            {isStunned && (
+                              <span className="px-2 py-0.5 rounded-full bg-red-600 text-white text-[11px] font-black animate-pulse">
+                                😱 PRIS EN FLAG ! (-8 m)
+                              </span>
+                            )}
+                            {!isStunned &&
+                              doorState === 'watching' &&
+                              r.finishedAtMs === null && (
+                                <span className="px-2 py-0.5 rounded-full bg-slate-800 border border-slate-500 text-slate-200 text-[11px] font-semibold">
+                                  🧐 Pose sérieuse…
+                                </span>
+                              )}
                           </div>
-                        )}
-                        <span className="text-xl drop-shadow">
-                          {isStunned
-                            ? '😱'
-                            : doorState === 'watching' &&
-                                r.finishedAtMs === null
-                              ? '🧐'
-                              : r.lastPose}
-                        </span>
+
+                          <div className="flex items-center gap-3 font-mono font-bold">
+                            {r.caughtCount > 0 && (
+                              <span className="text-red-300 text-[11px]">
+                                🚨 {r.caughtCount} flag
+                                {r.caughtCount > 1 ? 's' : ''}
+                              </span>
+                            )}
+                            <span className="text-amber-300">
+                              {r.finishedAtMs !== null
+                                ? `🏁 ${(r.finishedAtMs / 1000).toFixed(1)}s`
+                                : `${Math.round(r.distance)} m`}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Barre de progression Tapis Rouge + Pion Avatar */}
+                        <div className="relative h-12 bg-slate-900/90 rounded-xl border border-white/10 overflow-hidden">
+                          <div
+                            className={`h-full transition-all duration-150 ${
+                              isStunned
+                                ? 'bg-gradient-to-r from-red-800 to-red-600'
+                                : 'bg-gradient-to-r from-rose-700 via-amber-500 to-emerald-400'
+                            }`}
+                            style={{ width: `${Math.max(4, pct)}%` }}
+                          />
+
+                          {/* Avatar positionné sur la piste */}
+                          <div
+                            className="absolute top-1/2 -translate-y-1/2 flex items-center gap-1.5 transition-all duration-150"
+                            style={{
+                              left: `calc(${Math.min(92, Math.max(2, pct))}% - 12px)`,
+                            }}
+                          >
+                            {id.avatar ? (
+                              <img
+                                src={id.avatar.imageUrl}
+                                alt={id.avatar.name}
+                                className={`w-10 h-10 rounded-full object-cover border-2 shadow-lg ${
+                                  isStunned
+                                    ? 'border-red-400 grayscale'
+                                    : 'border-amber-300'
+                                }`}
+                              />
+                            ) : (
+                              <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-xl">
+                                🕺
+                              </div>
+                            )}
+                            <span className="text-xl drop-shadow">
+                              {isStunned
+                                ? '😱'
+                                : doorState === 'watching' &&
+                                    r.finishedAtMs === null
+                                  ? '🧐'
+                                  : r.lastPose}
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                )
-              })}
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Le sapin de Downing Street : ligne d'arrivée, éteint quand la porte s'ouvre */}
+              <aside className="hidden md:flex w-36 lg:w-48 shrink-0 flex-col items-center justify-end">
+                <ChristmasTree
+                  lit={doorState !== 'watching'}
+                  className="w-full h-auto max-h-[60vh] drop-shadow-[0_0_25px_rgba(250,204,21,0.25)]"
+                />
+                <div className="mt-1 text-[11px] font-black uppercase tracking-wider text-amber-300 text-center">
+                  🏁 Arrivée au sapin
+                </div>
+              </aside>
             </div>
 
             {/* Overlay Compte à Rebours 3, 2, 1 */}
@@ -984,7 +1016,7 @@ export default function HostGroovePage({
           3. PODIUM FINAL & TROPHÉES (RESULT)
       ===================================================================== */}
       {phase === 'result' && (
-        <div className="max-w-6xl w-full mx-auto my-auto space-y-6 py-4">
+        <div className="relative z-10 max-w-6xl w-full mx-auto my-auto space-y-6 py-4">
           <Confetti
             width={width}
             height={height}
@@ -996,8 +1028,16 @@ export default function HostGroovePage({
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-200 text-xs font-black uppercase tracking-widest">
               🏆 PALMARÈS OFFICIEL • 10 DOWNING STREET GROOVE
             </div>
-            <h1 className="text-3xl md:text-5xl font-black">
+            <h1 className="text-3xl md:text-5xl font-black flex items-center justify-center gap-4">
+              <ChristmasTree
+                className="h-16 md:h-20 w-auto"
+                withPresents={false}
+              />
               Le Podium du Déhanché Ministériel
+              <ChristmasTree
+                className="h-16 md:h-20 w-auto"
+                withPresents={false}
+              />
             </h1>
           </div>
 

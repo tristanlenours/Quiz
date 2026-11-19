@@ -789,6 +789,12 @@ export default function HostDashboardPage() {
                   <p className="text-slate-300 text-xs sm:text-sm mt-0.5">
                     Les téléphones deviennent des manettes : alternez GAUCHE / DROITE pour vous déhancher dans le couloir… et figez-vous net quand la secrétaire ouvre la porte !
                   </p>
+                  <p
+                    data-testid="groove-after-quiz-warning"
+                    className="mt-1.5 text-[11px] sm:text-xs font-bold text-amber-300"
+                  >
+                    🎵 Musique originale de la scène : à lancer <u>après</u> le Grand Quiz Love Actually, sinon la réponse d&apos;une manche est éventée.
+                  </p>
                 </div>
               </div>
               <button
