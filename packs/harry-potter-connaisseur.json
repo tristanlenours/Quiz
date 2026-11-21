@@ -1,6 +1,6 @@
 {
-  "name": "⚡ Harry Potter — Le Quiz du Vrai Connaisseur (12 manches)",
-  "description": "12 manches écrites par un immense spécialiste de l'univers (il a vu au moins un bout d'un film). Cape du maraudeur, nain géant, rouquin malin : ici, on maîtrise son sujet.",
+  "name": "⚡ Harry Potter — Le Quiz du Vrai Connaisseur (14 manches)",
+  "description": "14 manches écrites par un immense spécialiste de l'univers (il a vu au moins un bout d'un film). Cape du maraudeur, nain géant, rouquin malin : ici, on maîtrise son sujet.",
   "mode": "mixed",
   "avatar_theme": "harry_potter",
   "questions": [
@@ -347,6 +347,68 @@
     },
     {
       "order": 11,
+      "question_type": "quiz",
+      "body": "🏦 Gringott, la banque des sorciers, celle avec un dragon sur le toit : laquelle de ces infos est vraie ?",
+      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/harry-potter/gringott.jpg",
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/71/49/6d/71496d6c-67b0-c684-02d9-fcc543e22078/mzaf_6055771900274130683.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        {
+          "body": "Elle est tenue par des gobelins, des genre de petits banquiers pas aimables",
+          "is_correct": true
+        },
+        {
+          "body": "Elle s'est fait hacker et a perdu 118 millions d'euros (environ 20 millions de Gallions)",
+          "is_correct": false
+        },
+        {
+          "body": "Les coffres sont gardés par Touffu, le chien du nain géant",
+          "is_correct": false
+        },
+        {
+          "body": "On y gagne 3 % par an sur le Livret Gallion A",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 12,
+      "question_type": "quiz",
+      "body": "📚 Grand classique de la littérature, que tout connaisseur a lu au moins deux fois : lequel de ces titres est un vrai tome de la saga ?",
+      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/harry-potter/croupe.jpg",
+      "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b0/e1/5a/b0e15a9d-ac5f-cbf4-f06c-5e5dc59ddd8d/mzaf_8389942527619992041.plus.aac.p.m4a",
+      "audio_start_sec": 0,
+      "audio_duration_sec": 30,
+      "video_url": null,
+      "reveal_title": null,
+      "reveal_artist": null,
+      "reveal_cover_url": null,
+      "choices": [
+        {
+          "body": "Harry Potteur et la Croupe en feu",
+          "is_correct": true
+        },
+        {
+          "body": "Harry Potteur et le Seigneur des Anneaux",
+          "is_correct": false
+        },
+        {
+          "body": "Harry Potteur et la Tireuse à bièreaubeurre",
+          "is_correct": false
+        },
+        {
+          "body": "Harry Potteur et le Rouquin malin",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 13,
       "question_type": "blind_test",
       "body": "🎵 Blind Test final : ce thème bouleversant du dernier film, c'est de qui ?",
       "image_url": null,

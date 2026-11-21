@@ -37,6 +37,7 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **I26** | 2026-11-19 | Mieux retransmettre l'ambiance de la scène de danse (captures du couloir et de l'escalier aux portraits fournies) : « *la vieille qui apparaît quand la musique baisse pour surveiller et juger. Si on repart trop tôt à danser alors qu'on est encore en freeze et que la vieille est toujours là, sanction* ». | Demande explicite auteur | Actif |
 | **I27** | 2026-11-19 | Le Groove doit tenir **jusqu'à 10 joueurs** sur l'écran : « *la hauteur de l'écran pourrait peut-être se révéler un peu juste* ». La TV est en 4K, mais l'image vient d'une **Surface Pro 7** qui streame vers elle. | Demande explicite auteur | Actif |
 | **I28** | 2026-11-19 | « *Baisser un peu la vitesse de déplacement, de 15 ou 20 %* », « *ou limiter un peu la combo* ». | Demande explicite auteur | Actif |
+| **I29** | 2026-11-21 | « *Ajouter deux questions au quiz Harry Potteur à peu près* » : Gringott (fausse réponse clin d'œil au hack d'Arkéa, 118 millions d'euros convertis en monnaie sorcière) et les titres des livres, bonne réponse « Harry Potteur et la Croupe en feu ». « *Toujours une image pour illustrer chaque question.* » | Demande explicite auteur | Actif |
 
 ---
 
@@ -121,6 +122,7 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **D75** | 2026-11-19 | Groove : la secrétaire qui juge, la fausse sortie, le décor de la scène | La musique baisse en fondu (`warning`), la secrétaire apparaît dans l'encadrement de la double porte (`watching`, musique presque coupée), puis une fois sur deux la musique repart alors qu'elle est toujours là (`lingering`, 0,9 à 1,7 s) : tout pas est alors sanctionné, sans grâce. Décor dessiné d'après la scène (`src/components/DowningStreetScene.tsx`) : murs crème, cadres dorés, double porte blanche, escalier aux portraits noir et blanc et rampe en fer forgé, parquet et tapis rouges. | Adopté |
 | **D76** | 2026-11-19 | Écran TV du Groove : mis à l'échelle de l'écran, 15 couloirs sans défilement | L'écran TV est dessiné pour 1920×1080 et mis à l'échelle de la fenêtre réelle par la taille de police racine (tout ce qui est en rem suit). Pendant la course, la page tient en `100dvh` : le décor rétrécit avec le nombre de danseurs et chaque couloir tient sur une ligne, à hauteur partagée. Message de flag en surimpression, bouton plein écran au salon. Mesuré : 15 couloirs visibles de 1280×720 à 3840×2160. | Adopté |
 | **D77** | 2026-11-19 | Groove : combo plafonnée, course environ 16 % plus lente | Gain d'un pas alterné : 1,25 m (combo 1 à 5), 1,35 m (6 à 13), 1,45 m (14 et plus), au lieu de 1,25 / 1,5 / 1,75 m. Faux pas (+0,25 m), recul du flag (-8 m) et bonus de sang-froid (+2 m) inchangés. | Adopté |
+| **D78** | 2026-11-21 | Vrai Connaisseur : Gringott et la Croupe en feu (14 manches) | Deux questions avec image, insérées avant le Blind Test final, qui reste dernier. Bonnes réponses : les gobelins tiennent Gringott ; « Harry Potteur et la Croupe en feu ». Images dans `quiz-media/packs/harry-potter/`. | Adopté |
 
 ---
 
@@ -743,3 +745,15 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 - **Inchangé** : faux pas (+0,25 m), recul du flag (-8 m, donc un peu plus coûteux en proportion), bonus de sang-froid (+2 m), course de 100 m en 60 s maximum.
 - **Test** : le test 11 de `npm test` vérifie les trois paliers.
 - **Alternative écartée** : baisser tous les gains de 17 % (ralentit aussi les débutants, qui le sont déjà).
+
+### 2026-11-21 — D78 : Vrai Connaisseur, Gringott et la Croupe en feu
+- **Contexte** : Intention I29.
+- **Décision** : deux manches ajoutées au pack `packs/harry-potter-connaisseur.json` (12 → 14 manches, renommé en conséquence), en positions 12 et 13, avant le Blind Test final. Ton « faux expert » de D36 : la bonne réponse est vraie une fois traduite.
+  1. **Gringott** : « laquelle de ces infos est vraie ? » Bonne réponse : tenue par des gobelins. Leurres : le hack de 118 millions d'euros « (environ 20 millions de Gallions) », Touffu qui garde les coffres (rappel de la manche 2 ; il gardait en fait la pierre à Poudlard), un « Livret Gallion A » à 3 %. Conversion : 118 M€ ≈ 103 M£, à 1 Gallion ≈ 5 £ (estimation de J. K. Rowling en 2001), soit environ 20,6 millions. Le dragon est écarté des réponses : l'image le montre.
+  2. **Titres** : « lequel est un vrai tome de la saga ? » Bonne réponse : « Harry Potteur et la Croupe en feu » (la Coupe de feu). Leurres sans ressemblance avec un vrai titre (Seigneur des Anneaux, Tireuse à bièreaubeurre, Rouquin malin), pour qu'une seule réponse se traduise en vrai tome.
+- **Images** (règle de l'auteur : une image par question), hébergées dans `quiz-media/packs/harry-potter/` :
+  - `gringott.jpg` : façade de Gringott et son dragon au Wizarding World d'Universal Orlando, recadrée en 4:3 (Wikimedia Commons, *Diagon Alley Universal Studios.jpg*, CC BY-SA 4.0).
+  - `croupe.jpg` : un chat qui tourne sa croupe à côté de la pile des sept tomes (Wikimedia Commons, *Harry Potter books with cat.jpg*, CC BY-SA 4.0). Les titres anglais se lisent sur les tranches : petit indice assumé, aucun n'est traduit.
+- **Fond sonore** : comme les autres manches du pack, un extrait de la BO (iTunes) déjà utilisé dans le pack.
+- **Scores** : le pack n'avait aucune partie, rien n'a été effacé (D70).
+- **Fait non vérifié** : le montant du hack d'Arkéa (118 M€) est repris tel que donné par l'auteur ; c'est un leurre, donc sans effet sur la bonne réponse.
