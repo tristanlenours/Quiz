@@ -65,7 +65,7 @@
       "order": 3,
       "question_type": "quiz",
       "body": "Quel instrument le petit Sam apprend-il en secret pour impressionner Joanna ?",
-      "image_url": null,
+      "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/love-actually/joanna-actrice.jpg",
       "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/4a/47/ca/4a47ca71-5932-8a7e-fe49-b22ee9b973cd/mzaf_15384950070654149640.plus.aac.p.m4a",
       "audio_start_sec": 0,
       "audio_duration_sec": 30,

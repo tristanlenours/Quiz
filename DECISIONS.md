@@ -38,6 +38,7 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **I27** | 2026-11-19 | Le Groove doit tenir **jusqu'à 10 joueurs** sur l'écran : « *la hauteur de l'écran pourrait peut-être se révéler un peu juste* ». La TV est en 4K, mais l'image vient d'une **Surface Pro 7** qui streame vers elle. | Demande explicite auteur | Actif |
 | **I28** | 2026-11-19 | « *Baisser un peu la vitesse de déplacement, de 15 ou 20 %* », « *ou limiter un peu la combo* ». | Demande explicite auteur | Actif |
 | **I29** | 2026-11-21 | « *Ajouter deux questions au quiz Harry Potteur à peu près* » : Gringott (fausse réponse clin d'œil au hack d'Arkéa, 118 millions d'euros convertis en monnaie sorcière) et les titres des livres, bonne réponse « Harry Potteur et la Croupe en feu ». « *Toujours une image pour illustrer chaque question.* » | Demande explicite auteur | Actif |
+| **I30** | 2026-11-22 | Vérifier que chaque question du Warm-Up, du Grand Quiz Love Actually et du Vrai Connaisseur a une belle image ou une vidéo, et en ajouter là où il en manque. | Demande explicite auteur | Actif |
 
 ---
 
@@ -123,6 +124,7 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **D76** | 2026-11-19 | Écran TV du Groove : mis à l'échelle de l'écran, 15 couloirs sans défilement | L'écran TV est dessiné pour 1920×1080 et mis à l'échelle de la fenêtre réelle par la taille de police racine (tout ce qui est en rem suit). Pendant la course, la page tient en `100dvh` : le décor rétrécit avec le nombre de danseurs et chaque couloir tient sur une ligne, à hauteur partagée. Message de flag en surimpression, bouton plein écran au salon. Mesuré : 15 couloirs visibles de 1280×720 à 3840×2160. | Adopté |
 | **D77** | 2026-11-19 | Groove : combo plafonnée, course environ 16 % plus lente | Gain d'un pas alterné : 1,25 m (combo 1 à 5), 1,35 m (6 à 13), 1,45 m (14 et plus), au lieu de 1,25 / 1,5 / 1,75 m. Faux pas (+0,25 m), recul du flag (-8 m) et bonus de sang-froid (+2 m) inchangés. | Adopté |
 | **D78** | 2026-11-21 | Vrai Connaisseur : Gringott et la Croupe en feu (14 manches) | Deux questions avec image, insérées avant le Blind Test final, qui reste dernier. Bonnes réponses : les gobelins tiennent Gringott ; « Harry Potteur et la Croupe en feu ». Images dans `quiz-media/packs/harry-potter/`. | Adopté |
+| **D79** | 2026-11-22 | Une image pour chaque question du Warm-Up, du Grand Quiz et du Vrai Connaisseur | 17 photos libres de Wikimedia Commons (portraits des acteurs, Studio Tour, bièraubeurre, blaireau, quidditch moldu), choisies pour ne pas donner la réponse et hébergées dans `quiz-media/packs/`. Seuls les Blind Tests restent sans image pendant la question. Retouches du Studio du 22/11 sur le Vrai Connaisseur reportées dans le JSON. | Adopté |
 
 ---
 
@@ -757,3 +759,13 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 - **Fond sonore** : comme les autres manches du pack, un extrait de la BO (iTunes) déjà utilisé dans le pack.
 - **Scores** : le pack n'avait aucune partie, rien n'a été effacé (D70).
 - **Fait non vérifié** : le montant du hack d'Arkéa (118 M€) est repris tel que donné par l'auteur ; c'est un leurre, donc sans effet sur la bonne réponse.
+
+### 2026-11-22 — D79 : une image pour chaque question
+- **Contexte** : Intention I30, dans la lignée d'I29 (« *toujours une image pour illustrer chaque question* »). Sans visuel : la question de la batterie du Warm-Up, les questions 18 à 23 du Grand Quiz (texte seul) et 10 questions sur 14 du Vrai Connaisseur (fond sonore seul).
+- **Décision** : une image par question, hébergée dans `quiz-media/packs/love-actually/` ou `quiz-media/packs/harry-potter/`. Chaque photo montre le personnage ou le lieu de la question, **jamais la réponse** : pas de batterie, de Titanic, de Claudia Schiffer, de cape, de chien, de rat, de jet-ski, de serpent, de jaune et noir, de Robert Pattinson, de Vif d'or ni de Choixpeau. Photos de Wikimedia Commons, recadrées et ramenées à 1600×1080 au plus :
+  - Warm-Up, Sam et la batterie : Olivia Olson, qui joue Joanna (Super Festivals, CC BY 2.0).
+  - Grand Quiz : Bill Nighy (Jenn Deering Davis, CC BY 2.0), Thomas Brodie-Sangster (Gage Skidmore, CC BY-SA 2.0), Hugh Grant (Kurt Kulac, CC BY-SA 3.0), Laura Linney (Maximilian Bühn, CC BY-SA 4.0), Martine McCutcheon (USP Content, CC BY 3.0), Liam Neeson (Georges Biard, CC BY-SA 3.0).
+  - Vrai Connaisseur : maquette de Poudlard au Studio Tour (Karen Roe, CC BY 2.0) ; Robbie Coltrane (clogdancer, CC BY-SA 2.0) ; Rupert Grint (GabboT, CC BY-SA 2.5) ; Daniel Radcliffe (Gage Skidmore, CC BY-SA 2.0) ; Tom Felton (vivek jena, CC BY 2.0) ; Poudlard Express au Studio Tour (S. Perquin, CC BY-SA 4.0) ; tonneau de bièraubeurre à Universal (The Conmunity, CC BY 2.0) ; blaireau (Charles J. Sharp, CC BY-SA 4.0) ; quidditch moldu à Vancouver (Anton Bielousov, CC BY-SA 3.0) ; Grande Salle au Studio Tour (Ank Kumar, CC BY-SA 4.0).
+- **Blind Tests** : laissés sans image pendant la question (la pochette n'arrive qu'à la révélation), comme prévu par le format.
+- **Vrai Connaisseur, retouches du Studio** : le pack avait été réenregistré depuis le Studio le 22/11 (« Harry joue un cadavre », leurre « sosie officiel de Frodon », réponses mélangées). Ces retouches sont reportées dans le JSON. En base, seules les `image_url` ont été écrites, sans `pack:sync`, pour ne pas remélanger les réponses : le script compare et réécrit les choix triés par `created_at` puis par identifiant, alors qu'un enregistrement du Studio leur donne à tous le même `created_at`.
+- **Scores** (D70) : la partie existante du Grand Quiz a été effacée ; le Warm-Up et le Vrai Connaisseur n'en avaient aucune.

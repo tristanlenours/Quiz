@@ -31,7 +31,7 @@ Avant toute modification de schéma, d'interface ou de logique de jeu, lire :
    À chaque nouvelle décision `Dxx`, se demander si elle crée, change ou rend caduque une règle de travail durable (commande, convention, invariant, piège connu). Si oui, mettre à jour `AGENTS.md` **dans le même tour de travail**, sans attendre une révision d'ensemble ; une règle caduque est corrigée ou retirée, pas laissée en place.
    Dans tous les cas, avancer le marqueur ci-dessous jusqu'à la dernière décision relue. `npm test` échoue tant qu'une décision de `DECISIONS.md` est plus récente que ce marqueur.
 
-   **Dernière revue d'AGENTS.md : D78**
+   **Dernière revue d'AGENTS.md : D79**
 
 ---
 
@@ -81,6 +81,7 @@ Avant toute modification de schéma, d'interface ou de logique de jeu, lire :
 - `packs/*.json` est la **source de vérité** du contenu (format Import/Export du Studio, D09). Toute modification d'un pack se fait dans le JSON **puis** en base, dans le même tour de travail.
 - Règles de contenu : **4 choix et 1 seule bonne réponse** par question ; faits vérifiés sur une source (script, transcript) avant d'être posés ; un fait invérifiable est signalé dans `DECISIONS.md`. Dans le pack « Vrai Connaisseur », le vocabulaire est volontairement faux (cape du maraudeur, nain géant, rouquin malin, Serpanthères, Poufsouf) : ne pas le « corriger » (D36).
 - Mise en base d'un pack existant : `npm run pack:sync -- packs/<pack>.json` (simulation), puis `--apply`. La mise à jour se fait **sur place** pour conserver l'identifiant du pack (les liens solo et scores en dépendent) ; elle annonce en simulation, puis efface avec `--apply`, les parties du pack dès que le jeu change (D70). Ajouter `--set-id <uuid>` si le pack a été renommé. Un nouveau pack s'importe depuis le Studio (`/host/dashboard`) ou avec `--create`. Le script refuse de supprimer des questions : pour raccourcir un pack déjà joué, **désactiver** les manches (`"is_disabled": true` dans le JSON, ou l'interrupteur du Studio), sans les effacer (D38). Toute lecture de questions pour jouer doit exclure `is_disabled` et renuméroter `order` selon la position jouée.
+- **Piège (D79)** : un pack réenregistré depuis le Studio a des choix au même `created_at`. `pack:sync` les compare et les réécrit triés par identifiant : la simulation annonce alors des questions changées alors que seul l'ordre diffère, et `--apply` remélange les réponses. Avant d'appliquer, comparer le JSON à la base ; si l'écart ne porte que sur l'ordre des choix, reporter l'ordre de la base dans le JSON et n'écrire en base que les champs modifiés, puis purger les scores (D70).
 - Après un changement de pack, mettre à jour les attentes des tests (nombre de questions, nom du pack).
 
 ---
