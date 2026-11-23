@@ -1,12 +1,13 @@
 {
-  "name": "⚡ Harry Potter — Le Quiz du Vrai Connaisseur (14 manches)",
-  "description": "14 manches écrites par un immense spécialiste de l'univers (il a vu au moins un bout d'un film). Cape du maraudeur, nain géant, rouquin malin : ici, on maîtrise son sujet.",
+  "name": "⚡ Harry Potter — Le Quiz du Vrai Connaisseur (12 manches)",
+  "description": "12 manches écrites par un immense spécialiste de l'univers (il a vu au moins un bout d'un film). Cape du maraudeur, nain géant, rouquin malin : ici, on maîtrise son sujet.",
   "mode": "mixed",
   "avatar_theme": "harry_potter",
   "questions": [
     {
       "order": 0,
       "question_type": "quiz",
+      "is_disabled": false,
       "body": "🧥 On commence facile, entre connaisseurs : quel accessoire légendaire permet à Harry de se balader invisible dans Poudlard ?",
       "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/harry-potter/poudlard-maquette.jpg",
       "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/06/d0/e2/06d0e212-3cfc-d56a-a556-83383da598aa/mzaf_1095038464649433962.plus.aac.p.m4a",
@@ -38,6 +39,7 @@
     {
       "order": 1,
       "question_type": "quiz",
+      "is_disabled": false,
       "body": "🧔 Le fameux nain géant possède un chien à trois têtes. Quel petit nom lui a-t-il donné ?",
       "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/harry-potter/nain-geant.jpg",
       "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/d8/57/61/d857619c-2369-8251-9872-723887abfc9f/mzaf_16652206452432754333.plus.aac.p.m4a",
@@ -69,6 +71,7 @@
     {
       "order": 2,
       "question_type": "quiz",
+      "is_disabled": false,
       "body": "🎬 Regardez l'extrait ! Question de spécialiste : ce papy barbu très énervé, qui est-ce ?",
       "image_url": null,
       "audio_url": null,
@@ -100,6 +103,7 @@
     {
       "order": 3,
       "question_type": "quiz",
+      "is_disabled": true,
       "body": "🦊 Le rouquin malin se trimballe partout avec un rat. Comment s'appelle cette bestiole ?",
       "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/harry-potter/rouquin-malin.jpg",
       "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/71/49/6d/71496d6c-67b0-c684-02d9-fcc543e22078/mzaf_6055771900274130683.plus.aac.p.m4a",
@@ -131,6 +135,7 @@
     {
       "order": 4,
       "question_type": "quiz",
+      "is_disabled": false,
       "body": "🌊 Reconversion après Poudlard : dans Swiss Army Man, Harry joue un cadavre qui devient…",
       "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/harry-potter/acteur-harry.jpg",
       "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/e7/3f/f6/e73ff637-6770-63d1-54b1-f58ba11167fb/mzaf_1920378698193191158.plus.aac.p.m4a",
@@ -162,6 +167,7 @@
     {
       "order": 5,
       "question_type": "quiz",
+      "is_disabled": false,
       "body": "🐍 Attention, question piège : quel animal figure sur le blason des Serpanthères ?",
       "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/harry-potter/serpantheres.jpg",
       "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b0/e1/5a/b0e15a9d-ac5f-cbf4-f06c-5e5dc59ddd8d/mzaf_8389942527619992041.plus.aac.p.m4a",
@@ -193,6 +199,7 @@
     {
       "order": 6,
       "question_type": "quiz",
+      "is_disabled": false,
       "body": "💛 Les Poufsouf, vraiment la pire école de Poudlard : quelles sont leurs couleurs ?",
       "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/harry-potter/poudlard-express.jpg",
       "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/d8/57/61/d857619c-2369-8251-9872-723887abfc9f/mzaf_16652206452432754333.plus.aac.p.m4a",
@@ -224,6 +231,7 @@
     {
       "order": 7,
       "question_type": "quiz",
+      "is_disabled": false,
       "body": "🍺 Question de culture générale : est-ce que le club de quidisch dispose d'une tireuse à bièreaubeurre ?",
       "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/harry-potter/biereaubeurre.jpg",
       "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/06/d0/e2/06d0e212-3cfc-d56a-a556-83383da598aa/mzaf_1095038464649433962.plus.aac.p.m4a",
@@ -255,6 +263,7 @@
     {
       "order": 8,
       "question_type": "quiz",
+      "is_disabled": false,
       "body": "🦡 Quel est le Poufsouf le plus connu… ou plutôt le seul (lol) ?",
       "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/harry-potter/blaireau.jpg",
       "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/71/49/6d/71496d6c-67b0-c684-02d9-fcc543e22078/mzaf_6055771900274130683.plus.aac.p.m4a",
@@ -267,7 +276,7 @@
       "choices": [
         {
           "body": "Grégory Pattinson",
-          "is_correct": true
+          "is_correct": false
         },
         {
           "body": "Édouard Cullen",
@@ -275,7 +284,7 @@
         },
         {
           "body": "Cédric machin-chose",
-          "is_correct": false
+          "is_correct": true
         },
         {
           "body": "Un blaireau avec une écharpe jaune",
@@ -286,7 +295,8 @@
     {
       "order": 9,
       "question_type": "quiz",
-      "body": "🧹 Au quidisch, à quoi sert la petite balle dorée avec des ailes ?",
+      "is_disabled": false,
+      "body": "🧹 Question de vrai fan de quidisch : quel numéro Harry porte-t-il dans le dos ?",
       "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/harry-potter/quidisch.jpg",
       "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/06/d0/e2/06d0e212-3cfc-d56a-a556-83383da598aa/mzaf_1095038464649433962.plus.aac.p.m4a",
       "audio_start_sec": 0,
@@ -297,19 +307,19 @@
       "reveal_cover_url": null,
       "choices": [
         {
-          "body": "À faire gagner l'équipe direct, même si les autres ont joué pour rien",
+          "body": "1, comme Barthez, le crâne qu'on embrasse",
+          "is_correct": false
+        },
+        {
+          "body": "7, comme Pires : muscle ton jeu, Harry !",
           "is_correct": true
         },
         {
-          "body": "À débloquer la tireuse à bièreaubeurre au club-house",
+          "body": "9, comme Guivarc'h, la légende celtique",
           "is_correct": false
         },
         {
-          "body": "À remplacer l'arbitre quand il est parti boire un coup",
-          "is_correct": false
-        },
-        {
-          "body": "À faire peur aux Poufsouf",
+          "body": "19, comme le fameux Willy Sagnol",
           "is_correct": false
         }
       ]
@@ -317,6 +327,7 @@
     {
       "order": 10,
       "question_type": "quiz",
+      "is_disabled": false,
       "body": "🎩 À la rentrée en 6e à Poudlard, comment décide-t-on dans quelle maison tu vas passer les 7 prochaines années ?",
       "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/harry-potter/grande-salle.jpg",
       "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/d8/57/61/d857619c-2369-8251-9872-723887abfc9f/mzaf_16652206452432754333.plus.aac.p.m4a",
@@ -348,6 +359,7 @@
     {
       "order": 11,
       "question_type": "quiz",
+      "is_disabled": false,
       "body": "🏦 Gringott, la banque des sorciers, celle avec un dragon sur le toit : laquelle de ces infos est vraie ?",
       "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/harry-potter/gringott.jpg",
       "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/71/49/6d/71496d6c-67b0-c684-02d9-fcc543e22078/mzaf_6055771900274130683.plus.aac.p.m4a",
@@ -379,6 +391,7 @@
     {
       "order": 12,
       "question_type": "quiz",
+      "is_disabled": false,
       "body": "📚 Grand classique de la littérature, que tout connaisseur a lu au moins deux fois : lequel de ces titres est un vrai tome de la saga ?",
       "image_url": "https://ljtbtwaknnbdzbktxvfl.supabase.co/storage/v1/object/public/quiz-media/packs/harry-potter/croupe.jpg",
       "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b0/e1/5a/b0e15a9d-ac5f-cbf4-f06c-5e5dc59ddd8d/mzaf_8389942527619992041.plus.aac.p.m4a",
@@ -410,6 +423,7 @@
     {
       "order": 13,
       "question_type": "blind_test",
+      "is_disabled": true,
       "body": "🎵 Blind Test final : ce thème bouleversant du dernier film, c'est de qui ?",
       "image_url": null,
       "audio_url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/4f/6a/87/4f6a87c4-9adc-0187-dc67-fa85f5cdedd0/mzaf_2553637134403143289.plus.aac.p.m4a",

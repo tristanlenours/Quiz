@@ -39,6 +39,7 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **I28** | 2026-11-19 | « *Baisser un peu la vitesse de déplacement, de 15 ou 20 %* », « *ou limiter un peu la combo* ». | Demande explicite auteur | Actif |
 | **I29** | 2026-11-21 | « *Ajouter deux questions au quiz Harry Potteur à peu près* » : Gringott (fausse réponse clin d'œil au hack d'Arkéa, 118 millions d'euros convertis en monnaie sorcière) et les titres des livres, bonne réponse « Harry Potteur et la Croupe en feu ». « *Toujours une image pour illustrer chaque question.* » | Demande explicite auteur | Actif |
 | **I30** | 2026-11-22 | Vérifier que chaque question du Warm-Up, du Grand Quiz Love Actually et du Vrai Connaisseur a une belle image ou une vidéo, et en ajouter là où il en manque. | Demande explicite auteur | Actif |
+| **I31** | 2026-11-23 | Vrai Connaisseur : bonne réponse de la question 9 changée depuis le Studio (« Cédric machin-chose ») ; supprimer la question 14 ; question 10 sur le numéro de Harry au quidisch (1 comme Barthez, 7 comme Pires « muscle ton jeu Harry », 9 comme Guivarc'h « la légende celtique », 19 comme « le fameux Willy Sagnol »), tournure à améliorer ; passer à 12 questions, la question du rat (4) sortant aussi. | Demande explicite auteur | Actif |
 
 ---
 
@@ -125,6 +126,7 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **D77** | 2026-11-19 | Groove : combo plafonnée, course environ 16 % plus lente | Gain d'un pas alterné : 1,25 m (combo 1 à 5), 1,35 m (6 à 13), 1,45 m (14 et plus), au lieu de 1,25 / 1,5 / 1,75 m. Faux pas (+0,25 m), recul du flag (-8 m) et bonus de sang-froid (+2 m) inchangés. | Adopté |
 | **D78** | 2026-11-21 | Vrai Connaisseur : Gringott et la Croupe en feu (14 manches) | Deux questions avec image, insérées avant le Blind Test final, qui reste dernier. Bonnes réponses : les gobelins tiennent Gringott ; « Harry Potteur et la Croupe en feu ». Images dans `quiz-media/packs/harry-potter/`. | Adopté |
 | **D79** | 2026-11-22 | Une image pour chaque question du Warm-Up, du Grand Quiz et du Vrai Connaisseur | 17 photos libres de Wikimedia Commons (portraits des acteurs, Studio Tour, bièraubeurre, blaireau, quidditch moldu), choisies pour ne pas donner la réponse et hébergées dans `quiz-media/packs/`. Seuls les Blind Tests restent sans image pendant la question. Retouches du Studio du 22/11 sur le Vrai Connaisseur reportées dans le JSON. | Adopté |
+| **D80** | 2026-11-23 | Vrai Connaisseur à 12 manches : Cédric, numéro de Harry | Q9 : bonne réponse « Cédric machin-chose » (choix du Studio). Q10 : « quel numéro Harry porte-t-il dans le dos ? », bonne réponse 7 (comme Pires). Manches 4 (rat) et 14 (Blind Test final) désactivées, pas effacées (D38). Écrit en base champ par champ, sans `pack:sync` (D79). | Adopté |
 
 ---
 
@@ -769,3 +771,13 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 - **Blind Tests** : laissés sans image pendant la question (la pochette n'arrive qu'à la révélation), comme prévu par le format.
 - **Vrai Connaisseur, retouches du Studio** : le pack avait été réenregistré depuis le Studio le 22/11 (« Harry joue un cadavre », leurre « sosie officiel de Frodon », réponses mélangées). Ces retouches sont reportées dans le JSON. En base, seules les `image_url` ont été écrites, sans `pack:sync`, pour ne pas remélanger les réponses : le script compare et réécrit les choix triés par `created_at` puis par identifiant, alors qu'un enregistrement du Studio leur donne à tous le même `created_at`.
 - **Scores** (D70) : la partie existante du Grand Quiz a été effacée ; le Warm-Up et le Vrai Connaisseur n'en avaient aucune.
+
+### 2026-11-23 — D80 : Vrai Connaisseur à 12 manches, Cédric et le numéro de Harry
+- **Contexte** : Intention I31. L'auteur avait changé la bonne réponse de la question 9 dans le Studio, ce qui a réenregistré tout le pack (choix au même `created_at`, piège D79).
+- **Décision** :
+  1. **Question 9** (le Poufsouf le plus connu) : la bonne réponse devient « Cédric machin-chose », comme dans le Studio ; Grégory Pattinson passe en leurre. Seul le JSON a été mis à jour, la base l'avait déjà.
+  2. **Question 10** (quidisch) : « 🧹 Question de vrai fan de quidisch : quel numéro Harry porte-t-il dans le dos ? ». Choix, par numéro croissant : « 1, comme Barthez, le crâne qu'on embrasse », « 7, comme Pires : muscle ton jeu, Harry ! » (bonne réponse), « 9, comme Guivarc'h, la légende celtique », « 19, comme le fameux Willy Sagnol ». L'ancienne question sur le Vif d'or disparaît. Image inchangée (quidditch moldu, aucun numéro visible).
+  3. **12 manches** : la question 4 (le rat du rouquin malin, choix de l'auteur parmi quatre proposées) et la question 14 (Blind Test final, Lily's Theme) sont **désactivées** (`is_disabled`), pas effacées, comme le veut D38 : un interrupteur du Studio les remet en jeu. Le pack n'a donc plus de Blind Test. Nom et description passent à « 12 manches ».
+- **Vérification** : Harry porte le n° 7 dans les films, numéro choisi par la costumière Jany Temime (Bustle, entretien avec Jany Temime). Les numéros des footballeurs sont des clins d'œil de l'auteur, non vérifiés : ce sont des leurres, sauf le 7 de Pires (son numéro à Arsenal).
+- **En base** : écriture directe (nom, description, `is_disabled` des manches 4 et 14, texte de la 10 et ses quatre choix recréés dans l'ordre du JSON), sans `pack:sync`, qui aurait remélangé les réponses des autres questions (D79). Lecture de contrôle identique à celle de l'écran Hôte : ordre des choix conforme au JSON.
+- **Scores** (D70) : le pack n'avait aucune partie, rien n'a été effacé.
