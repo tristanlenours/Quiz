@@ -31,7 +31,7 @@ Avant toute modification de schéma, d'interface ou de logique de jeu, lire :
    À chaque nouvelle décision `Dxx`, se demander si elle crée, change ou rend caduque une règle de travail durable (commande, convention, invariant, piège connu). Si oui, mettre à jour `AGENTS.md` **dans le même tour de travail**, sans attendre une révision d'ensemble ; une règle caduque est corrigée ou retirée, pas laissée en place.
    Dans tous les cas, avancer le marqueur ci-dessous jusqu'à la dernière décision relue. `npm test` échoue tant qu'une décision de `DECISIONS.md` est plus récente que ce marqueur.
 
-   **Dernière revue d'AGENTS.md : D80**
+   **Dernière revue d'AGENTS.md : D81**
 
 ---
 
@@ -64,6 +64,7 @@ Avant toute modification de schéma, d'interface ou de logique de jeu, lire :
 - **Prénom obligatoire** (D72) : Salon (quiz live, Groove) et solo refusent un prénom vide ; le prénom est gardé dans le cookie `quiz_player_name` (`src/playerName.ts`) et pré-remplit le jeu suivant. Tout nouvel écran d'inscription réutilise ces helpers. Les tests E2E saisissent toujours un prénom.
 - **Scores** (D63 à D65) : `quiz_games.play_mode` (`live`/`solo`) et `is_training`. Le tableau (`src/leaderboard.ts`) ignore le training, classe chaque joueur d'une partie live terminée, et ne classe d'une personne (appareil ou prénom saisi) que sa toute première partie solo, si elle est terminée.
 - **Un pack qui change perd ses scores** (D70) : dès qu'une question, un choix, un média, un calage ou l'activation d'une manche change, toutes les parties du pack sont effacées (`purgePackScores` dans `src/leaderboard.ts`). C'est automatique dans `pack:sync --apply`, à l'enregistrement dans l'éditeur du Studio et sur l'interrupteur d'une manche ; tout nouveau chemin qui modifie un pack doit faire de même. Changer seulement le nom ou la description n'efface rien.
+- **Médias dès l'affichage de la question** (D81) : sur la TV et en solo, son et extrait vidéo partent avec la question, pendant les 5 s de lecture, et ne redémarrent pas à l'arrivée des choix (lecture et réponse partagent la même zone média). L'extrait garde son calage, finit donc avant le chrono, et `useExtractEnded` (`src/useExtractEnded.ts`) le retire une fois terminé pour ne pas laisser les suggestions YouTube à l'écran. Ne pas repousser ce départ à l'apparition des choix.
 - **Extraits YouTube** : vérifier qu'ils sont intégrables (oEmbed HTTP 200 et `playableInEmbed: true` **ne suffisent pas** : un ayant droit comme FIFA peut bloquer l'intégration, `tests/e2e/videos-embed.spec.ts` le détecte, D47) et caler `audio_start_sec` / `audio_duration_sec` pour que l'extrait **ne montre pas la réponse** (l'extrait s'arrête à début + temps de réponse).
 - **Titre YouTube** : l'Écran Hôte zoome la vidéo pour sortir du cadre le titre incrusté par le lecteur, qui peut donner la réponse (D48). Ne pas retirer ce recadrage.
 - **Son** : extraits iTunes (`audio-ssl.itunes.apple.com`, 30 s) et pochettes `mzstatic.com` en `600x600bb`.

@@ -190,6 +190,20 @@ export async function expectHostMedia(host: Page, q: Question) {
   }
 }
 
+/**
+ * Pendant les 5 s de lecture, avant les choix : l'extrait vidéo tourne déjà (D81).
+ * Vérification légère, pour ne pas fausser la mesure du temps de lecture. Le son est
+ * lancé au même moment, mais le Chromium de Playwright ne lit pas l'AAC : non vérifiable ici.
+ */
+export async function expectVideoDuringReading(screen: Page, q: Question) {
+  if (q.question_type === 'blind_test' || !q.video_url) return
+  const videoId = q.video_url.match(YOUTUBE_ID)?.[1]
+  await expect(
+    screen.locator(`iframe[src*="youtube.com/embed/${videoId}"]`),
+    `Extrait vidéo lancé dès la question, avant les choix (« ${q.body} »)`
+  ).toHaveCount(1, { timeout: 2000 })
+}
+
 /** Manette = question + réponses uniquement : aucune image de question, vidéo ni son (Décision D31) */
 async function expectControllerTextOnly(page: Page, label: string) {
   await expect(page.locator('iframe, video, audio'), `Aucun média sur la manette de ${label}`).toHaveCount(0)
@@ -489,6 +503,7 @@ export async function runFullGame(
           }
         }
         await expect(host.getByText('Réponses', { exact: true })).toHaveCount(0)
+        await expectVideoDuringReading(host, q)
         for (const p of players) await expectControllerTextOnly(p.page, p.displayName)
 
         // Aucun résidu de la manche précédente (révélation, score) sur les manettes

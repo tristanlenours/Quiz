@@ -12,6 +12,7 @@ import {
   getYouTubeEmbedUrl,
   supabase,
 } from '@/types/types'
+import { useExtractEnded } from '@/useExtractEnded'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 
@@ -261,11 +262,13 @@ export default function Quiz({
     }
   }, [gameId, question.id])
 
-  // Déclencher la lecture audio sur l'Écran Hôte dès que les choix s'affichent (Blind Test ET Quiz sonorisé — Décisions D08 & D23)
+  // Son de la manche lu sur l'Écran Hôte dès l'affichage de la question, sans attendre
+  // la fin du décompte de lecture (Blind Test ET Quiz sonorisé — Décisions D08, D23, D81)
   useEffect(() => {
-    if (hasShownChoices && hasAudioTrack && audioRef.current) {
-      const audio = audioRef.current
-      audio.volume = isBlindTest ? 1.0 : 0.65
+    if (isAnswerRevealedProp || !hasAudioTrack || !audioRef.current) return
+    const audio = audioRef.current
+    audio.volume = isBlindTest ? 1.0 : 0.65
+    const start = () => {
       audio.currentTime = question.audio_start_sec || 0
       audio
         .play()
@@ -275,13 +278,19 @@ export default function Quiz({
           setIsAudioPlaying(false)
         })
     }
-  }, [
-    hasShownChoices,
-    hasAudioTrack,
-    isBlindTest,
-    question.audio_url,
-    question.audio_start_sec,
-  ])
+    if (audio.readyState >= 1) start()
+    else audio.addEventListener('loadedmetadata', start, { once: true })
+    return () => audio.removeEventListener('loadedmetadata', start)
+    // Une seule fois par manche : l'apparition des choix ne relance pas le son
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [question.id, hasAudioTrack])
+
+  // Extrait vidéo lancé dès l'affichage de la question, retiré une fois terminé (D81)
+  const isVideoEnded = useExtractEnded(
+    question.id,
+    Boolean(videoEmbedUrl) && !isAnswerRevealed,
+    answerDurationSec
+  )
 
   const toggleAudio = () => {
     if (!audioRef.current) return
@@ -307,7 +316,7 @@ export default function Quiz({
       )}
 
       <div className="absolute right-6 top-6 z-20 flex items-center gap-3">
-        {hasAudioTrack && hasShownChoices && (
+        {hasAudioTrack && (
           <button
             type="button"
             onClick={toggleAudio}
@@ -352,136 +361,143 @@ export default function Quiz({
       </div>
 
       <div className="flex-grow min-h-0 text-white px-8 flex flex-col justify-center">
-        {!hasShownChoices && !isAnswerRevealed && (
-          <div className="flex flex-col items-center justify-center gap-5 flex-grow min-h-0 py-4">
-            {/* Illustration visible dès l'affichage de la question (Décision D17) */}
-            {!isBlindTest && question.image_url && (
-              <img
-                src={question.image_url}
-                alt="Illustration question"
-                className="min-h-0 max-h-full max-w-full rounded-2xl shadow-lg object-contain"
-              />
-            )}
-            <div className="flex items-center gap-4 bg-slate-800/80 border border-white/10 px-6 py-3 rounded-2xl shadow-xl">
-              <CountdownCircleTimer
-                key={`host_preview_${question.id}`}
-                isPlaying={!hasShownChoices}
-                duration={TIME_TIL_CHOICE_REVEAL / 1000}
-                size={64}
-                strokeWidth={6}
-                colors={['#f43f5e', '#6366f1', '#F7B801', '#ef4444']}
-                trailColor={'transparent' as any}
-                colorsTime={[
-                  Math.round((TIME_TIL_CHOICE_REVEAL / 1000) * 0.75),
-                  Math.round((TIME_TIL_CHOICE_REVEAL / 1000) * 0.5),
-                  2,
-                  0,
-                ]}
-                onComplete={() => {
-                  hasShownChoicesRef.current = true
-                  setHasShownChoices(true)
-                }}
-              >
-                {({ remainingTime }) => (
-                  <span className="text-2xl font-black text-white">
-                    {remainingTime}
-                  </span>
-                )}
-              </CountdownCircleTimer>
-              <div className="text-xl text-slate-200 font-bold">
-                {isBlindTest
-                  ? '🎧 Préparez vos oreilles... Écoute dans un instant !'
-                  : '👀 Lisez bien la question... Les choix arrivent !'}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {hasShownChoices && !isAnswerRevealed && (
+        {/* Lecture puis réponse dans un même bloc : la zone média reste montée quand les choix
+            arrivent, l'extrait vidéo et le son continuent sans redémarrer (D81) */}
+        {!isAnswerRevealed && (
           <div
-            className={`flex justify-between items-center gap-6 w-full mx-auto ${
-              hasMedia ? 'flex-grow min-h-0 py-4' : 'max-w-5xl'
-            }`}
+            className={`flex items-center w-full mx-auto ${
+              hasShownChoices ? 'justify-between gap-6' : 'flex-col justify-center gap-5'
+            } ${hasShownChoices && !hasMedia ? 'max-w-5xl' : 'flex-grow min-h-0 py-4'}`}
           >
-            <div className="text-5xl font-black">
-              <CountdownCircleTimer
-                key={question.id}
-                onComplete={() => {
-                  onTimeUp()
-                }}
-                isPlaying
-                duration={answerDurationSec}
-                colors={['#f43f5e', '#6366f1', '#F7B801', '#ef4444']}
-                colorsTime={[
-                  Math.round(answerDurationSec * 0.6),
-                  Math.round(answerDurationSec * 0.3),
-                  3,
-                  0,
-                ]}
-              >
-                {({ remainingTime }) => remainingTime}
-              </CountdownCircleTimer>
-            </div>
+            {hasShownChoices && (
+              <div className="text-5xl font-black">
+                <CountdownCircleTimer
+                  key={question.id}
+                  onComplete={() => {
+                    onTimeUp()
+                  }}
+                  isPlaying
+                  duration={answerDurationSec}
+                  colors={['#f43f5e', '#6366f1', '#F7B801', '#ef4444']}
+                  colorsTime={[
+                    Math.round(answerDurationSec * 0.6),
+                    Math.round(answerDurationSec * 0.3),
+                    3,
+                    0,
+                  ]}
+                >
+                  {({ remainingTime }) => remainingTime}
+                </CountdownCircleTimer>
+              </div>
+            )}
 
-            {/* Zone centrale : Image Quiz ou Vinyle Blind Test */}
-            <div className="flex flex-col items-center justify-center mx-6 flex-grow min-h-0 h-full">
-              {isBlindTest ? (
-                <div className="flex flex-col items-center gap-4">
-                  <div
-                    onClick={toggleAudio}
-                    className={`cursor-pointer w-36 h-36 rounded-full border-8 border-slate-700 bg-gradient-to-tr from-rose-900 via-slate-950 to-indigo-900 flex items-center justify-center shadow-2xl ${
-                      isAudioPlaying ? 'animate-spin' : ''
-                    }`}
-                    style={{ animationDuration: '4s' }}
-                    title="Cliquer pour lecture/pause"
-                  >
-                    <div className="w-12 h-12 rounded-full bg-rose-500 flex items-center justify-center text-2xl">
-                      🎵
+            {/* Zone centrale : image, extrait vidéo ou vinyle Blind Test, dès l'affichage de la question (D17, D81) */}
+            {(hasMedia || isBlindTest || hasShownChoices) && (
+              <div
+                className={`flex flex-col items-center justify-center flex-grow min-h-0 ${
+                  hasShownChoices ? 'mx-6 h-full' : 'self-stretch'
+                }`}
+              >
+                {isBlindTest ? (
+                  <div className="flex flex-col items-center gap-4">
+                    <div
+                      onClick={toggleAudio}
+                      className={`cursor-pointer w-36 h-36 rounded-full border-8 border-slate-700 bg-gradient-to-tr from-rose-900 via-slate-950 to-indigo-900 flex items-center justify-center shadow-2xl ${
+                        isAudioPlaying ? 'animate-spin' : ''
+                      }`}
+                      style={{ animationDuration: '4s' }}
+                      title="Cliquer pour lecture/pause"
+                    >
+                      <div className="w-12 h-12 rounded-full bg-rose-500 flex items-center justify-center text-2xl">
+                        🎵
+                      </div>
                     </div>
+                    <button
+                      onClick={toggleAudio}
+                      className="px-4 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-xs font-semibold"
+                    >
+                      {isAudioPlaying
+                        ? '🔊 Lecture en cours (Pause)'
+                        : '▶️ Relancer le son'}
+                    </button>
                   </div>
-                  <button
-                    onClick={toggleAudio}
-                    className="px-4 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-xs font-semibold"
-                  >
-                    {isAudioPlaying
-                      ? '🔊 Lecture en cours (Pause)'
-                      : '▶️ Relancer le son'}
-                  </button>
-                </div>
-              ) : videoEmbedUrl ? (
-                // Extrait vidéo YouTube lu sur l'Écran Hôte pendant le chrono (Décision D19)
-                // Zoom recadré : le titre de la vidéo incrusté par YouTube peut donner la réponse (D48)
-                <div className="h-full max-w-full aspect-video rounded-2xl shadow-lg overflow-hidden">
-                  <iframe
-                    key={question.id}
-                    src={videoEmbedUrl}
-                    title="Extrait vidéo"
-                    allow="autoplay; encrypted-media; picture-in-picture"
-                    className="w-full h-full border-0 scale-[1.35]"
-                  />
-                </div>
-              ) : (
-                question.image_url && (
+                ) : videoEmbedUrl && !isVideoEnded ? (
+                  // Extrait vidéo YouTube lu sur l'Écran Hôte dès la question (Décisions D19, D81)
+                  // Zoom recadré : le titre de la vidéo incrusté par YouTube peut donner la réponse (D48)
+                  <div className="h-full max-w-full aspect-video rounded-2xl shadow-lg overflow-hidden">
+                    <iframe
+                      key={question.id}
+                      src={videoEmbedUrl}
+                      title="Extrait vidéo"
+                      allow="autoplay; encrypted-media; picture-in-picture"
+                      className="w-full h-full border-0 scale-[1.35]"
+                    />
+                  </div>
+                ) : question.image_url ? (
                   <img
                     src={question.image_url}
                     alt="Illustration question"
-                    className="max-h-full max-w-full rounded-2xl shadow-lg object-contain"
+                    className="min-h-0 max-h-full max-w-full rounded-2xl shadow-lg object-contain"
                   />
-                )
-              )}
-            </div>
+                ) : (
+                  videoEmbedUrl && (
+                    // Extrait terminé avant le chrono : pas de suggestions YouTube à l'écran (D81)
+                    <div className="px-8 py-6 rounded-2xl bg-slate-800/80 border border-white/10 text-2xl font-bold text-slate-200">
+                      🎬 Fin de l&apos;extrait : à vous de jouer !
+                    </div>
+                  )
+                )}
+              </div>
+            )}
 
-            <div className="text-center bg-slate-800/80 px-8 py-5 rounded-2xl border border-white/10">
-              <div className="text-6xl font-black pb-1 text-rose-400">
-                {answers.length}
-                <span className="text-2xl text-slate-400">
-                  /{participants.length}
-                </span>
+            {!hasShownChoices && (
+              <div className="flex items-center gap-4 bg-slate-800/80 border border-white/10 px-6 py-3 rounded-2xl shadow-xl">
+                <CountdownCircleTimer
+                  key={`host_preview_${question.id}`}
+                  isPlaying={!hasShownChoices}
+                  duration={TIME_TIL_CHOICE_REVEAL / 1000}
+                  size={64}
+                  strokeWidth={6}
+                  colors={['#f43f5e', '#6366f1', '#F7B801', '#ef4444']}
+                  trailColor={'transparent' as any}
+                  colorsTime={[
+                    Math.round((TIME_TIL_CHOICE_REVEAL / 1000) * 0.75),
+                    Math.round((TIME_TIL_CHOICE_REVEAL / 1000) * 0.5),
+                    2,
+                    0,
+                  ]}
+                  onComplete={() => {
+                    hasShownChoicesRef.current = true
+                    setHasShownChoices(true)
+                  }}
+                >
+                  {({ remainingTime }) => (
+                    <span className="text-2xl font-black text-white">
+                      {remainingTime}
+                    </span>
+                  )}
+                </CountdownCircleTimer>
+                <div className="text-xl text-slate-200 font-bold">
+                  {isBlindTest
+                    ? '🎧 Écoutez bien... Les choix arrivent !'
+                    : '👀 Lisez bien la question... Les choix arrivent !'}
+                </div>
               </div>
-              <div className="text-lg uppercase tracking-wider text-slate-300 font-semibold">
-                Réponses
+            )}
+
+            {hasShownChoices && (
+              <div className="text-center bg-slate-800/80 px-8 py-5 rounded-2xl border border-white/10">
+                <div className="text-6xl font-black pb-1 text-rose-400">
+                  {answers.length}
+                  <span className="text-2xl text-slate-400">
+                    /{participants.length}
+                  </span>
+                </div>
+                <div className="text-lg uppercase tracking-wider text-slate-300 font-semibold">
+                  Réponses
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 

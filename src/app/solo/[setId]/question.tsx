@@ -6,6 +6,7 @@ import {
 } from '@/constants'
 import { computeAnswerScore } from '@/scoring'
 import { Choice, Question, getYouTubeEmbedUrl } from '@/types/types'
+import { useExtractEnded } from '@/useExtractEnded'
 import { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react'
 import { ColorFormat, CountdownCircleTimer } from 'react-countdown-circle-timer'
 
@@ -16,7 +17,8 @@ const CHOICE_COLORS = ['bg-red-500', 'bg-blue-500', 'bg-yellow-500', 'bg-green-5
 /**
  * Une manche de l'Écran Solo (D62) : même cadencement que le live (5 s de lecture,
  * chrono = durée de l'extrait, barème 1000 → 500), mais l'écran diffuse lui-même
- * image, extrait YouTube et son, puisqu'il n'y a pas de TV.
+ * image, extrait YouTube et son, puisqu'il n'y a pas de TV. Comme sur la TV, son et
+ * vidéo partent dès l'affichage de la question (D81).
  */
 export default function SoloQuestion({
   question,
@@ -53,6 +55,10 @@ export default function SoloQuestion({
     : getYouTubeEmbedUrl(question.video_url, question.audio_start_sec || 0, durationSec)
   const hasAudioTrack = Boolean(question.audio_url && !videoEmbedUrl)
   const showImage = !isBlindTest && Boolean(question.image_url)
+  const isPlaying = stage !== 'revealed'
+  // Extrait vidéo retiré une fois terminé, avant la fin du chrono (D81)
+  const isVideoEnded = useExtractEnded(question.id, Boolean(videoEmbedUrl) && isPlaying, durationSec)
+  const showVideo = Boolean(videoEmbedUrl) && isPlaying && !isVideoEnded
 
   const stopAudio = useCallback(() => {
     audioRef.current?.pause()
@@ -95,9 +101,10 @@ export default function SoloQuestion({
     return () => clearTimeout(timeUp)
   }, [stage, durationMs, reveal])
 
-  // Son de la manche (Blind Test ou quiz sonorisé), lu sur cet écran pendant la réponse
+  // Son de la manche (Blind Test ou quiz sonorisé), lu sur cet écran dès l'affichage de la
+  // question, sans attendre la fin de la lecture (D81). La manche est remontée à chaque question.
   useEffect(() => {
-    if (stage !== 'answering' || !hasAudioTrack || !audioRef.current || !question.audio_url) return
+    if (!hasAudioTrack || !audioRef.current || !question.audio_url) return
     const audio = audioRef.current
     if (audio.getAttribute('src') !== question.audio_url) audio.src = question.audio_url
     audio.volume = isBlindTest ? 1.0 : 0.65
@@ -111,7 +118,7 @@ export default function SoloQuestion({
     if (audio.readyState >= 1) start()
     else audio.addEventListener('loadedmetadata', start, { once: true })
     return () => audio.removeEventListener('loadedmetadata', start)
-  }, [stage, hasAudioTrack, audioRef, question.audio_url, question.audio_start_sec, isBlindTest])
+  }, [hasAudioTrack, audioRef, question.audio_url, question.audio_start_sec, isBlindTest])
 
   const retryAudio = () => {
     audioRef.current
@@ -139,28 +146,28 @@ export default function SoloQuestion({
         </h2>
       </div>
 
-      {/* Média : image dès la lecture, vidéo et son pendant la réponse, comme sur la TV en live */}
+      {/* Média : image, vidéo et son dès la lecture, comme sur la TV en live (D81) */}
       <div className="flex flex-col items-center justify-center px-4 py-3 gap-3">
-        {stage === 'answering' && videoEmbedUrl && (
+        {showVideo && (
           // Zoom recadré : le titre incrusté par YouTube peut donner la réponse (D48)
           <div className="w-full max-w-3xl aspect-video rounded-2xl overflow-hidden shadow-lg bg-black">
             <iframe
               key={question.id}
-              src={videoEmbedUrl}
+              src={videoEmbedUrl!}
               title="Extrait vidéo"
               allow="autoplay; encrypted-media; picture-in-picture"
               className="w-full h-full border-0 scale-[1.35]"
             />
           </div>
         )}
-        {showImage && !(stage === 'answering' && videoEmbedUrl) && (
+        {showImage && !showVideo && (
           <img
             src={question.image_url!}
             alt="Illustration question"
             className="max-h-[38vh] max-w-full rounded-2xl shadow-lg object-contain"
           />
         )}
-        {stage === 'answering' && isBlindTest && (
+        {isPlaying && isBlindTest && (
           <div
             className={`w-28 h-28 rounded-full border-8 border-slate-700 bg-gradient-to-tr from-rose-900 via-slate-950 to-indigo-900 flex items-center justify-center shadow-2xl ${
               audioBlocked ? '' : 'animate-spin'
@@ -170,7 +177,7 @@ export default function SoloQuestion({
             <div className="w-10 h-10 rounded-full bg-rose-500 flex items-center justify-center text-xl">🎵</div>
           </div>
         )}
-        {stage === 'answering' && hasAudioTrack && audioBlocked && (
+        {isPlaying && hasAudioTrack && audioBlocked && (
           <button
             type="button"
             onClick={retryAudio}
@@ -179,7 +186,7 @@ export default function SoloQuestion({
             ▶️ Lancer le son
           </button>
         )}
-        {stage === 'answering' && videoEmbedUrl && (
+        {showVideo && (
           <p className="text-[11px] text-slate-400">Si la vidéo ne démarre pas, touche-la.</p>
         )}
       </div>
@@ -199,7 +206,7 @@ export default function SoloQuestion({
             {({ remainingTime }) => <span className="text-3xl font-black">{remainingTime}</span>}
           </CountdownCircleTimer>
           <p className="text-slate-400 text-xs font-semibold animate-pulse">
-            {isBlindTest ? '🎧 Prépare tes oreilles...' : '👀 Lis bien la question...'}
+            {isBlindTest ? '🎧 Écoute bien...' : '👀 Lis bien la question...'}
           </p>
         </div>
       )}

@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js'
 import fs from 'node:fs'
 import path from 'node:path'
 import { rankPackGames } from '../../src/leaderboard'
-import { expectHostMedia, type Question } from './full-game'
+import { expectHostMedia, expectVideoDuringReading, type Question } from './full-game'
 
 /**
  * Partie solo à distance (D62 à D66) : écran unique sur téléphone, mot de passe,
@@ -204,6 +204,7 @@ test('Solo training : partie complète du Warm-Up sur téléphone, rien n’est 
         for (const c of q.choices) {
           await expect(page.getByRole('button', { name: c.body, exact: true }), 'Choix affiché pendant la lecture').toHaveCount(0)
         }
+        await expectVideoDuringReading(page, q)
 
         const firstChoice = page.getByRole('button', { name: q.choices[0].body, exact: true })
         await expect(firstChoice).toBeVisible({ timeout: READING_MS + 4000 })

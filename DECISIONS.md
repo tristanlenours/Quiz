@@ -40,6 +40,7 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **I29** | 2026-11-21 | « *Ajouter deux questions au quiz Harry Potteur à peu près* » : Gringott (fausse réponse clin d'œil au hack d'Arkéa, 118 millions d'euros convertis en monnaie sorcière) et les titres des livres, bonne réponse « Harry Potteur et la Croupe en feu ». « *Toujours une image pour illustrer chaque question.* » | Demande explicite auteur | Actif |
 | **I30** | 2026-11-22 | Vérifier que chaque question du Warm-Up, du Grand Quiz Love Actually et du Vrai Connaisseur a une belle image ou une vidéo, et en ajouter là où il en manque. | Demande explicite auteur | Actif |
 | **I31** | 2026-11-23 | Vrai Connaisseur : bonne réponse de la question 9 changée depuis le Studio (« Cédric machin-chose ») ; supprimer la question 14 ; question 10 sur le numéro de Harry au quidisch (1 comme Barthez, 7 comme Pires « muscle ton jeu Harry », 9 comme Guivarc'h « la légende celtique », 19 comme « le fameux Willy Sagnol »), tournure à améliorer ; passer à 12 questions, la question du rat (4) sortant aussi. | Demande explicite auteur | Actif |
+| **I32** | 2026-11-23 | « *Pour tous les quiz, commencer à jouer la musique et lancer les vidéos dès l'affichage de la question, sans attendre la fin du compte à rebours.* » | Demande explicite auteur | Actif |
 
 ---
 
@@ -127,6 +128,7 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 | **D78** | 2026-11-21 | Vrai Connaisseur : Gringott et la Croupe en feu (14 manches) | Deux questions avec image, insérées avant le Blind Test final, qui reste dernier. Bonnes réponses : les gobelins tiennent Gringott ; « Harry Potteur et la Croupe en feu ». Images dans `quiz-media/packs/harry-potter/`. | Adopté |
 | **D79** | 2026-11-22 | Une image pour chaque question du Warm-Up, du Grand Quiz et du Vrai Connaisseur | 17 photos libres de Wikimedia Commons (portraits des acteurs, Studio Tour, bièraubeurre, blaireau, quidditch moldu), choisies pour ne pas donner la réponse et hébergées dans `quiz-media/packs/`. Seuls les Blind Tests restent sans image pendant la question. Retouches du Studio du 22/11 sur le Vrai Connaisseur reportées dans le JSON. | Adopté |
 | **D80** | 2026-11-23 | Vrai Connaisseur à 12 manches : Cédric, numéro de Harry | Q9 : bonne réponse « Cédric machin-chose » (choix du Studio). Q10 : « quel numéro Harry porte-t-il dans le dos ? », bonne réponse 7 (comme Pires). Manches 4 (rat) et 14 (Blind Test final) désactivées, pas effacées (D38). Écrit en base champ par champ, sans `pack:sync` (D79). | Adopté |
+| **D81** | 2026-11-23 | Son et extrait vidéo dès l'affichage de la question | Écran Hôte (TV) et Écran Solo lancent le son et la vidéo dès la question, pendant les 5 s de lecture, sans les relancer à l'arrivée des choix. Chrono et barème inchangés. L'extrait garde son calage (début → début + temps de réponse), finit donc avant le chrono, et l'écran le retire une fois terminé (image de la question, sinon « Fin de l'extrait »). | Adopté |
 
 ---
 
@@ -781,3 +783,13 @@ Chaque intention exprimée par l'auteur et chaque micro-décision technique, pro
 - **Vérification** : Harry porte le n° 7 dans les films, numéro choisi par la costumière Jany Temime (Bustle, entretien avec Jany Temime). Les numéros des footballeurs sont des clins d'œil de l'auteur, non vérifiés : ce sont des leurres, sauf le 7 de Pires (son numéro à Arsenal).
 - **En base** : écriture directe (nom, description, `is_disabled` des manches 4 et 14, texte de la 10 et ses quatre choix recréés dans l'ordre du JSON), sans `pack:sync`, qui aurait remélangé les réponses des autres questions (D79). Lecture de contrôle identique à celle de l'écran Hôte : ordre des choix conforme au JSON.
 - **Scores** (D70) : le pack n'avait aucune partie, rien n'a été effacé.
+
+### 2026-11-23 — D81 : son et extrait vidéo dès l'affichage de la question
+- **Contexte** : Intention I32. Jusqu'ici, l'Écran Hôte et l'Écran Solo attendaient la fin du décompte de lecture (5 s) pour lancer le son (D08, D23) et l'extrait YouTube (D19) : la question restait muette pendant la lecture.
+- **Décision** :
+  1. **Son** (Blind Test et fond sonore) : lancé dès l'affichage de la question, une seule fois par manche ; l'arrivée des choix ne le relance pas. Le bouton « Relancer la musique » de la TV est disponible dès la lecture, le vinyle du Blind Test aussi.
+  2. **Vidéo** : l'extrait YouTube remplace l'image dès la lecture. Sur la TV, lecture et réponse partagent désormais le même bloc, pour que la vidéo ne soit pas rechargée quand les choix apparaissent.
+  3. **Calage inchangé** : l'extrait va toujours de `audio_start_sec` à début + `audio_duration_sec`, pour ne jamais montrer ce qui suit (la réponse). Parti 5 s plus tôt, il finit avant le chrono. Passé la durée de l'extrait plus 1 s (`VIDEO_END_GRACE_MS`, le temps que le lecteur charge), l'écran retire la vidéo (`src/useExtractEnded.ts`) et affiche l'image de la question, ou « Fin de l'extrait : à vous de jouer ! » : sans cela, YouTube afficherait ses suggestions, dont les titres peuvent donner la réponse.
+  4. **Inchangés** : 5 s de lecture avant les choix, chrono = `audio_duration_sec`, barème (`src/scoring.ts`), Manette en texte seul (D31). Le son d'un quiz sonorisé (extrait iTunes de 30 s) peut s'arrêter avant la fin d'un chrono de 30 s : c'est un fond sonore.
+- **Tests** : les E2E (TV en live et Écran Solo) vérifient que l'extrait vidéo est déjà présent pendant la lecture, avant les choix. Le départ effectif du son ne se vérifie pas en test (le Chromium de Playwright ne lit pas l'AAC) : à contrôler en répétition sur la vraie TV.
+- **Alternatives écartées** : avancer le début de l'extrait de 5 s (montrerait des images non calées) ; prolonger sa fin de 5 s (risque de montrer la réponse) ; laisser la vidéo finie à l'écran (suggestions YouTube visibles).
