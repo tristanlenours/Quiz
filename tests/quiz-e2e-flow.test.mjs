@@ -270,13 +270,13 @@ test('4. Simulation E2E d’une partie multijoueur : avatars exclusifs, réponse
         participant_id: insertedPlayers[0].id,
         question_id: q0.id,
         choice_id: q0Correct.id,
-        score: 960,
+        score: 1024,
       },
       {
         participant_id: insertedPlayers[1].id,
         question_id: q0.id,
         choice_id: q0Correct.id,
-        score: 810,
+        score: 1006,
       },
       {
         participant_id: insertedPlayers[2].id,
@@ -288,13 +288,13 @@ test('4. Simulation E2E d’une partie multijoueur : avatars exclusifs, réponse
         participant_id: insertedPlayers[0].id,
         question_id: q1.id,
         choice_id: q1Correct.id,
-        score: 920,
+        score: 1020,
       },
       {
         participant_id: insertedPlayers[2].id,
         question_id: q1.id,
         choice_id: q1Correct.id,
-        score: 640,
+        score: 1001,
       },
     ])
 
@@ -308,11 +308,11 @@ test('4. Simulation E2E d’une partie multijoueur : avatars exclusifs, réponse
     assert.ifError(rErr)
     assert.equal(results.length, 3)
     assert.equal(results[0].nickname, '[#david]Tristan')
-    assert.equal(results[0].total_score, 1880)
+    assert.equal(results[0].total_score, 2044)
     assert.equal(results[1].nickname, '[#natalie]Chloé')
-    assert.equal(results[1].total_score, 810)
+    assert.equal(results[1].total_score, 1006)
     assert.equal(results[2].nickname, '[#rufus]Max')
-    assert.equal(results[2].total_score, 640)
+    assert.equal(results[2].total_score, 1001)
   } finally {
     // 5. Nettoyage en cascade de la partie de test
     await supabase.from('quiz_games').delete().eq('id', game.id)
@@ -386,14 +386,14 @@ test('9. Commentaire solo (D66) : statistiques individuelles, repli déterminist
     '../src/soloAnalysis.ts'
   )
 
-  const stats = computeSoloStats({ displayName: 'Testeur', characterName: null }, [1000, 750, 0, null, 500, 900])
+  const stats = computeSoloStats({ displayName: 'Testeur', characterName: null }, [1025, 1013, 0, null, 1000, 1020])
   assert.equal(stats.correct, 4)
   assert.equal(stats.wrong, 1)
   assert.equal(stats.timeouts, 1)
-  assert.equal(stats.totalScore, 3150)
+  assert.equal(stats.totalScore, 4058)
   assert.equal(stats.maxStreak, 2)
-  assert.equal(stats.avgTimeUsedPct, Math.round(((0 + 0.5 + 1 + 0.2) / 4) * 100))
-  assert.deepEqual(stats.bestRound, { round: 1, score: 1000 })
+  assert.equal(stats.avgTimeUsedPct, Math.round(((0 + 0.48 + 1 + 0.2) / 4) * 100))
+  assert.deepEqual(stats.bestRound, { round: 1, score: 1025 })
 
   // Aucun texte ne doit contenir une bonne réponse d'un pack du même univers (AGENTS.md §4)
   const fold = (t) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
@@ -643,5 +643,69 @@ test('11. Downing Street Groove (D71) : moteur de course 1, 2, 3 Soleil, trophé
     const src = fs.readFileSync(path.resolve(process.cwd(), relPath), 'utf8').toLowerCase()
     assert.ok(!src.includes('jump (for my love)'), `${relPath} ne doit pas divulgâcher Jump (For My Love)`)
     assert.ok(!src.includes('pointer sisters'), `${relPath} ne doit pas divulgâcher The Pointer Sisters`)
+  }
+})
+
+test('12. Barème (D82) : une bonne réponse de plus bat toujours la vitesse, sur tous les packs actifs', async () => {
+  const { computeAnswerScore, timeShareFromScore, MAX_QUESTIONS_FOR_CORRECT_FIRST } = await import(
+    '../src/scoring.ts'
+  )
+  const { computeSoloStats } = await import('../src/soloAnalysis.ts')
+
+  assert.equal(computeAnswerScore(false, 0, 20_000), 0)
+  assert.equal(computeAnswerScore(true, 0, 20_000), 1025)
+  assert.equal(computeAnswerScore(true, 20_000, 20_000), 1000)
+  assert.equal(timeShareFromScore(computeAnswerScore(true, 5_000, 20_000)), 0.24)
+  // Le commentaire solo recopie la formule de timeShareFromScore : elles doivent rester alignées
+  const slowish = computeAnswerScore(true, 15_000, 20_000)
+  assert.equal(
+    computeSoloStats({ displayName: 'T', characterName: null }, [slowish]).avgTimeUsedPct,
+    Math.round(timeShareFromScore(slowish) * 100)
+  )
+
+  // L'exemple de l'auteur : 11/14 au bout du chrono bat 10/14 instantanés
+  const total = (correct, elapsedMs, n) =>
+    Array.from({ length: n }, (_, i) => computeAnswerScore(i < correct, elapsedMs, 20_000)).reduce((a, b) => a + b, 0)
+  assert.ok(total(11, 20_000, 14) > total(10, 0, 14), '11 lentes doivent battre 10 instantanées')
+  assert.ok(
+    total(MAX_QUESTIONS_FOR_CORRECT_FIRST, 20_000, MAX_QUESTIONS_FOR_CORRECT_FIRST) >
+      total(MAX_QUESTIONS_FOR_CORRECT_FIRST - 1, 0, MAX_QUESTIONS_FOR_CORRECT_FIRST),
+    'La garantie tient jusqu’à la longueur maximale annoncée'
+  )
+
+  // Aucun pack actif en base ne dépasse cette longueur
+  const { data: sets, error } = await supabase
+    .from('quiz_sets')
+    .select('name, questions:quiz_questions(id, is_disabled)')
+  assert.ifError(error)
+  for (const set of sets) {
+    const active = (set.questions ?? []).filter((q) => !q.is_disabled).length
+    assert.ok(
+      active <= MAX_QUESTIONS_FOR_CORRECT_FIRST,
+      `« ${set.name} » a ${active} manches actives : au-delà de ${MAX_QUESTIONS_FOR_CORRECT_FIRST}, réduire MAX_SPEED_BONUS (src/scoring.ts)`
+    )
+  }
+})
+
+test('13. Quiz Lives (D83, D84) : 10 s d’écoute, manche de 1 min 10 jouée jusqu’au bout, 4 choix et une seule bonne réponse', async () => {
+  const { getChoiceRevealMs, playsFullRound, getExtractDurationSec, TIME_TIL_CHOICE_REVEAL } = await import('../src/constants.ts')
+  assert.equal(getChoiceRevealMs('lives'), 10_000)
+  assert.equal(playsFullRound('lives'), true)
+  for (const theme of ['love_actually', 'harry_potter', 'retro_2026', null, undefined]) {
+    assert.equal(getChoiceRevealMs(theme), TIME_TIL_CHOICE_REVEAL, `${theme} garde 5 s de lecture`)
+    assert.equal(playsFullRound(theme), false, `${theme} garde la fin anticipée`)
+    assert.equal(getExtractDurationSec(theme, 30), 30, `${theme} garde l’extrait calé sur le chrono (D81)`)
+  }
+  const pack = JSON.parse(fs.readFileSync(path.resolve('packs/lives.json'), 'utf8'))
+  assert.equal(pack.avatar_theme, 'lives')
+  assert.equal(pack.questions.length, 9)
+  for (const q of pack.questions) {
+    assert.equal(q.choices.length, 4, q.body)
+    assert.equal(q.choices.filter((c) => c.is_correct).length, 1, q.body)
+    assert.match(q.video_url, /youtube\.com\/watch\?v=[\w-]{11}$/, q.body)
+    // Départ à 0:02, écoute + chrono = 1 min 10, extrait sur toute la manche (I35)
+    assert.equal(q.audio_start_sec, 2, q.body)
+    assert.equal(getChoiceRevealMs('lives') / 1000 + q.audio_duration_sec, 70, q.body)
+    assert.equal(getExtractDurationSec('lives', q.audio_duration_sec), 70, q.body)
   }
 })

@@ -8,6 +8,7 @@ import {
   type Page,
 } from '@playwright/test'
 import { createClient } from '@supabase/supabase-js'
+import { computeAnswerScore, MAX_SPEED_BONUS, POINTS_PER_CORRECT } from '../../src/scoring'
 import fs from 'node:fs'
 import path from 'node:path'
 
@@ -666,14 +667,14 @@ export async function runFullGame(
           if (action.pick === 'wrong') {
             expect(row!.score).toBe(0)
           } else {
-            expect(row!.score).toBeGreaterThanOrEqual(500)
-            expect(row!.score).toBeLessThanOrEqual(1000)
-            // Barème linéaire 1000 → 500 sur la durée de la manche (marge pour la latence)
-            const expectedScore = 1000 - Math.round((action.at / durationMs) * 500)
+            expect(row!.score).toBeGreaterThanOrEqual(POINTS_PER_CORRECT)
+            expect(row!.score).toBeLessThanOrEqual(POINTS_PER_CORRECT + MAX_SPEED_BONUS)
+            // Barème D82 : 1000 + bonus de vitesse 25 → 0 sur la durée de la manche (marge pour la latence)
+            const expectedScore = computeAnswerScore(true, action.at, durationMs)
             expect(
               Math.abs(row!.score - expectedScore),
               `Score de ${p.displayName} (${row!.score}) cohérent avec un temps de réponse de ${action.at} ms`
-            ).toBeLessThanOrEqual(40)
+            ).toBeLessThanOrEqual(2)
           }
         }
 

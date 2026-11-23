@@ -49,8 +49,9 @@ export function computeSoloStats(
       correct++
       streak++
       maxStreak = Math.max(maxStreak, streak)
-      // Barème : 1000 instantané → 500 au bout du chrono (src/scoring.ts)
-      timeUsed.push(Math.min(1, Math.max(0, (1000 - score) / 500)))
+      // Barème D82 : 1025 instantané → 1000 au bout du chrono (timeShareFromScore de src/scoring.ts,
+      // recopié ici car ce module est importé tel quel par Node dans `npm test`, sans alias `@/`)
+      timeUsed.push(Math.min(1, Math.max(0, (1025 - score) / 25)))
       if (!bestRound || score > bestRound.score) bestRound = { round: i + 1, score }
       if (i < half) firstHalfCorrect++
       else secondHalfCorrect++

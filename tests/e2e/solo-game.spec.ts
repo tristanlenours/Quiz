@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js'
 import fs from 'node:fs'
 import path from 'node:path'
 import { rankPackGames } from '../../src/leaderboard'
+import { computeAnswerScore } from '../../src/scoring'
 import { expectHostMedia, expectVideoDuringReading, type Question } from './full-game'
 
 /**
@@ -258,8 +259,8 @@ test('Solo training : partie complète du Warm-Up sur téléphone, rien n’est 
             expect(row!.score).toBe(0)
             await expect(resultLine).toHaveText('Dommage !')
           } else {
-            const expected = 1000 - Math.round((step.at / durationMs) * 500)
-            expect(Math.abs(row!.score - expected), `Score ${row!.score} pour une réponse à ${step.at} ms`).toBeLessThanOrEqual(40)
+            const expected = computeAnswerScore(true, step.at, durationMs)
+            expect(Math.abs(row!.score - expected), `Score ${row!.score} pour une réponse à ${step.at} ms`).toBeLessThanOrEqual(2)
             await expect(resultLine).toHaveText(`Exact ! +${row!.score} pts`)
             correctCount++
           }
